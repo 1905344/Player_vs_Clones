@@ -6,14 +6,26 @@ using System;
 
 public class InputManager : MonoBehaviour
 {
-    //public static TestControls inputActions = new TestControls();
-    public static PlayerControls inputActions = new PlayerControls();
+    #region Variables
+
+    private static InputManager _instance;
+
+    public static InputManager Instance 
+    {  
+        get 
+        { 
+            return _instance; 
+        } 
+    }
+
+    //public static TestControls testActions = new TestControls();      //For Debugging
+    public static PlayerControls playerActions;
     public static event Action<InputActionMap> changeActionMap;
 
-    public bool isGamepad;
-    public bool isKeyboard;
+    [NonSerialized] public bool isGamepad;
+    [NonSerialized] public bool isKeyboard;
 
-    public string _currentControlScheme;
+    [NonSerialized] public string _currentControlScheme;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -28,15 +40,56 @@ public class InputManager : MonoBehaviour
         return false;
     }
 
+    public bool PlayerJumped()
+    {
+        return playerActions.Player.Jump.triggered;
+    }
+
+    public Vector2 GetPlayerMovement()
+    {
+        return playerActions.Player.Move.ReadValue<Vector2>();
+    }
+
+    public Vector2 GetMouseDelta()
+    {
+        return playerActions.Player.Look.ReadValue<Vector2>();
+    }
+
+    #endregion
+
     public void OnControlsChanged(PlayerInput input)
     {
         isGamepad = input.currentControlScheme.Equals("Gamepad");
         isKeyboard = input.currentControlScheme.Equals("Keyboard");
     }
 
-    void Start()
+    private void Awake()
     {
-        ToggleActionMap(inputActions.UI);
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+
+        playerActions = new PlayerControls();
+    }
+
+    private void Start()
+    {
+        ToggleActionMap(playerActions.UI);
+    }
+
+    private void OnEnable()
+    {
+        playerActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerActions.Disable();
     }
 
     public static void ToggleActionMap(InputActionMap actionMap)
@@ -46,7 +99,7 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        inputActions.Disable();
+        playerActions.Disable();
         changeActionMap?.Invoke(actionMap);
         actionMap.Enable();
     }

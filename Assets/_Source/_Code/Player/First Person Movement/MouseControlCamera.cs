@@ -14,22 +14,8 @@ public class MouseControlCamera : MonoBehaviour
     [SerializeField, Tooltip("How sensitive the camera is when moving the camera")] private float mouseSens;
     private float xRotation;
 
-    //Input Actions
-    private InputAction mouseLook;
-
-    #endregion
-
-    #region OnEnable and OnDisable
-
-    private void OnEnable()
-    {
-        InputManager.inputActions.Player.Look.performed += OnMouseMove;
-    }
-
-    private void OnDisable()
-    {
-        InputManager.inputActions.Player.Look.performed -= OnMouseMove;
-    }
+    //Input manager
+    private InputManager inputManager;
 
     #endregion
 
@@ -45,7 +31,7 @@ public class MouseControlCamera : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void Update()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;

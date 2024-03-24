@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+[RequireComponent(typeof(CharacterController))]
 public class FirstPersonMovement : MonoBehaviour
 {
     #region Variables
@@ -14,7 +11,7 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private CharacterController charController;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundMask;
-    [SerializeField] private Rigidbody playerBody;
+    //[SerializeField] private Rigidbody playerBody;
 
     [Space(5)]
 
@@ -23,14 +20,16 @@ public class FirstPersonMovement : MonoBehaviour
     [Space(15)]
 
     [Header("Movement Variables")]
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private Vector2 playerMovement;
+    [SerializeField] private Vector3 characterMove;
+    [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float directionX;
     [SerializeField] private float directionZ;
-    [SerializeField] private float playerGravity;
+    [SerializeField] private float playerGravity = -9.81f;
     
     [Space(10)]    
 
-    [SerializeField] private float jumpHeight;
+    [SerializeField] private float jumpHeight = 1f;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float timeToJumpApex;
 
@@ -47,67 +46,28 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
 
-    //Input Actions
-    private InputAction playerMove;
-    private InputAction playerJump;
+    //Input manager
+    private InputManager inputManager;
 
     #endregion
 
     private void Awake()
     {
-        playerBody = GetComponent<Rigidbody>();
         charController = GetComponent<CharacterController>();
     }
 
-    #region OnEnable and OnDisable
-
-    private void OnEnable()
+    private void Start()
     {
-        InputManager.inputActions.Player.Move.performed += OnPlayerMove;
-        InputManager.inputActions.Player.Jump.performed += OnPlayerJump;
+        inputManager = InputManager.Instance;
     }
-
-    private void OnDisable()
-    {
-        InputManager.inputActions.Player.Move.performed -= OnPlayerMove;
-        InputManager.inputActions.Player.Jump.performed -= OnPlayerJump;
-    }
-
-    #endregion
-
-    #region Input
-
-    public void OnPlayerMove(InputAction.CallbackContext context)
-    {
-        if (!disablePlayerMovement)
-        {
-            directionX = context.ReadValue<float>();
-            directionZ = context.ReadValue<float>();
-        }
-    }
-   
-    public void OnPlayerJump(InputAction.CallbackContext context)
-    {
-        if (!disablePlayerMovement && !disablePlayerJumping)
-        {
-            canJump = true;
-        }
-        
-        if (context.canceled && !isGrounded)
-        {
-            canJump = false;
-        }
-    }
-
-    #endregion
 
     #region Jump Physics
 
-    private void JumpPhysics()
-    {
-        Vector3 newGravity = new Vector3(0, (-2 * jumpHeight) / (timeToJumpApex * timeToJumpApex));
-        playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * playerGravity);
-    }
+    //private void JumpPhysics()
+    //{
+    //    Vector3 newGravity = new Vector3(0, (-2 * jumpHeight) / (timeToJumpApex * timeToJumpApex));
+    //    playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * playerGravity);
+    //}
 
     #endregion
 
@@ -168,27 +128,26 @@ public class FirstPersonMovement : MonoBehaviour
 
         #region Player Movement
 
-        if (directionX != 0)
+        playerMovement = inputManager.GetPlayerMovement();
+
+        characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
+
+        charController.Move(characterMove * moveSpeed * Time.deltaTime);
+
+        if (characterMove != Vector3.zero)
         {
-            transform.localScale = new Vector3(directionX > 0 ? 1 : -1, 1, 1);
+            gameObject.transform.forward = characterMove;
         }
 
-        if (directionZ != 0)
-        {
-            transform.localScale = new Vector3(directionZ > 0 ? 1 : -1, 1, 1);
-        }
-
-        Vector3 move = transform.right * directionX + transform.forward * directionZ;
+        charController.Move(playerVelocity * Time.deltaTime);
 
         #endregion
 
         #region Player Jumping
 
-        if (canJump && isGrounded)
+        if (inputManager.PlayerJumped() && isGrounded)
         {
-            OnJump();
-            playerBody.velocity = playerVelocity;
-            return;
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * playerGravity);
         }
 
         #endregion
@@ -196,7 +155,7 @@ public class FirstPersonMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        playerVelocity = playerBody.velocity;
+        //playerVelocity = playerBody.velocity;
 
         if (isGrounded)
         {
