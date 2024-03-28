@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using Cinemachine;
 
 public class InputManager : MonoBehaviour
 {
@@ -18,14 +19,27 @@ public class InputManager : MonoBehaviour
         } 
     }
 
-    //public static TestControls testActions = new TestControls();      //For Debugging
+    [Header("Cinemachine Virtual Camera")]
+    [SerializeField] private CinemachineVirtualCamera _camera;
+
+    [Space(15)]
+        
     public static PlayerControls playerActions;
     public static event Action<InputActionMap> changeActionMap;
 
-    [NonSerialized] public bool isGamepad;
-    [NonSerialized] public bool isKeyboard;
+    public bool isGamepad;
+    public bool isKeyboard;
 
-    [NonSerialized] public string _currentControlScheme;
+    [SerializeField] public string _currentControlScheme;
+
+    [Space(15)]
+
+    [Header("Mouse Sensitivity Settings")]
+    [SerializeField, Tooltip("How sensitive the mouse is on the horizontal axis")]
+    private float mouseHorizontalSensitivity = 10f;
+
+    [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis")]
+    private float mouseVerticalSensitivity = 10f;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -52,7 +66,7 @@ public class InputManager : MonoBehaviour
 
     public Vector2 GetMouseDelta()
     {
-        return playerActions.Player.Look.ReadValue<Vector2>();
+        return playerActions.Player.MouseLook.ReadValue<Vector2>();
     }
 
     #endregion
@@ -75,6 +89,7 @@ public class InputManager : MonoBehaviour
         }
 
         playerActions = new PlayerControls();
+        _camera = GetComponent<CinemachineVirtualCamera>();
     }
 
     private void Start()
@@ -114,5 +129,6 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("Input Manager: Keyboard connected.");
         }
+
     }
 }

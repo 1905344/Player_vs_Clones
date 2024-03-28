@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Look",
+                    "name": "MouseLook",
                     "type": "PassThrough",
                     "id": "cb617683-cbd3-4749-9797-b6cd9feba8cd",
                     "expectedControlType": "Vector2",
@@ -193,7 +193,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Look",
+                    "action": "MouseLook",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

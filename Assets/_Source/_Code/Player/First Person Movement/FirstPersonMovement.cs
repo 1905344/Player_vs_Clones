@@ -61,44 +61,6 @@ public class FirstPersonMovement : MonoBehaviour
         inputManager = InputManager.Instance;
     }
 
-    #region Jump Physics
-
-    //private void JumpPhysics()
-    //{
-    //    Vector3 newGravity = new Vector3(0, (-2 * jumpHeight) / (timeToJumpApex * timeToJumpApex));
-    //    playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * playerGravity);
-    //}
-
-    #endregion
-
-    #region Jumping When Requested
-
-    private void OnJump()
-    {
-        if (isGrounded)
-        {
-            canJump = true;
-
-            playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * playerGravity);
-
-            jumpSpeed = Mathf.Sqrt(-2f * Physics2D.gravity.y * playerGravity * jumpHeight);
-
-            if (playerVelocity.y > 0f)
-            {
-                jumpSpeed = Mathf.Max(jumpSpeed - playerVelocity.y, 0f);
-            }
-            else if (playerVelocity.y < 0f)
-            {
-                jumpSpeed += Mathf.Abs(playerVelocity.y);
-            }
-
-            playerVelocity.y = jumpSpeed;
-            isJumping = true;
-        }
-    }
-
-    #endregion
-
     private void Update()
     {
         #region Disable Movement
@@ -123,6 +85,11 @@ public class FirstPersonMovement : MonoBehaviour
         #region Ground Check
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (isGrounded)
+        {
+            playerVelocity.y = 0f;
+        }
 
         #endregion
 
@@ -151,35 +118,6 @@ public class FirstPersonMovement : MonoBehaviour
         }
 
         #endregion
-    }
-
-    void FixedUpdate()
-    {
-        //playerVelocity = playerBody.velocity;
-
-        if (isGrounded)
-        {
-            playerVelocity.y = 0f;
-        }
-
-        //float x = Input.GetAxis("Horizontal");
-        //float z = Input.GetAxis("Vertical");
-
-        //Vector3 move = transform.right * x + transform.forward * z;
-
-        //charController.Move(move * moveSpeed * Time.deltaTime);
-
-        //if (Input.GetButtonDown("Jump") && isGrounded)
-        //{
-        //    playerVelocity.y = Mathf.Sqrt(jumpHeight * -2f * playerGravity);
-        //}
-
-        //if (!isGrounded)
-        //{
-        //    playerVelocity.y += playerGravity * Time.deltaTime;
-        //}
-
-        //charController.Move(playerVelocity * Time.deltaTime);
 
     }
 }
