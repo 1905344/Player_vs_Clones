@@ -19,11 +19,6 @@ public class InputManager : MonoBehaviour
         } 
     }
 
-    [Header("Cinemachine Virtual Camera")]
-    [SerializeField] private CinemachineVirtualCamera _camera;
-
-    [Space(15)]
-        
     public static PlayerControls playerActions;
     public static event Action<InputActionMap> changeActionMap;
 
@@ -34,12 +29,28 @@ public class InputManager : MonoBehaviour
 
     [Space(15)]
 
+    [Header("Mouse Settings")]
+    [SerializeField] public bool mouseAcceleration = false;
+    [SerializeField] public bool invertMouse = false;
+
+    [Space(10)]
+
     [Header("Mouse Sensitivity Settings")]
     [SerializeField, Tooltip("How sensitive the mouse is on the horizontal axis")]
-    private float mouseHorizontalSensitivity = 10f;
+    public float mouseHorizontalSensitivity = 0.3f;
 
     [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis")]
-    private float mouseVerticalSensitivity = 10f;
+    public float mouseVerticalSensitivity = 0.3f;
+
+    [Space(15)]
+
+    [Header("Cinemachine Virtual Camera Reference")]
+    [SerializeField] CinemachineVirtualCamera characterFollowCamera;
+    
+    [Space(15)]
+
+    [Header("Camera FOV")]
+    [SerializeField] private float _FOV = 90f;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -89,7 +100,10 @@ public class InputManager : MonoBehaviour
         }
 
         playerActions = new PlayerControls();
-        _camera = GetComponent<CinemachineVirtualCamera>();
+
+        Debug.Log("Camera FOV is: " + characterFollowCamera.GetFocalLength());
+
+        //characterFollowCamera.SetFocalLength(_FOV);
     }
 
     private void Start()
@@ -121,6 +135,8 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
+        characterFollowCamera.SetFocalLength(_FOV);
+
         if (isGamepad)
         {
             Debug.Log("Input Manager: Gamepad connected.");
@@ -129,6 +145,5 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("Input Manager: Keyboard connected.");
         }
-
     }
 }

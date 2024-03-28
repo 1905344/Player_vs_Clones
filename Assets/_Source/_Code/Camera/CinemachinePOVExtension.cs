@@ -61,9 +61,5 @@ public class CinemachinePOVExtension : CinemachineExtension
                 }
             }
         }
-
-
     }
-
-
 }

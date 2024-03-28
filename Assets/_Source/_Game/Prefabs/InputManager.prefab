@@ -44,3 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 985cc5e571f4fce4aa4bfff982878bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vCamera: {fileID: 0}
+  isGamepad: 0
+  isKeyboard: 0
+  _currentControlScheme: 
+  mouseHorizontalSensitivity: 0.3
+  mouseVerticalSensitivity: 0.3
+  mouseAcceleration: 0
+  invertMouse: 0
+  _FOV: 90
