@@ -22,22 +22,18 @@ public class CinemachineMouseSettingsExtension : CinemachineExtension
         //Call the Awake function of the InputManager
         base.Awake();
 
-        if (inputManager.mouseAcceleration)
-        {
-            camPOV.m_VerticalAxis.m_SpeedMode = AxisState.SpeedMode.MaxSpeed;
-        }
-        else
-        {
-            camPOV.m_VerticalAxis.m_SpeedMode = AxisState.SpeedMode.InputValueGain;
-        }
+        //Referencing the Cinemachine camera POV
+        //camPOV = GetComponent<CinemachinePOV>();
 
-        if (inputManager.invertMouse)
-        {
-            camPOV.m_HorizontalAxis.m_InvertInput = true;
-        }
+        //if (inputManager.mouseAcceleration)
+        //{
+        //    camPOV.m_VerticalAxis.m_SpeedMode = AxisState.SpeedMode.MaxSpeed;
+        //}
 
-        camPOV.m_HorizontalAxis.m_MaxSpeed = inputManager.mouseVerticalSensitivity;
-        camPOV.m_VerticalAxis.m_MaxSpeed = inputManager.mouseHorizontalSensitivity;
+        //if (inputManager.invertMouse)
+        //{
+        //    camPOV.m_HorizontalAxis.m_InvertInput = true;
+        //}
     }
 
     protected override void PostPipelineStageCallback(CinemachineVirtualCameraBase vcam, CinemachineCore.Stage stage, ref CameraState state, float deltaTime)

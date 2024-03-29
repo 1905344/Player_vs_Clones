@@ -43,11 +43,11 @@ public class CinemachinePOVExtension : CinemachineExtension
                     startingRotation = transform.localRotation.eulerAngles;
 
                     //Get the mouse delta value from the Input Manager as a vector2 value
-                    Vector2 deltaInput = inputManager.GetMouseDelta();
+                    //Vector2 deltaInput = inputManager.GetMouseDelta();
                     
                     //Update the camera rotation using the mouse delta values from the InputManager
-                    startingRotation.x += deltaInput.x * mouseVerticalSensitivity * Time.deltaTime;
-                    startingRotation.y += deltaInput.y * mouseHorizontalSensitivity * Time.deltaTime;
+                    //startingRotation.x += deltaInput.x * mouseVerticalSensitivity * Time.deltaTime;
+                    //startingRotation.y += deltaInput.y * mouseHorizontalSensitivity * Time.deltaTime;
 
                     //Clamping the 'y' value of the camera when moving the mouse vertically
                     startingRotation.y = Mathf.Clamp(startingRotation.y, -clampYAngle, clampYAngle);
@@ -55,7 +55,7 @@ public class CinemachinePOVExtension : CinemachineExtension
                     //Setting the camera orientation when moving it with the mouse
                     //startingRotation.y is in the 'X' value to rotate horizontally (look left or right)
                     //startingRotation.x is in the 'Y' value to rotate vertically (look up or down)
-                    state.RawOrientation = Quaternion.Euler(startingRotation.y, startingRotation.x, 0f);
+                    //state.RawOrientation = Quaternion.Euler(startingRotation.y, startingRotation.x, 0f);
 
 
                 }

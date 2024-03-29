@@ -30,8 +30,8 @@ public class InputManager : MonoBehaviour
     [Space(15)]
 
     [Header("Mouse Settings")]
-    [SerializeField] public bool mouseAcceleration = false;
-    [SerializeField] public bool invertMouse = false;
+    [SerializeField] private bool mouseAcceleration = false;
+    [SerializeField] private bool invertMouseY = false;
 
     [Space(10)]
 
@@ -45,12 +45,14 @@ public class InputManager : MonoBehaviour
     [Space(15)]
 
     [Header("Cinemachine Virtual Camera Reference")]
-    [SerializeField] CinemachineVirtualCamera characterFollowCamera;
-    
-    [Space(15)]
+    [SerializeField] CinemachineVirtualCamera vCam;
 
-    [Header("Camera FOV")]
-    [SerializeField] private float _FOV = 90f;
+    [Space(10)]
+
+    [Header("Camera Field of View")]
+    [SerializeField, Range(1f,180f)] private float _FOV = 90f;
+
+    public bool updateFOV;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -80,6 +82,16 @@ public class InputManager : MonoBehaviour
         return playerActions.Player.MouseLook.ReadValue<Vector2>();
     }
 
+    public float GetMouseHorizontalSensitivity()
+    {
+        return mouseHorizontalSensitivity;
+    }
+
+    public float GetMouseVerticalSensitivity()
+    {
+        return mouseVerticalSensitivity;
+    }
+
     #endregion
 
     public void OnControlsChanged(PlayerInput input)
@@ -100,15 +112,16 @@ public class InputManager : MonoBehaviour
         }
 
         playerActions = new PlayerControls();
-
-        Debug.Log("Camera FOV is: " + characterFollowCamera.GetFocalLength());
-
-        //characterFollowCamera.SetFocalLength(_FOV);
     }
 
     private void Start()
     {
         ToggleActionMap(playerActions.UI);
+
+        vCam.SetFocalLength(_FOV);
+        Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
     }
 
     private void OnEnable()
@@ -135,7 +148,13 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        characterFollowCamera.SetFocalLength(_FOV);
+        if (updateFOV)
+        {
+            vCam.SetFocalLength(_FOV);
+            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+            updateFOV = false;
+        }
 
         if (isGamepad)
         {

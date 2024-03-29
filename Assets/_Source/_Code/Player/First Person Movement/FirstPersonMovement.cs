@@ -23,8 +23,8 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float directionX;
-    [SerializeField] private float directionZ;
+    private float directionX;
+    private float directionZ;
     [SerializeField] private float playerGravity = -9.81f;
     
     [Space(10)]    
