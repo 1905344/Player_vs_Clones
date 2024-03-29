@@ -50,7 +50,7 @@ public class InputManager : MonoBehaviour
     [Space(10)]
 
     [Header("Camera Field of View")]
-    [SerializeField, Range(1f,180f)] private float _FOV = 90f;
+    [SerializeField, Range(90f,180f)] private float _FOV = 90f;
 
     public bool updateFOV;
 
@@ -112,6 +112,9 @@ public class InputManager : MonoBehaviour
         }
 
         playerActions = new PlayerControls();
+        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Start()
@@ -124,12 +127,12 @@ public class InputManager : MonoBehaviour
         vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
     }
 
-    private void OnEnable()
+    public void OnEnable()
     {
         playerActions.Enable();
     }
 
-    private void OnDisable()
+    public void OnDisable()
     {
         playerActions.Disable();
     }

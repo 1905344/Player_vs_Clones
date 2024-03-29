@@ -9,13 +9,6 @@ public class FirstPersonMovement : MonoBehaviour
 
     [Header("Player Components")]
     [SerializeField] private CharacterController charController;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundMask;
-    //[SerializeField] private Rigidbody playerBody;
-
-    [Space(5)]
-
-    [SerializeField] private float groundDistance;
 
     [Space(15)]
 
@@ -33,16 +26,19 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float timeToJumpApex;
 
-    [Space(10)]
+    private Vector3 playerVelocity;
 
-    [SerializeField] private Vector3 playerVelocity;
+    [Space(15)]
+
+    [Header("Cinemachine Virtual Camera Reference")]
+    [SerializeField] private Transform cameraTransform;
 
     [Space(15)]
 
     [Header("Debugging")]
     [SerializeField] private bool disablePlayerMovement = false;
     [SerializeField] private bool disablePlayerJumping = false;
-    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool onGround;
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
 
@@ -59,6 +55,8 @@ public class FirstPersonMovement : MonoBehaviour
     private void Start()
     {
         inputManager = InputManager.Instance;
+
+        cameraTransform = Camera.main.transform;
     }
 
     private void Update()
@@ -67,8 +65,11 @@ public class FirstPersonMovement : MonoBehaviour
 
         if (disablePlayerMovement)
         {
-            directionX = 0;
-            directionZ = 0;
+            inputManager.OnDisable();
+        }
+        else
+        {
+            inputManager.OnEnable();
         }
 
         #endregion
@@ -79,32 +80,35 @@ public class FirstPersonMovement : MonoBehaviour
         {
             jumpHeight = 0;
         }
+        else
+        {
+            jumpHeight = 1f;
+        }
 
         #endregion
 
         #region Ground Check
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        onGround = charController.isGrounded;
 
-        if (isGrounded)
+        if (onGround && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
+            canJump = true;
+            isJumping = false;
         }
-
+        
         #endregion
 
         #region Player Movement
 
         playerMovement = inputManager.GetPlayerMovement();
-
         characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
-        charController.Move(characterMove * moveSpeed * Time.deltaTime);
+        characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
+        characterMove.y = 0f;
 
-        if (characterMove != Vector3.zero)
-        {
-            gameObject.transform.forward = characterMove;
-        }
+        charController.Move(characterMove * moveSpeed * Time.deltaTime);
 
         charController.Move(playerVelocity * Time.deltaTime);
 
@@ -112,10 +116,20 @@ public class FirstPersonMovement : MonoBehaviour
 
         #region Player Jumping
 
-        if (inputManager.PlayerJumped() && isGrounded)
+        if (inputManager.PlayerJumped() && onGround && canJump)
         {
+            //Debug.Log("Jumping!");
+            canJump = false;
+            isJumping = true;
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * playerGravity);
         }
+        else if (onGround && playerVelocity.y <= 0.01f) 
+        {
+            isJumping = false;
+            canJump = true;
+        }
+
+        playerVelocity.y += playerGravity * Time.deltaTime;
 
         #endregion
 
