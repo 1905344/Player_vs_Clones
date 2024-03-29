@@ -29,13 +29,22 @@
                     "id": "39ac5fa2-4b43-4559-a357-cd7fbbcfed8b",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press,Hold,Tap,MultiTap",
                     "initialStateCheck": false
                 },
                 {
                     "name": "Jump",
                     "type": "Button",
                     "id": "d45878ae-4857-404d-a2cc-46bb75f5eea2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "872cf282-4b07-42ff-a7f5-e97944ce6a13",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -260,6 +269,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "360231fd-1b66-4ca2-a91c-c2211109c684",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

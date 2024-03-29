@@ -91,6 +91,16 @@ public class InputManager : MonoBehaviour
     {
         return mouseVerticalSensitivity;
     }
+        
+    public bool PlayerFiredGun()
+    {
+        return playerActions.Player.Fire.triggered;
+    }
+
+    public bool PlayerPressedReload()
+    {
+        return playerActions.Player.Reload.triggered;
+    }
 
     #endregion
 
