@@ -1,16 +1,29 @@
-using Unity.VisualScripting;
 using UnityEngine;
+using Cinemachine;
+using TMPro;
 
 public class GunplayManager : MonoBehaviour
 {
     #region Variables
 
     [Header("References")]
-    [SerializeField] private Camera _camera;
-    [SerializeField] private Transform bulletHitPoint;
+    [SerializeField] private CinemachineVirtualCamera vCam;
+    [SerializeField] private Transform muzzle;
     [SerializeField] private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
     private InputManager inputManager;
+
+    [Space(10)]
+
+    [Header("Visual Feedback References")]
+    [SerializeField] private GameObject muzzleFlash;
+    [SerializeField] private GameObject bulletHoleDecal;
+    [SerializeField] private TextMeshProUGUI bulletsRemainingText;
+
+    [Space(10)]
+    [Header("Camera Shake")]
+    [SerializeField, Tooltip("How much the camera will shake")] private float cameraShakeMagnitude;
+    [SerializeField, Tooltip("How long the camera will shake for")] private float cameraShakeAmplitude;
 
     [Space(20)]
 
@@ -96,7 +109,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Calculate bullet spread direction
 
-        Vector3 spreadDirection = _camera.transform.forward + new Vector3(x, y, 0);
+        Vector3 spreadDirection = vCam.transform.forward + new Vector3(x, y, 0);
 
         #endregion
 
@@ -104,7 +117,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+        if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
         {
             Debug.Log("Bullet hit: " + _raycastHit.collider.name);
 
@@ -120,6 +133,13 @@ public class GunplayManager : MonoBehaviour
         #region Camera Shake
 
         CinemachineShake.Instance.ShakeCamera(3f, .1f);
+
+        #endregion
+
+        #region Visual Feedback - Bullet Hole & Muzzle Flash
+
+        Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
+        Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
 
         #endregion
 
@@ -155,5 +175,7 @@ public class GunplayManager : MonoBehaviour
     private void Update()
     {
         GunInput();
+
+        bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
     }
 }

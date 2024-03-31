@@ -51,7 +51,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""39ac5fa2-4b43-4559-a357-cd7fbbcfed8b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press,Hold,Tap,MultiTap"",
+                    ""interactions"": ""Press(behavior=2),Hold,Tap,MultiTap"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -78,7 +78,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""5dc6aa80-b7a7-47ce-b565-3beddda83846"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap,Hold"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -318,7 +318,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""5b5137c4-c41e-47d9-b438-22ce13cc13b8"",
                     ""path"": ""<Keyboard>/shift"",
-                    ""interactions"": ""Hold,Tap"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Sprint"",
