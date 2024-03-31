@@ -1757,6 +1757,8 @@ MonoBehaviour:
   moveSpeed: 12
   playerGravity: -9.81
   jumpHeight: 1
+  jumpSpeed: 0
+  timeToJumpApex: 0
   cameraTransform: {fileID: 731941752}
   disablePlayerMovement: 0
   disablePlayerJumping: 0
@@ -5150,6 +5152,7 @@ GameObject:
   - component: {fileID: 731941751}
   - component: {fileID: 731941754}
   - component: {fileID: 731941755}
+  - component: {fileID: 731941756}
   m_Layer: 0
   m_Name: First Person Camera
   m_TagString: Untagged
@@ -5243,6 +5246,18 @@ MonoBehaviour:
   mouseHorizontalSensitivity: 10
   mouseVerticalSensitivity: 10
   clampYAngle: 85
+--- !u!114 &731941756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731941750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d688efac4bd14c6409bf6797950c1c07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &881333063
 GameObject:
   m_ObjectHideFlags: 0
@@ -6353,6 +6368,7 @@ GameObject:
   - component: {fileID: 1703217400}
   - component: {fileID: 1703217402}
   - component: {fileID: 1703217403}
+  - component: {fileID: 1703217404}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -6471,6 +6487,23 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
+--- !u!114 &1703217404
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703217396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 1
+  m_FrequencyGain: 1
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &1775251076
 MonoBehaviour:
   m_ObjectHideFlags: 0

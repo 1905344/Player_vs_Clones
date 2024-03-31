@@ -117,6 +117,12 @@ public class GunplayManager : MonoBehaviour
 
         #endregion
 
+        #region Camera Shake
+
+        CinemachineShake.Instance.ShakeCamera(3f, .1f);
+
+        #endregion
+
         bulletsRemaining--;
         bulletsFired--;
         Invoke("ResetShot", timeBetweenShooting);
