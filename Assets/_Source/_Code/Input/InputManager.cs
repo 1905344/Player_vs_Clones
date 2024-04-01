@@ -54,6 +54,9 @@ public class InputManager : MonoBehaviour
 
     public bool updateFOV;
 
+    [Header("Toggle or Hold Shift to Sprint")]
+    [SerializeField] private bool holdToSprint = false;
+
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
         for (int i = 0; i < input.devices.Count; i++)
@@ -101,6 +104,18 @@ public class InputManager : MonoBehaviour
     {
         return playerActions.Player.Reload.triggered;
     }
+
+    //public bool PlayerPressedSprintButton()
+    //{
+    //    if (holdToSprint)
+    //    {
+    //        return playerActions.Player.Sprint.triggered;
+    //    }
+    //    else
+    //    {
+
+    //    }
+    //}
 
     #endregion
 
