@@ -17,6 +17,7 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private Vector3 characterMove;
     [SerializeField] private float moveSpeed = 12f;
     [SerializeField] private float sprintSpeed = 10f;
+    private float movementSpeed;
     private float directionX;
     private float directionZ;
     [SerializeField] private float playerGravity = -9.81f;
@@ -116,17 +117,17 @@ public class FirstPersonMovement : MonoBehaviour
 
         if (isSprinting)
         {
-            charController.Move(characterMove * (moveSpeed + sprintSpeed) * Time.deltaTime);
+            movementSpeed = sprintSpeed;
             Debug.Log("Character is sprinting!");
-            charController.Move(playerVelocity * Time.deltaTime);
 
         }
         else
         {
-            charController.Move(characterMove * moveSpeed * Time.deltaTime);
-            charController.Move(playerVelocity * Time.deltaTime);
-            Debug.Log("Character is not sprinting.");
+            movementSpeed = moveSpeed;
         }
+
+        charController.Move(characterMove * movementSpeed * Time.deltaTime);
+        charController.Move(playerVelocity * Time.deltaTime);
 
         #endregion
 
