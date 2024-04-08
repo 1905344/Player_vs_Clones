@@ -15,7 +15,8 @@ public class FirstPersonMovement : MonoBehaviour
     [Header("Movement Variables")]
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
-    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float moveSpeed = 12f;
+    [SerializeField] private float sprintSpeed = 10f;
     private float directionX;
     private float directionZ;
     [SerializeField] private float playerGravity = -9.81f;
@@ -41,6 +42,7 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private bool onGround;
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
+    [SerializeField] private bool isSprinting;
 
     //Input manager
     private InputManager inputManager;
@@ -100,7 +102,7 @@ public class FirstPersonMovement : MonoBehaviour
         
         #endregion
 
-        #region Player Movement
+        #region Player Movement and Sprinting
 
         playerMovement = inputManager.GetPlayerMovement();
         characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
@@ -108,9 +110,23 @@ public class FirstPersonMovement : MonoBehaviour
         characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
         characterMove.y = 0f;
 
-        charController.Move(characterMove * moveSpeed * Time.deltaTime);
+        //Sprinting
 
-        charController.Move(playerVelocity * Time.deltaTime);
+        isSprinting = inputManager.IsPlayerSprintingThisFrame;
+
+        if (isSprinting)
+        {
+            charController.Move(characterMove * (moveSpeed + sprintSpeed) * Time.deltaTime);
+            Debug.Log("Character is sprinting!");
+            charController.Move(playerVelocity * Time.deltaTime);
+
+        }
+        else
+        {
+            charController.Move(characterMove * moveSpeed * Time.deltaTime);
+            charController.Move(playerVelocity * Time.deltaTime);
+            Debug.Log("Character is not sprinting.");
+        }
 
         #endregion
 
@@ -133,5 +149,6 @@ public class FirstPersonMovement : MonoBehaviour
 
         #endregion
 
+        
     }
 }

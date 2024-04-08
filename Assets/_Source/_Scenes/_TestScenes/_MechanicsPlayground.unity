@@ -1755,6 +1755,7 @@ MonoBehaviour:
   playerMovement: {x: 0, y: 0}
   characterMove: {x: 0, y: 0, z: 0}
   moveSpeed: 12
+  sprintSpeed: 10
   playerGravity: -9.81
   jumpHeight: 1
   jumpSpeed: 0
@@ -1765,6 +1766,7 @@ MonoBehaviour:
   onGround: 0
   canJump: 0
   isJumping: 0
+  isSprinting: 0
 --- !u!143 &221765639
 CharacterController:
   m_ObjectHideFlags: 0
@@ -6501,8 +6503,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
   m_PivotOffset: {x: 0, y: 0, z: 0}
-  m_AmplitudeGain: 1
-  m_FrequencyGain: 1
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 0
   mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &1775251076
 MonoBehaviour:
@@ -7710,15 +7712,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGamepad: 0
-  isKeyboard: 0
+  isKeyboard: 1
+  fireGunButton: {fileID: 3960374084208640699, guid: 2a1f7b5f0b8715946a4a07938d634292,
+    type: 3}
+  sprintButton: {fileID: -2380491255870824223, guid: 2a1f7b5f0b8715946a4a07938d634292,
+    type: 3}
   _currentControlScheme: 
   mouseAcceleration: 0
   invertMouseY: 0
-  mouseHorizontalSensitivity: 0.15
-  mouseVerticalSensitivity: 0.15
+  mouseHorizontalSensitivity: 0.3
+  mouseVerticalSensitivity: 0.3
   vCam: {fileID: 731941751}
   _FOV: 90
   updateFOV: 0
+  holdToSprint: 1
+  isTappingFireButton: 0
+  isPressingFireButton: 0
+  isHoldingFireButton: 0
 --- !u!4 &1928487800373145404
 Transform:
   m_ObjectHideFlags: 0

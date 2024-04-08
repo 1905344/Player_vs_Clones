@@ -1,6 +1,7 @@
 using UnityEngine;
 using Cinemachine;
 using TMPro;
+using UnityEngine.InputSystem.Interactions;
 
 public class GunplayManager : MonoBehaviour
 {
@@ -67,14 +68,50 @@ public class GunplayManager : MonoBehaviour
 
     private void GunInput()
     {
+        #region Tap, Press or Hold Fire Button to Shoot
+
         if (allowFireButtonHold)
         {
-            //Need to get the input manager to return the correct interaction type for holding the fire button
+            isShooting = inputManager.IsPlayerHoldingTheFireButton;
         }
         else
         {
-            //Need to get the input manager to return the correct interaction type for tapping the fire button
+            isShooting = inputManager.IsPlayerTappingTheFireButton;
         }
+
+        //inputManager.fireGunButton.action.started += context =>
+        //{
+        //    if (context.interaction is HoldInteraction && allowFireButtonHold)
+        //    {
+        //        isShooting = true;
+        //    }
+        //    else if (context.interaction is TapInteraction)
+        //    {
+        //        isShooting = true;
+        //    }
+        //    else if (context.interaction is PressInteraction)
+        //    {
+        //        isShooting = true;
+        //    }
+        //};
+
+        //inputManager.fireGunButton.action.performed += context =>
+        //{
+        //    if (context.interaction is TapInteraction || context.interaction is PressInteraction || context.interaction is HoldInteraction)
+        //    {
+        //        isShooting = false;
+        //    }
+        //};
+
+        //inputManager.fireGunButton.action.canceled += context =>
+        //{
+        //    if (context.interaction is TapInteraction || context.interaction is PressInteraction || context.interaction is HoldInteraction)
+        //    {
+        //        isShooting = false;
+        //    }
+        //};
+
+        #endregion
 
         #region Firing the Gun
 

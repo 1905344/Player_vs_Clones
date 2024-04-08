@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using Cinemachine;
+using UnityEngine.InputSystem.Interactions;
+using Unity.VisualScripting;
 
 public class InputManager : MonoBehaviour
 {
@@ -11,27 +13,31 @@ public class InputManager : MonoBehaviour
 
     private static InputManager _instance;
 
-    public static InputManager Instance 
-    {  
-        get 
-        { 
-            return _instance; 
-        } 
+    public static InputManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
     }
 
     public static PlayerControls playerActions;
     public static event Action<InputActionMap> changeActionMap;
 
-    public bool isGamepad;
-    public bool isKeyboard;
+    public bool isGamepad = false;
+    public bool isKeyboard = true;
+
+    //Input Action References
+    public InputActionReference fireGunButton;
+    public InputActionReference sprintButton;
 
     [SerializeField] public string _currentControlScheme;
 
     [Space(15)]
 
     [Header("Mouse Settings")]
-    [SerializeField] private bool mouseAcceleration = false;
-    [SerializeField] private bool invertMouseY = false;
+    public bool mouseAcceleration = false;
+    public bool invertMouseY = false;
 
     [Space(10)]
 
@@ -50,12 +56,19 @@ public class InputManager : MonoBehaviour
     [Space(10)]
 
     [Header("Camera Field of View")]
-    [SerializeField, Range(90f,180f)] private float _FOV = 90f;
+    [SerializeField, Range(90f, 180f)] private float _FOV = 90f;
 
     public bool updateFOV;
 
     [Header("Toggle or Hold Shift to Sprint")]
-    [SerializeField] private bool holdToSprint = false;
+    public bool holdToSprint = true;
+
+    //Booleans for returning which type of button interaction for firing the gun
+    public bool isTappingFireButton = false;
+    public bool isPressingFireButton = false;
+    public bool isHoldingFireButton = false;
+
+    public bool getSprintInput = false;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -94,28 +107,16 @@ public class InputManager : MonoBehaviour
     {
         return mouseVerticalSensitivity;
     }
-        
-    public bool PlayerFiredGun()
-    {
-        return playerActions.Player.Fire.triggered;
-    }
 
     public bool PlayerPressedReload()
     {
         return playerActions.Player.Reload.triggered;
     }
 
-    //public bool PlayerPressedSprintButton()
-    //{
-    //    if (holdToSprint)
-    //    {
-    //        return playerActions.Player.Sprint.triggered;
-    //    }
-    //    else
-    //    {
-
-    //    }
-    //}
+    public bool IsPlayerHoldingTheFireButton { get; private set; }
+    public bool IsPlayerTappingTheFireButton { get; private set; }
+    
+    public bool IsPlayerSprintingThisFrame { get; private set; }
 
     #endregion
 
@@ -144,6 +145,94 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
+        if (!(fireGunButton.action.interactions.Contains("Tap") && fireGunButton.action.interactions.Contains("Press") && fireGunButton.action.interactions.Contains("Hold")))
+        {
+            return;
+        }
+
+        if (!(sprintButton.action.interactions.Contains("Tap") && sprintButton.action.interactions.Contains("Hold")))
+        {
+            return;
+        }
+
+        #region Gun action interaction context
+
+        fireGunButton.action.started += context =>
+        {
+            if (context.interaction is TapInteraction)
+            {
+                IsPlayerHoldingTheFireButton = false;
+                IsPlayerTappingTheFireButton = true;
+
+                Debug.Log("Player is tapping the fire button.");
+            }
+            else if (context.interaction is HoldInteraction)
+            {
+                IsPlayerHoldingTheFireButton = true;
+                IsPlayerTappingTheFireButton = false;
+                Debug.Log("Player is holding the fire button.");
+            }
+        };
+
+        #endregion
+
+        #region Hold to sprint and sprint action interaction context
+
+        //Hold to sprint
+        //if (holdToSprint)
+        //{
+        //    sprintButton.action.AddBinding("<Keyboard>/shift").WithInteractions(interactions: "hold(duration=0.5)");
+        //    Debug.Log("Added hold interaction to sprint action binding.");
+        //}
+        //else
+        //{
+        //    sprintButton.action.AddBinding("<Keyboard>/shift").WithInteractions(interactions: "tap(duration=0.3)");
+        //    Debug.Log("Added tap interaction to sprint action binding.");
+        //}
+
+        sprintButton.action.started += context =>
+        {
+            if (context.interaction is TapInteraction)
+            {
+                if (!holdToSprint)
+                {
+                    IsPlayerSprintingThisFrame = true;
+                }
+                else
+                {
+                    IsPlayerSprintingThisFrame = false;
+                }
+            }
+            if (context.interaction is HoldInteraction)
+            {
+                if (holdToSprint)
+                {
+                    IsPlayerSprintingThisFrame = true;
+                }
+                else
+                {
+                    IsPlayerSprintingThisFrame = false;
+                }
+            }
+        };
+
+
+        //Action interaction context
+        sprintButton.action.started += context =>
+        {
+            //IsPlayerSprintingThisFrame();
+            IsPlayerSprintingThisFrame = true;
+        };
+
+        sprintButton.action.canceled += context =>
+        {
+            //HasPlayerStoppedSprintingThisFrame();
+            IsPlayerSprintingThisFrame= false;
+
+        };
+
+        #endregion
+
         ToggleActionMap(playerActions.UI);
 
         vCam.SetFocalLength(_FOV);
@@ -174,8 +263,40 @@ public class InputManager : MonoBehaviour
         actionMap.Enable();
     }
 
+    #region Firing Gun
+
+    //public void IsPlayerHoldingFireButton()
+    //{
+    //    isHoldingFireButton = true;
+    //    isTappingFireButton = false;
+    //}
+
+    //public void IsPlayerTappingFireButton()
+    //{
+    //    isTappingFireButton = true;
+    //    isHoldingFireButton = false;
+    //}
+
+    #endregion
+
+    #region Sprinting
+
+    //public void IsPlayerSprintingThisFrame()
+    //{
+    //    getSprintInput = true;
+    //}
+
+    //public void HasPlayerStoppedSprintingThisFrame()
+    //{
+    //    getSprintInput = false;
+    //}
+
+    #endregion
+
     private void Update()
     {
+        #region Update the first person camera (Cinemachine virtual camera) FOV (Field Of View)
+
         if (updateFOV)
         {
             vCam.SetFocalLength(_FOV);
@@ -184,13 +305,82 @@ public class InputManager : MonoBehaviour
             updateFOV = false;
         }
 
+        #endregion
+
+        #region Get The Current Input Device
+
         if (isGamepad)
         {
-            Debug.Log("Input Manager: Gamepad connected.");
+            //Debug.Log("Input Manager: Gamepad connected.");
+            _currentControlScheme = "Gamepad";
         }
         else if (isKeyboard)
         {
-            Debug.Log("Input Manager: Keyboard connected.");
+            //Debug.Log("Input Manager: Keyboard connected.");
+            _currentControlScheme = "Keyboard";
         }
+
+        #endregion
+
+        #region Getting Interaction Type for the Shoot/Fire Button
+
+        //Action started
+        fireGunButton.action.started += context =>
+        {
+            isTappingFireButton = false;
+            isPressingFireButton = false;
+            isHoldingFireButton = false;
+
+            if (context.interaction is TapInteraction)
+            {
+                isTappingFireButton = true;
+            }
+            else if (context.interaction is PressInteraction)
+            {
+                isPressingFireButton = true;
+            }
+            else if (context.interaction is HoldInteraction)
+            {
+                isHoldingFireButton = true;
+            }
+        };
+
+        //Action performed
+        fireGunButton.action.performed += context =>
+        {
+            if (context.interaction is TapInteraction)
+            {
+                isTappingFireButton = false;
+            }
+            else if (context.interaction is PressInteraction)
+            {
+                isPressingFireButton = false;
+            }
+            else if (context.interaction is HoldInteraction)
+            {
+                isHoldingFireButton = false;
+            }
+        };
+
+        //Action cancelled
+        fireGunButton.action.canceled += context =>
+        {
+            if (context.interaction is TapInteraction)
+            {
+                isTappingFireButton = false;
+            }
+            else if (context.interaction is PressInteraction)
+            {
+                isPressingFireButton = false;
+            }
+            else if (context.interaction is HoldInteraction)
+            {
+                isHoldingFireButton = false;
+            }
+        };
+
+        #endregion
+
+        getSprintInput = IsPlayerSprintingThisFrame;
     }
 }
