@@ -1,7 +1,6 @@
 using UnityEngine;
 using Cinemachine;
 using TMPro;
-using UnityEngine.InputSystem.Interactions;
 
 public class GunplayManager : MonoBehaviour
 {
@@ -12,6 +11,7 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private Transform muzzle;
     [SerializeField] private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
+    [SerializeField] private LayerMask isTarget;
     private InputManager inputManager;
 
     [Space(10)]
@@ -53,6 +53,10 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private bool canShoot;
     [SerializeField] private bool isReloading;
 
+    [Space(10)]
+
+    [SerializeField] public bool isPlayerInTrainingCourse = false;
+
     #endregion
 
     private void Awake()
@@ -78,38 +82,6 @@ public class GunplayManager : MonoBehaviour
         {
             isShooting = inputManager.IsPlayerTappingTheFireButton;
         }
-
-        //inputManager.fireGunButton.action.started += context =>
-        //{
-        //    if (context.interaction is HoldInteraction && allowFireButtonHold)
-        //    {
-        //        isShooting = true;
-        //    }
-        //    else if (context.interaction is TapInteraction)
-        //    {
-        //        isShooting = true;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isShooting = true;
-        //    }
-        //};
-
-        //inputManager.fireGunButton.action.performed += context =>
-        //{
-        //    if (context.interaction is TapInteraction || context.interaction is PressInteraction || context.interaction is HoldInteraction)
-        //    {
-        //        isShooting = false;
-        //    }
-        //};
-
-        //inputManager.fireGunButton.action.canceled += context =>
-        //{
-        //    if (context.interaction is TapInteraction || context.interaction is PressInteraction || context.interaction is HoldInteraction)
-        //    {
-        //        isShooting = false;
-        //    }
-        //};
 
         #endregion
 
@@ -154,14 +126,30 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+        if (isPlayerInTrainingCourse)
         {
-            Debug.Log("Bullet hit: " + _raycastHit.collider.name);
-
-            if (_raycastHit.collider.CompareTag("Enemy"))
+            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
-                //Need to create an enemy script with a public function to take damage and reference it here
-                //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
+                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+
+                if (_raycastHit.collider.CompareTag("Enemy"))
+                {
+                    //Need to create an enemy script with a public function to take damage and reference it here
+                    //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
+                }
+            }
+        }
+        else
+        {
+            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+            {
+                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+
+                if (_raycastHit.collider.CompareTag("Target"))
+                {
+                    //Need to create an enemy script with a public function to take damage and reference it here
+                    //_raycastHit.collider.GetComponent<Target>().TargetHit(bulletDamage);
+                }
             }
         }
 

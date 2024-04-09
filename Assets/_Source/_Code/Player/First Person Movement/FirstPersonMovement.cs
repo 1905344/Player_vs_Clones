@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.InputSystem.Interactions;
 
 [RequireComponent(typeof(CharacterController))]
 public class FirstPersonMovement : MonoBehaviour
@@ -16,8 +16,8 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
     [SerializeField] private float moveSpeed = 12f;
-    [SerializeField] private float sprintSpeed = 10f;
-    private float movementSpeed;
+    [SerializeField] private float sprintSpeed = 20f;
+    [SerializeField] private float movementSpeed;
     private float directionX;
     private float directionZ;
     [SerializeField] private float playerGravity = -9.81f;
@@ -113,20 +113,33 @@ public class FirstPersonMovement : MonoBehaviour
 
         //Sprinting
 
-        isSprinting = inputManager.IsPlayerSprintingThisFrame;
+        isSprinting = inputManager.PlayerPressedSprintThisFrame();
+
+        //if (inputManager.PlayerPressedSprintThisFrame())
+        //{
+        //    movementSpeed = sprintSpeed;
+        //    isSprinting = true;
+        //    Debug.Log("Character is sprinting! Movement speed is: " + movementSpeed);
+        //}
+        //else
+        //{
+        //    isSprinting = false;
+        //    movementSpeed = moveSpeed;
+
+        //    Debug.Log("Character is not sprinting. Movement speed is: " + movementSpeed);
+        //}
 
         if (isSprinting)
         {
-            movementSpeed = sprintSpeed;
+            charController.Move(characterMove * sprintSpeed * Time.deltaTime);
             Debug.Log("Character is sprinting!");
-
         }
         else
         {
-            movementSpeed = moveSpeed;
+            charController.Move(characterMove * moveSpeed * Time.deltaTime);
+            Debug.Log("Character is not sprinting!");
         }
-
-        charController.Move(characterMove * movementSpeed * Time.deltaTime);
+        
         charController.Move(playerVelocity * Time.deltaTime);
 
         #endregion

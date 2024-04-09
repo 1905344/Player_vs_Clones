@@ -58,6 +58,15 @@
                     "processors": "",
                     "interactions": "Tap,Hold",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Start Training Course",
+                    "type": "Button",
+                    "id": "2cacd252-9f84-4796-a871-efb0fb8813e0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -300,6 +309,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "30ac7d5c-095f-42a3-9050-3d2bde46fe06",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Start Training Course",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

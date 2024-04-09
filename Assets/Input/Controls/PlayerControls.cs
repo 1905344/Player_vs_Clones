@@ -80,6 +80,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Tap,Hold"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Start Training Course"",
+                    ""type"": ""Button"",
+                    ""id"": ""2cacd252-9f84-4796-a871-efb0fb8813e0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -322,6 +331,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""30ac7d5c-095f-42a3-9050-3d2bde46fe06"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Start Training Course"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -915,6 +935,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+        m_Player_StartTrainingCourse = m_Player.FindAction("Start Training Course", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -994,6 +1015,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Reload;
     private readonly InputAction m_Player_Sprint;
+    private readonly InputAction m_Player_StartTrainingCourse;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -1004,6 +1026,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
+        public InputAction @StartTrainingCourse => m_Wrapper.m_Player_StartTrainingCourse;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1031,6 +1054,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @StartTrainingCourse.started += instance.OnStartTrainingCourse;
+            @StartTrainingCourse.performed += instance.OnStartTrainingCourse;
+            @StartTrainingCourse.canceled += instance.OnStartTrainingCourse;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1053,6 +1079,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @StartTrainingCourse.started -= instance.OnStartTrainingCourse;
+            @StartTrainingCourse.performed -= instance.OnStartTrainingCourse;
+            @StartTrainingCourse.canceled -= instance.OnStartTrainingCourse;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1241,6 +1270,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnStartTrainingCourse(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

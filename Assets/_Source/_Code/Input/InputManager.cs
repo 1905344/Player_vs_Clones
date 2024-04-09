@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 using System;
 using Cinemachine;
 using UnityEngine.InputSystem.Interactions;
-using Unity.VisualScripting;
 
 public class InputManager : MonoBehaviour
 {
@@ -68,8 +67,6 @@ public class InputManager : MonoBehaviour
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
 
-    public bool getSprintInput = false;
-
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
         for (int i = 0; i < input.devices.Count; i++)
@@ -113,10 +110,41 @@ public class InputManager : MonoBehaviour
         return playerActions.Player.Reload.triggered;
     }
 
+    public bool PlayerStartedTrainingCourse()
+    {
+        return playerActions.Player.StartTrainingCourse.triggered;
+    }
+
+    public bool PlayerPressedSprintThisFrame()
+    {
+        if (holdToSprint)
+        {
+            if (playerActions.Player.Sprint.WasPressedThisFrame())
+            {
+                Debug.Log("Player is holding sprint!");
+                return playerActions.Player.Sprint.triggered;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (playerActions.Player.Sprint.IsPressed())
+            {
+                Debug.Log("Player tapped sprint!");
+                return playerActions.Player.Sprint.triggered;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
-    
-    public bool IsPlayerSprintingThisFrame { get; private set; }
 
     #endregion
 
@@ -176,63 +204,6 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        #region Hold to sprint and sprint action interaction context
-
-        //Hold to sprint
-        //if (holdToSprint)
-        //{
-        //    sprintButton.action.AddBinding("<Keyboard>/shift").WithInteractions(interactions: "hold(duration=0.5)");
-        //    Debug.Log("Added hold interaction to sprint action binding.");
-        //}
-        //else
-        //{
-        //    sprintButton.action.AddBinding("<Keyboard>/shift").WithInteractions(interactions: "tap(duration=0.3)");
-        //    Debug.Log("Added tap interaction to sprint action binding.");
-        //}
-
-        sprintButton.action.started += context =>
-        {
-            if (context.interaction is TapInteraction)
-            {
-                if (!holdToSprint)
-                {
-                    IsPlayerSprintingThisFrame = true;
-                }
-                else
-                {
-                    IsPlayerSprintingThisFrame = false;
-                }
-            }
-            if (context.interaction is HoldInteraction)
-            {
-                if (holdToSprint)
-                {
-                    IsPlayerSprintingThisFrame = true;
-                }
-                else
-                {
-                    IsPlayerSprintingThisFrame = false;
-                }
-            }
-        };
-
-
-        //Action interaction context
-        sprintButton.action.started += context =>
-        {
-            //IsPlayerSprintingThisFrame();
-            IsPlayerSprintingThisFrame = true;
-        };
-
-        sprintButton.action.canceled += context =>
-        {
-            //HasPlayerStoppedSprintingThisFrame();
-            IsPlayerSprintingThisFrame= false;
-
-        };
-
-        #endregion
-
         ToggleActionMap(playerActions.UI);
 
         vCam.SetFocalLength(_FOV);
@@ -275,20 +246,6 @@ public class InputManager : MonoBehaviour
     //{
     //    isTappingFireButton = true;
     //    isHoldingFireButton = false;
-    //}
-
-    #endregion
-
-    #region Sprinting
-
-    //public void IsPlayerSprintingThisFrame()
-    //{
-    //    getSprintInput = true;
-    //}
-
-    //public void HasPlayerStoppedSprintingThisFrame()
-    //{
-    //    getSprintInput = false;
     //}
 
     #endregion
@@ -381,6 +338,5 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        getSprintInput = IsPlayerSprintingThisFrame;
     }
 }
