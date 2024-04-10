@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.InputSystem.Interactions;
 
 [RequireComponent(typeof(CharacterController))]
 public class FirstPersonMovement : MonoBehaviour
@@ -15,7 +15,9 @@ public class FirstPersonMovement : MonoBehaviour
     [Header("Movement Variables")]
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
-    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float moveSpeed = 12f;
+    [SerializeField] private float sprintSpeed = 20f;
+    [SerializeField] private float movementSpeed;
     private float directionX;
     private float directionZ;
     [SerializeField] private float playerGravity = -9.81f;
@@ -41,6 +43,7 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private bool onGround;
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
+    [SerializeField] private bool isSprinting;
 
     //Input manager
     private InputManager inputManager;
@@ -100,7 +103,7 @@ public class FirstPersonMovement : MonoBehaviour
         
         #endregion
 
-        #region Player Movement
+        #region Player Movement and Sprinting
 
         playerMovement = inputManager.GetPlayerMovement();
         characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
@@ -108,8 +111,22 @@ public class FirstPersonMovement : MonoBehaviour
         characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
         characterMove.y = 0f;
 
-        charController.Move(characterMove * moveSpeed * Time.deltaTime);
+        //Sprinting
 
+        isSprinting = inputManager.isPlayerSprintingThisFrame;
+
+        if (isSprinting)
+        {
+            movementSpeed = sprintSpeed;
+            Debug.Log("Character is sprinting!");
+        }
+        else
+        {
+            movementSpeed = moveSpeed;
+            Debug.Log("Character is not sprinting!");
+        }
+
+        charController.Move(characterMove * movementSpeed * Time.deltaTime);
         charController.Move(playerVelocity * Time.deltaTime);
 
         #endregion
@@ -133,5 +150,6 @@ public class FirstPersonMovement : MonoBehaviour
 
         #endregion
 
+        
     }
 }
