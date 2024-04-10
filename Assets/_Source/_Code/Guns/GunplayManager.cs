@@ -11,6 +11,7 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private Transform muzzle;
     [SerializeField] private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
+    [SerializeField] private LayerMask isTarget;
     private InputManager inputManager;
 
     [Space(10)]
@@ -52,6 +53,10 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private bool canShoot;
     [SerializeField] private bool isReloading;
 
+    [Space(10)]
+
+    [SerializeField] public bool isPlayerInTrainingCourse = false;
+
     #endregion
 
     private void Awake()
@@ -67,14 +72,18 @@ public class GunplayManager : MonoBehaviour
 
     private void GunInput()
     {
+        #region Tap, Press or Hold Fire Button to Shoot
+
         if (allowFireButtonHold)
         {
-            //Need to get the input manager to return the correct interaction type for holding the fire button
+            isShooting = inputManager.IsPlayerHoldingTheFireButton;
         }
         else
         {
-            //Need to get the input manager to return the correct interaction type for tapping the fire button
+            isShooting = inputManager.IsPlayerTappingTheFireButton;
         }
+
+        #endregion
 
         #region Firing the Gun
 
@@ -117,14 +126,30 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+        if (isPlayerInTrainingCourse)
         {
-            Debug.Log("Bullet hit: " + _raycastHit.collider.name);
-
-            if (_raycastHit.collider.CompareTag("Enemy"))
+            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
-                //Need to create an enemy script with a public function to take damage and reference it here
-                //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
+                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+
+                if (_raycastHit.collider.CompareTag("Enemy"))
+                {
+                    //Need to create an enemy script with a public function to take damage and reference it here
+                    //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
+                }
+            }
+        }
+        else
+        {
+            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+            {
+                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+
+                if (_raycastHit.collider.CompareTag("Target"))
+                {
+                    //Need to create an enemy script with a public function to take damage and reference it here
+                    //_raycastHit.collider.GetComponent<Target>().TargetHit(bulletDamage);
+                }
             }
         }
 
