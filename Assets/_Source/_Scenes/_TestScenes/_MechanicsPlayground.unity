@@ -8734,10 +8734,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isGamepad: 0
   isKeyboard: 1
-  fireGunButton: {fileID: 3960374084208640699, guid: 2a1f7b5f0b8715946a4a07938d634292,
-    type: 3}
-  sprintButton: {fileID: -2380491255870824223, guid: 2a1f7b5f0b8715946a4a07938d634292,
-    type: 3}
+  fireGunButton:
+    m_Name: Fire Gun Button
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 3aa31789-b6e8-4ad6-af52-0669133ae251
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  sprintButton:
+    m_Name: Sprint Button
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 4918b7ab-46ca-4f15-9fa9-05a4b18355d7
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   _currentControlScheme: 
   mouseAcceleration: 0
   invertMouseY: 0

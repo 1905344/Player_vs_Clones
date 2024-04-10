@@ -51,7 +51,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""39ac5fa2-4b43-4559-a357-cd7fbbcfed8b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap,Press(behavior=2),Hold"",
+                    ""interactions"": ""Tap,Press(behavior=2),Hold(duration=0.55)"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -78,8 +78,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""5dc6aa80-b7a7-47ce-b565-3beddda83846"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap,Hold"",
-                    ""initialStateCheck"": false
+                    ""interactions"": ""Tap,Hold(duration=0.55)"",
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Start Training Course"",

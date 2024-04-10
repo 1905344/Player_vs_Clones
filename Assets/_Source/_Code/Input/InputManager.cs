@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using System;
 using Cinemachine;
 using UnityEngine.InputSystem.Interactions;
+using Autodesk.Fbx;
 
 public class InputManager : MonoBehaviour
 {
@@ -27,8 +28,8 @@ public class InputManager : MonoBehaviour
     public bool isKeyboard = true;
 
     //Input Action References
-    public InputActionReference fireGunButton;
-    public InputActionReference sprintButton;
+    public InputAction fireGunButton;
+    public InputAction sprintButton;
 
     [SerializeField] public string _currentControlScheme;
 
@@ -115,33 +116,7 @@ public class InputManager : MonoBehaviour
         return playerActions.Player.StartTrainingCourse.triggered;
     }
 
-    public bool PlayerPressedSprintThisFrame()
-    {
-        if (holdToSprint)
-        {
-            if (playerActions.Player.Sprint.WasPressedThisFrame())
-            {
-                Debug.Log("Player is holding sprint!");
-                return playerActions.Player.Sprint.triggered;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if (playerActions.Player.Sprint.IsPressed())
-            {
-                Debug.Log("Player tapped sprint!");
-                return playerActions.Player.Sprint.triggered;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
+    public bool isPlayerSprintingThisFrame { get; private set; }
 
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
@@ -166,41 +141,96 @@ public class InputManager : MonoBehaviour
         }
 
         playerActions = new PlayerControls();
+
+        playerActions.Player.Sprint.performed += SprintThisFrame;
+        playerActions.Player.Sprint.canceled += StopSprintingThisFrame;
+        playerActions.Player.Fire.performed += FiringGunThisFrame;
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
+    #region Input
+
+    private void SprintThisFrame(InputAction.CallbackContext context)
+    {
+        if (holdToSprint)
+        {
+            if (context.duration > 0.51f && !isPlayerSprintingThisFrame)
+            {
+                isPlayerSprintingThisFrame = true;
+            }
+        }
+        else
+        {
+            if (!isPlayerSprintingThisFrame)
+            {
+                if (context.duration < 0.5f)
+                {
+                    isPlayerSprintingThisFrame = true;
+                }
+            }
+            else if (context.duration < 0.5f && isPlayerSprintingThisFrame)
+            {
+                isPlayerSprintingThisFrame = false;
+            }
+        }
+    }
+
+    private void StopSprintingThisFrame(InputAction.CallbackContext context)
+    {
+        isPlayerSprintingThisFrame = false;
+    }
+
+    private void FiringGunThisFrame(InputAction.CallbackContext context)
+    {
+        if (context.duration < 0.5f)
+        {
+            IsPlayerTappingTheFireButton = true;
+            IsPlayerHoldingTheFireButton = false;
+            Debug.Log("Player is tapping the fire gun input key.");
+        }
+        else if (context.duration > 0.51f)
+        {
+            IsPlayerHoldingTheFireButton = true;
+            IsPlayerTappingTheFireButton = false;
+
+            Debug.Log("Player is holding the fire gun input key.");
+        }
+    }
+
+    #endregion
+
     private void Start()
     {
-        if (!(fireGunButton.action.interactions.Contains("Tap") && fireGunButton.action.interactions.Contains("Press") && fireGunButton.action.interactions.Contains("Hold")))
-        {
-            return;
-        }
+        //if (!(fireGunButton.action.interactions.Contains("Tap") && fireGunButton.action.interactions.Contains("Press") && fireGunButton.action.interactions.Contains("Hold")))
+        //{
+        //    return;
+        //}
 
-        if (!(sprintButton.action.interactions.Contains("Tap") && sprintButton.action.interactions.Contains("Hold")))
-        {
-            return;
-        }
+        //if (!(sprintButton.action.interactions.Contains("Tap") && sprintButton.action.interactions.Contains("Hold")))
+        //{
+        //    return;
+        //}
 
         #region Gun action interaction context
 
-        fireGunButton.action.started += context =>
-        {
-            if (context.interaction is TapInteraction)
-            {
-                IsPlayerHoldingTheFireButton = false;
-                IsPlayerTappingTheFireButton = true;
+        //fireGunButton.action.started += context =>
+        //{
+        //    if (context.interaction is TapInteraction)
+        //    {
+        //        IsPlayerHoldingTheFireButton = false;
+        //        IsPlayerTappingTheFireButton = true;
 
-                Debug.Log("Player is tapping the fire button.");
-            }
-            else if (context.interaction is HoldInteraction)
-            {
-                IsPlayerHoldingTheFireButton = true;
-                IsPlayerTappingTheFireButton = false;
-                Debug.Log("Player is holding the fire button.");
-            }
-        };
+        //        Debug.Log("Player is tapping the fire button.");
+        //    }
+        //    else if (context.interaction is HoldInteraction)
+        //    {
+        //        IsPlayerHoldingTheFireButton = true;
+        //        IsPlayerTappingTheFireButton = false;
+        //        Debug.Log("Player is holding the fire button.");
+        //    }
+        //};
 
         #endregion
 
@@ -282,61 +312,63 @@ public class InputManager : MonoBehaviour
         #region Getting Interaction Type for the Shoot/Fire Button
 
         //Action started
-        fireGunButton.action.started += context =>
-        {
-            isTappingFireButton = false;
-            isPressingFireButton = false;
-            isHoldingFireButton = false;
+        //fireGunButton.action.started += context =>
+        //{
+        //    isTappingFireButton = false;
+        //    isPressingFireButton = false;
+        //    isHoldingFireButton = false;
 
-            if (context.interaction is TapInteraction)
-            {
-                isTappingFireButton = true;
-            }
-            else if (context.interaction is PressInteraction)
-            {
-                isPressingFireButton = true;
-            }
-            else if (context.interaction is HoldInteraction)
-            {
-                isHoldingFireButton = true;
-            }
-        };
+        //    if (context.interaction is TapInteraction)
+        //    {
+        //        isTappingFireButton = true;
+        //    }
+        //    else if (context.interaction is PressInteraction)
+        //    {
+        //        isPressingFireButton = true;
+        //    }
+        //    else if (context.interaction is HoldInteraction)
+        //    {
+        //        isHoldingFireButton = true;
+        //    }
+        //};
 
         //Action performed
-        fireGunButton.action.performed += context =>
-        {
-            if (context.interaction is TapInteraction)
-            {
-                isTappingFireButton = false;
-            }
-            else if (context.interaction is PressInteraction)
-            {
-                isPressingFireButton = false;
-            }
-            else if (context.interaction is HoldInteraction)
-            {
-                isHoldingFireButton = false;
-            }
-        };
+        //fireGunButton.action.performed += context =>
+        //{
+        //    if (context.interaction is TapInteraction)
+        //    {
+        //        isTappingFireButton = false;
+        //    }
+        //    else if (context.interaction is PressInteraction)
+        //    {
+        //        isPressingFireButton = false;
+        //    }
+        //    else if (context.interaction is HoldInteraction)
+        //    {
+        //        isHoldingFireButton = false;
+        //    }
+        //};
 
         //Action cancelled
-        fireGunButton.action.canceled += context =>
-        {
-            if (context.interaction is TapInteraction)
-            {
-                isTappingFireButton = false;
-            }
-            else if (context.interaction is PressInteraction)
-            {
-                isPressingFireButton = false;
-            }
-            else if (context.interaction is HoldInteraction)
-            {
-                isHoldingFireButton = false;
-            }
-        };
+        //fireGunButton.action.canceled += context =>
+        //{
+        //    if (context.interaction is TapInteraction)
+        //    {
+        //        isTappingFireButton = false;
+        //    }
+        //    else if (context.interaction is PressInteraction)
+        //    {
+        //        isPressingFireButton = false;
+        //    }
+        //    else if (context.interaction is HoldInteraction)
+        //    {
+        //        isHoldingFireButton = false;
+        //    }
+        //};
 
         #endregion
+
+        Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
 
     }
 }

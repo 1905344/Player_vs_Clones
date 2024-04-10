@@ -113,33 +113,20 @@ public class FirstPersonMovement : MonoBehaviour
 
         //Sprinting
 
-        isSprinting = inputManager.PlayerPressedSprintThisFrame();
-
-        //if (inputManager.PlayerPressedSprintThisFrame())
-        //{
-        //    movementSpeed = sprintSpeed;
-        //    isSprinting = true;
-        //    Debug.Log("Character is sprinting! Movement speed is: " + movementSpeed);
-        //}
-        //else
-        //{
-        //    isSprinting = false;
-        //    movementSpeed = moveSpeed;
-
-        //    Debug.Log("Character is not sprinting. Movement speed is: " + movementSpeed);
-        //}
+        isSprinting = inputManager.isPlayerSprintingThisFrame;
 
         if (isSprinting)
         {
-            charController.Move(characterMove * sprintSpeed * Time.deltaTime);
+            movementSpeed = sprintSpeed;
             Debug.Log("Character is sprinting!");
         }
         else
         {
-            charController.Move(characterMove * moveSpeed * Time.deltaTime);
+            movementSpeed = moveSpeed;
             Debug.Log("Character is not sprinting!");
         }
-        
+
+        charController.Move(characterMove * movementSpeed * Time.deltaTime);
         charController.Move(playerVelocity * Time.deltaTime);
 
         #endregion
