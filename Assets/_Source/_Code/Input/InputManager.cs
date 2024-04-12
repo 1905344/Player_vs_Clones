@@ -144,7 +144,8 @@ public class InputManager : MonoBehaviour
 
         playerActions.Player.Sprint.performed += SprintThisFrame;
         playerActions.Player.Sprint.canceled += StopSprintingThisFrame;
-        playerActions.Player.Fire.performed += FiringGunThisFrame;
+        playerActions.Player.Fire.started += FiringGunThisFrame;
+        playerActions.Player.Fire.performed += StopFiringGunThisFrame;
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -184,19 +185,25 @@ public class InputManager : MonoBehaviour
 
     private void FiringGunThisFrame(InputAction.CallbackContext context)
     {
-        if (context.duration < 0.5f)
+        if (context.duration < 0.5f && !IsPlayerTappingTheFireButton)
         {
             IsPlayerTappingTheFireButton = true;
             IsPlayerHoldingTheFireButton = false;
             Debug.Log("Player is tapping the fire gun input key.");
         }
-        else if (context.duration > 0.51f)
+        else if (context.duration > 0.51f && !IsPlayerHoldingTheFireButton)
         {
             IsPlayerHoldingTheFireButton = true;
             IsPlayerTappingTheFireButton = false;
 
             Debug.Log("Player is holding the fire gun input key.");
         }
+    }
+
+    private void StopFiringGunThisFrame(InputAction.CallbackContext context)
+    {
+        IsPlayerHoldingTheFireButton = false;
+        IsPlayerTappingTheFireButton = false;
     }
 
     #endregion

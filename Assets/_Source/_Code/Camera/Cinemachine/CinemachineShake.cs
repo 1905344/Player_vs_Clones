@@ -9,7 +9,7 @@ public class CinemachineShake : MonoBehaviour
 
     public static CinemachineShake Instance { get; private set; }
 
-    private CinemachineVirtualCamera vCam;
+    [SerializeField] private CinemachineVirtualCamera vCam;
 
     private float shakeTimer;
     private float shakeTimerLength;
