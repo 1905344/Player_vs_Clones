@@ -134,12 +134,8 @@ public class GunplayManager : MonoBehaviour
 
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
-<<<<<<< Updated upstream
                     //Need to create an enemy script with a public function to take damage and reference it here
-                    //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
-=======
                     _raycastHit.collider.GetComponent<Target>().TargetHit(bulletDamage);
->>>>>>> Stashed changes
                 }
             }
         }
@@ -152,7 +148,7 @@ public class GunplayManager : MonoBehaviour
                 if (_raycastHit.collider.CompareTag("Target"))
                 {
                     //Need to create an enemy script with a public function to take damage and reference it here
-                    //_raycastHit.collider.GetComponent<Target>().TargetHit(bulletDamage);
+                    //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
                 }
             }
         }
