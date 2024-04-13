@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 using System;
 using Cinemachine;
 using UnityEngine.InputSystem.Interactions;
-using Autodesk.Fbx;
 
 public class InputManager : MonoBehaviour
 {
@@ -210,16 +209,6 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
-        //if (!(fireGunButton.action.interactions.Contains("Tap") && fireGunButton.action.interactions.Contains("Press") && fireGunButton.action.interactions.Contains("Hold")))
-        //{
-        //    return;
-        //}
-
-        //if (!(sprintButton.action.interactions.Contains("Tap") && sprintButton.action.interactions.Contains("Hold")))
-        //{
-        //    return;
-        //}
-
         #region Gun action interaction context
 
         //fireGunButton.action.started += context =>
