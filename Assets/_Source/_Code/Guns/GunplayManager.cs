@@ -1,13 +1,13 @@
 using UnityEngine;
-using Cinemachine;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class GunplayManager : MonoBehaviour
 {
     #region Variables
 
     [Header("References")]
-    [SerializeField] private CinemachineVirtualCamera vCam;
+    [SerializeField] private Camera _camera;
     [SerializeField] private Transform muzzle;
     [SerializeField] private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
@@ -118,7 +118,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Calculate bullet spread direction
 
-        Vector3 spreadDirection = vCam.transform.forward + new Vector3(x, y, 0);
+        Vector3 spreadDirection = _camera.transform.forward + new Vector3(x, y, 0);
 
         #endregion
 
@@ -128,27 +128,28 @@ public class GunplayManager : MonoBehaviour
 
         if (isPlayerInTrainingCourse)
         {
-            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
+            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
+            {
+                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+
+                if (_raycastHit.collider.CompareTag("Target"))
+                {
+                    //_raycastHit.collider.GetComponent<TargetTrigger>().GetThisTargetsGuid();
+                    GameManager.Instance.TargetHit(_raycastHit.collider.GetComponent<TargetTrigger>().GetThisTargetsGuid(), bulletDamage);
+                }
+            }
+        }
+        else
+        {
+            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
                 Debug.Log("Bullet hit: " + _raycastHit.collider.name);
 
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
                     //Need to create an enemy script with a public function to take damage and reference it here
-                    _raycastHit.collider.GetComponent<Target>().TargetHit(bulletDamage);
-                }
-            }
-        }
-        else
-        {
-            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
-            {
-                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
-
-                if (_raycastHit.collider.CompareTag("Target"))
-                {
-                    //Need to create an enemy script with a public function to take damage and reference it here
                     //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
+                    Debug.Log("Hit an enemy!");
                 }
             }
         }
@@ -163,7 +164,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Visual Feedback - Bullet Hole & Muzzle Flash
 
-        Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
+        Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.LookRotation(_raycastHit.normal));
         Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
 
         #endregion

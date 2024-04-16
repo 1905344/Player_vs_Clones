@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.EventSystems;
 
 public class TrainingCourseManager : MonoBehaviour
 {
@@ -19,7 +20,8 @@ public class TrainingCourseManager : MonoBehaviour
     }
 
     [Header("Training Course Gun Reference")]
-    [SerializeField] private GunplayManager trainingCourseGun;
+    [SerializeField] private GameObject trainingCourseGun;
+    private GunplayManager trainingCourseGunManager;
 
     [Space(15)]
 
@@ -55,12 +57,15 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [Header("Targets")]
-    [SerializeField] private GameObject _target;
-    [SerializeField] private float totalTargetCount;
-    [SerializeField] private float targetHitCount;
-    [SerializeField] private float currentScore;
-    [SerializeField] public List<GameObject> targetList;
-    private List<Target> targetScriptList;
+    //private GameObject _target;
+    [SerializeField] private int totalTargetCount;
+    [SerializeField] private int targetHitCount;
+    [SerializeField] private int currentScore;
+    [SerializeField] public List<GameObject> currentTargetList;
+    [SerializeField] public List<GameObject> courseOnetargetList;
+    [SerializeField] public List<GameObject> courseTwotargetList;
+    [SerializeField] public List<GameObject> courseThreetargetList;
+    private List<TargetTrigger> targetTriggerScriptList;
     private List<Guid> targetGuidList;
     private bool checkForAllTargets = false;
 
@@ -89,6 +94,15 @@ public class TrainingCourseManager : MonoBehaviour
         {
             _instance = this;
         }
+    }
+
+    private void Start()
+    {
+        GameManager.Instance.OnTargetHit += TargetHit;
+        //GameManager.Instance.OnTrainingCourseStart += OnStartTrainingCourse;
+        //GameManager.Instance.OnTrainingCourseEnd += NextTrainingCourse();
+        trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
+
     }
 
     #region Countdown Timer Functions
@@ -128,16 +142,22 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void OnCountdownTimerFinished()
     {
-        if (targetHitCount == totalTargetCount)
-        {
-            isTrainingCourseComplete = true;
-            NextTrainingCourse();
-        }
-        else
-        {
-            isTrainingCourseComplete = false;
-            RestartTrainingCourse();
-        }
+        NextTrainingCourse();
+        isTrainingCourseComplete = true;
+
+        //This if statement needs to be changed to check if the 
+        //player has hit all of the targets and then to trigger
+        //some other check
+        //if (targetHitCount == totalTargetCount)
+        //{
+        //    isTrainingCourseComplete = true;
+        //    NextTrainingCourse();
+        //}
+        //else
+        //{
+        //    isTrainingCourseComplete = false;
+        //    RestartTrainingCourse();
+        //}
     }
 
     #endregion
@@ -151,34 +171,37 @@ public class TrainingCourseManager : MonoBehaviour
             hasPlayerStartedTrainingCourse = true;
             isTrainingCourseComplete = false;
 
-            if (targetList.Count > 0)
+            countdownTimer = countdownTimerAmount;
+
+            if (currentTargetList.Count > 0)
             {
                 //If the target list is somehow not empty
                 Debug.LogError("TrainingCourseManager: Training course cannot setup because the target game object list is not clear!");
                 Debug.Break();
             }
 
-            targetList = new List<GameObject>();
-            targetScriptList = new List<Target>();
+            currentTargetList = new List<GameObject>();
+            targetTriggerScriptList = new List<TargetTrigger>();
             targetGuidList = new List<Guid>();
 
             //Populating the list for each of the scripts from the targets
-            foreach (GameObject target in targetList)
+            foreach (GameObject target in currentTargetList)
             {
-                targetScriptList.Add(target.GetComponent<Target>());
+                targetTriggerScriptList.Add(target.GetComponentInChildren<TargetTrigger>());
+                target.GetComponent<Target>().isPlayerTraining = true;
             }
 
             //Populating the list 
-            foreach(Target targetScript in targetScriptList)
+            foreach(TargetTrigger targetTriggerScript in targetTriggerScriptList)
             {
-                for (int i = 0; i < targetList.Count; i++)
+                for (int i = 0; i < currentTargetList.Count; i++)
                 {
-                    targetScript.SetTargetID(i);
-                    targetScript.ReportTarget();
-                    targetGuidList.Add(targetScript.GetThisTargetsGuid());
+                    targetTriggerScript.SetTargetID(i);
+                    targetTriggerScript.ReportTarget();
+                    targetGuidList.Add(targetTriggerScript.GetThisTargetsGuid());
                 }
 
-                if ((targetScriptList.Count != targetList.Count))
+                if ((targetTriggerScriptList.Count != currentTargetList.Count))
                 {
                     Debug.LogError("TrainingCourseManager: Target script list count is not equal to the target game object list count!");
                     break;
@@ -191,19 +214,55 @@ public class TrainingCourseManager : MonoBehaviour
             }
 
             //If instantiating the targets
-            //targetList = new List<GameObject>();
+            //currentTargetList = new List<GameObject>();
         }
     }
+
+    private void OnTrainingCourseFinished()
+    {
+        hasPlayerStartedTrainingCourse = false;
+        isTrainingCourseAllSetup = false;
+
+        foreach (GameObject target in currentTargetList)
+        {
+            target.GetComponent<Target>().isPlayerTraining = false;
+        }
+    }
+
 
     private void RestartTrainingCourse()
     {
         //Reset the training course if the player fails to complete it in time
+        hasPlayerStartedTrainingCourse = false;
+        isTrainingCourseAllSetup = false;
+        isTrainingCourseComplete = false;
+
+        foreach (GameObject target in currentTargetList)
+        {
+            target.GetComponent<Target>().isPlayerTraining = false;
+        }
+
+        if (!isTrainingCourseOneComplete)
+        {
+            playerCharacter.transform.position = trainingCourseOneStartingPosition.position;
+            OnStartTrainingCourse();
+        }
+        else if (isTrainingCourseOneComplete && !isTrainingCourseTwoComplete)
+        {
+            playerCharacter.transform.position = trainingCourseTwoStartingPosition.position;
+            OnStartTrainingCourse();
+        }
+        else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && !isTrainingCourseThreeComplete)
+        {
+            playerCharacter.transform.position = trainingCourseThreeStartingPosition.position;
+            OnStartTrainingCourse();
+        }
     }
 
     private void NextTrainingCourse()
     {
-        targetList.Clear();
-        targetScriptList.Clear();
+        currentTargetList.Clear();
+        targetTriggerScriptList.Clear();
         targetGuidList.Clear();
 
         //Load and setup the next training course
@@ -259,13 +318,41 @@ public class TrainingCourseManager : MonoBehaviour
     //Instantiate(_target);
     //}
 
-    public void OnTargetHit(float updateScore)
+    public void TargetHit(Guid guid, int damage)
     {
-        currentScore += updateScore;
-        currentScoreText.text = ("Score: " + currentScore);
-
         targetHitCount++;
         targetHitText.text = ("Targets hit: " + targetHitCount + " / " + totalTargetCount);
+
+        targetGuidList.Remove(guid);
+
+        foreach (GameObject target in currentTargetList)
+        {
+            Guid getTargetGuid = target.GetComponent<Target>().targetGuid;
+
+            if (getTargetGuid == guid)
+            {
+                Destroy(target.transform);
+            }
+        }
+
+        foreach (TargetTrigger targetTrigger in targetTriggerScriptList)
+        {
+            Guid getTargetGuid = targetTrigger.targetGuid;
+
+            if (getTargetGuid == guid)
+            {
+                targetTriggerScriptList.Remove(targetTrigger);
+            }
+        }
+    }
+
+    public void UpdateScore(int updateScore)
+    {
+        if (hasPlayerStartedTrainingCourse && (countdownTimer != 0))
+        {
+            currentScore += updateScore;
+            currentScoreText.text = ("Score: " + currentScore);
+        }
     }
 
     #endregion
@@ -274,7 +361,7 @@ public class TrainingCourseManager : MonoBehaviour
     {
         if (hasPlayerStartedTrainingCourse)
         {
-            trainingCourseGun.isPlayerInTrainingCourse = true;
+            trainingCourseGunManager.isPlayerInTrainingCourse = true;
             countdownTimerActive = true;
         }
     }

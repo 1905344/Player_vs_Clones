@@ -364,7 +364,7 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
+        //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
 
     }
 }

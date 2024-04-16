@@ -9,7 +9,7 @@ public class CinemachineShake : MonoBehaviour
 
     public static CinemachineShake Instance { get; private set; }
 
-    [SerializeField] private CinemachineVirtualCamera vCam;
+    private CinemachineVirtualCamera vCam;
 
     private float shakeTimer;
     private float shakeTimerLength;
@@ -20,7 +20,7 @@ public class CinemachineShake : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        GetComponent<CinemachineVirtualCamera>();
+        vCam = GetComponent<CinemachineVirtualCamera>();
     }
 
     public void ShakeCamera(float intensity, float time)
