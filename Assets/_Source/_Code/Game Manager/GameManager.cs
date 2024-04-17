@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     public event Action TrainingCourseStarted;
     public event Action TrainingCourseEnded;
 
+    //Events for A.I. Behaviours
+    public event Action SetAiBehaviour;
+
     #endregion
 
     private void Awake()
@@ -74,6 +77,14 @@ public class GameManager : MonoBehaviour
         if (TrainingCourseEnded != null)
         {
             TrainingCourseEnded();
+        }
+    }
+
+    public void OnSetAiBehaviour()
+    {
+        if (SetAiBehaviour != null)
+        {
+            SetAiBehaviour();
         }
     }
 

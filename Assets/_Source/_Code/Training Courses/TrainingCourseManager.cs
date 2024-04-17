@@ -34,6 +34,7 @@ public class TrainingCourseManager : MonoBehaviour
     [SerializeField] private Transform trainingCourseOneStartingPosition;
     [SerializeField] private Transform trainingCourseTwoStartingPosition;
     [SerializeField] private Transform trainingCourseThreeStartingPosition;
+    [SerializeField] private Transform playerStartingPositionAfterTraining;
 
     [Space(15)]
 
@@ -81,6 +82,7 @@ public class TrainingCourseManager : MonoBehaviour
     [SerializeField] private bool isTrainingCourseOneComplete = false;
     [SerializeField] private bool isTrainingCourseTwoComplete = false;
     [SerializeField] private bool isTrainingCourseThreeComplete = false;
+    [SerializeField] private bool isTrainingComplete = false;
 
     #endregion
 
@@ -148,16 +150,16 @@ public class TrainingCourseManager : MonoBehaviour
         //This if statement needs to be changed to check if the 
         //player has hit all of the targets and then to trigger
         //some other check
-        //if (targetHitCount == totalTargetCount)
-        //{
-        //    isTrainingCourseComplete = true;
-        //    NextTrainingCourse();
-        //}
-        //else
-        //{
-        //    isTrainingCourseComplete = false;
-        //    RestartTrainingCourse();
-        //}
+        if (targetHitCount == totalTargetCount)
+        {
+            isTrainingCourseComplete = true;
+            NextTrainingCourse();
+        }
+        else
+        {
+            isTrainingCourseComplete = false;
+            RestartTrainingCourse();
+        }
     }
 
     #endregion
@@ -276,6 +278,7 @@ public class TrainingCourseManager : MonoBehaviour
         }
         else if (isTrainingCourseThreeComplete)
         {
+            isTrainingComplete = true;
             //Call the function to switch the player to the actual gameplay
             //Call the relevant finite state machine function(s) to create the A.I.
         }
@@ -304,6 +307,12 @@ public class TrainingCourseManager : MonoBehaviour
         {
             playerCharacter.transform.position = trainingCourseThreeStartingPosition.position;
         }
+    }
+
+    private void OnTrainingComplete()
+    {
+        playerCharacter.transform.position = playerStartingPositionAfterTraining.position;
+        GameManager.Instance.OnSetAiBehaviour();
     }
 
     #endregion
@@ -363,6 +372,19 @@ public class TrainingCourseManager : MonoBehaviour
         {
             trainingCourseGunManager.isPlayerInTrainingCourse = true;
             countdownTimerActive = true;
+        }
+
+        if (isTrainingComplete)
+        {
+            OnTrainingComplete();
+        }
+
+        //This needs to be changed to a variable that meets the win condition
+        if (targetHitCount == totalTargetCount)
+        {
+            isTrainingCourseComplete = true;
+            countdownTimerActive = false;
+            NextTrainingCourse();
         }
     }
 }

@@ -11,7 +11,6 @@ public class TargetTrigger : MonoBehaviour
     #region Variables
 
     [SerializeField] private GameObject targetGameObject;
-    private Target targetScript;
 
     //Identifying this target
     public int targetListID;
