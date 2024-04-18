@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -9,6 +11,8 @@ public class FirstPersonMovement : MonoBehaviour
 
     [Header("Player Components")]
     [SerializeField] private CharacterController charController;
+    [SerializeField] private GameObject characterBodyObject;
+    private Transform characterBodyTransform;
 
     [Space(15)]
 
@@ -53,14 +57,33 @@ public class FirstPersonMovement : MonoBehaviour
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
+        characterBodyTransform = characterBodyObject.transform;
     }
 
     private void Start()
     {
         inputManager = InputManager.Instance;
+        GameManager.Instance.TrainingCourseStarted += EnablePlayerMovement;
+        GameManager.Instance.TrainingCourseEnded += DisablePlayerMovement;
 
         cameraTransform = Camera.main.transform;
     }
+
+    #region Enable and Disable Player Movement
+
+    private void EnablePlayerMovement(int ID)
+    {
+        disablePlayerMovement = true;
+        disablePlayerJumping = true;
+    }
+
+    private void DisablePlayerMovement(int ID)
+    {
+        disablePlayerMovement = false;
+        disablePlayerJumping = false;
+    }
+
+    #endregion
 
     private void Update()
     {
@@ -118,16 +141,19 @@ public class FirstPersonMovement : MonoBehaviour
         if (isSprinting)
         {
             movementSpeed = sprintSpeed;
-            Debug.Log("Character is sprinting!");
+            //Debug.Log("Character is sprinting!");
         }
         else
         {
             movementSpeed = moveSpeed;
-            Debug.Log("Character is not sprinting!");
+            //Debug.Log("Character is not sprinting!");
         }
 
         charController.Move(characterMove * movementSpeed * Time.deltaTime);
         charController.Move(playerVelocity * Time.deltaTime);
+
+        //Rotating the body game object when the player rotates the camera with the mouse
+        characterBodyTransform.rotation = cameraTransform.rotation;
 
         #endregion
 
@@ -150,6 +176,5 @@ public class FirstPersonMovement : MonoBehaviour
 
         #endregion
 
-        
     }
 }

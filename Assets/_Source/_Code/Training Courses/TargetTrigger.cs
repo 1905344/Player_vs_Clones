@@ -43,6 +43,11 @@ public class TargetTrigger : MonoBehaviour
         targetGuid = GenerateGuid();
     }
 
+    public void Start()
+    {
+        targetGameObject.GetComponent<Target>().targetGuid = targetGuid;
+    }
+
     public void ReportTarget()
     {
         //This is a function for debugging

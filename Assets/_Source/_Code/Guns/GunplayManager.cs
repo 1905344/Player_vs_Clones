@@ -7,7 +7,7 @@ public class GunplayManager : MonoBehaviour
     #region Variables
 
     [Header("References")]
-    [SerializeField] private Camera _camera;
+    [SerializeField] private Camera _cam;
     [SerializeField] private Transform muzzle;
     [SerializeField] private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
@@ -118,7 +118,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Calculate bullet spread direction
 
-        Vector3 spreadDirection = _camera.transform.forward + new Vector3(x, y, 0);
+        Vector3 spreadDirection = _cam.transform.forward + new Vector3(x, y, 0);
 
         #endregion
 
@@ -128,7 +128,7 @@ public class GunplayManager : MonoBehaviour
 
         if (isPlayerInTrainingCourse)
         {
-            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
+            if (Physics.Raycast(_cam.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
                 Debug.Log("Bullet hit: " + _raycastHit.collider.name);
 
@@ -141,7 +141,7 @@ public class GunplayManager : MonoBehaviour
         }
         else
         {
-            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+            if (Physics.Raycast(_cam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
                 Debug.Log("Bullet hit: " + _raycastHit.collider.name);
 
@@ -162,7 +162,7 @@ public class GunplayManager : MonoBehaviour
 
         #endregion
 
-        #region Visual Feedback - Bullet Hole & Muzzle Flash
+        #region Visual Feedback: Bullet Hole & Muzzle Flash
 
         Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.LookRotation(_raycastHit.normal));
         Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);

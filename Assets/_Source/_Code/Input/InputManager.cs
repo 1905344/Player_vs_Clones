@@ -67,6 +67,8 @@ public class InputManager : MonoBehaviour
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
 
+    public bool isPlayerInTrainingCourse = false;
+
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
         for (int i = 0; i < input.devices.Count; i++)
@@ -145,12 +147,21 @@ public class InputManager : MonoBehaviour
         playerActions.Player.Sprint.canceled += StopSprintingThisFrame;
         playerActions.Player.Fire.started += FiringGunThisFrame;
         playerActions.Player.Fire.performed += StopFiringGunThisFrame;
+
+        playerActions.Player.StartTrainingCourse.performed += StartTraining;
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (!isPlayerInTrainingCourse)
+        {
+            playerActions.Player.StartTrainingCourse.Enable();
+        }
     }
 
     #region Input
+
+    #region Sprint
 
     private void SprintThisFrame(InputAction.CallbackContext context)
     {
@@ -182,6 +193,10 @@ public class InputManager : MonoBehaviour
         isPlayerSprintingThisFrame = false;
     }
 
+    #endregion
+
+    #region Firing the Gun
+
     private void FiringGunThisFrame(InputAction.CallbackContext context)
     {
         if (context.duration < 0.5f && !IsPlayerTappingTheFireButton)
@@ -204,6 +219,27 @@ public class InputManager : MonoBehaviour
         IsPlayerHoldingTheFireButton = false;
         IsPlayerTappingTheFireButton = false;
     }
+
+    #endregion
+
+    #region Starting the Training Course
+
+    private void StartTraining(InputAction.CallbackContext context)
+    {
+        if (isPlayerInTrainingCourse)
+        {
+            return;
+        }
+        else
+        {
+            isPlayerInTrainingCourse = true;
+            //Trigger the start training course event
+            //GameManager.Instance.OnTrainingCourseStart();
+        }
+        
+    }
+
+    #endregion
 
     #endregion
 
@@ -260,22 +296,6 @@ public class InputManager : MonoBehaviour
         actionMap.Enable();
     }
 
-    #region Firing Gun
-
-    //public void IsPlayerHoldingFireButton()
-    //{
-    //    isHoldingFireButton = true;
-    //    isTappingFireButton = false;
-    //}
-
-    //public void IsPlayerTappingFireButton()
-    //{
-    //    isTappingFireButton = true;
-    //    isHoldingFireButton = false;
-    //}
-
-    #endregion
-
     private void Update()
     {
         #region Update the first person camera (Cinemachine virtual camera) FOV (Field Of View)
@@ -305,62 +325,12 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        #region Getting Interaction Type for the Shoot/Fire Button
+        #region Checking if the player has pressed the start training course button
 
-        //Action started
-        //fireGunButton.action.started += context =>
-        //{
-        //    isTappingFireButton = false;
-        //    isPressingFireButton = false;
-        //    isHoldingFireButton = false;
-
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        isTappingFireButton = true;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isPressingFireButton = true;
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        isHoldingFireButton = true;
-        //    }
-        //};
-
-        //Action performed
-        //fireGunButton.action.performed += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        isTappingFireButton = false;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isPressingFireButton = false;
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        isHoldingFireButton = false;
-        //    }
-        //};
-
-        //Action cancelled
-        //fireGunButton.action.canceled += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        isTappingFireButton = false;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isPressingFireButton = false;
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        isHoldingFireButton = false;
-        //    }
-        //};
+        if (isPlayerInTrainingCourse)
+        {
+            playerActions.Player.StartTrainingCourse.Disable();
+        }
 
         #endregion
 

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,8 +28,11 @@ public class GameManager : MonoBehaviour
     public event Action AfterTargetHit;
 
     //Ending training courses
-    public event Action TrainingCourseStarted;
-    public event Action TrainingCourseEnded;
+    public event Action<int> TrainingCourseStarted;
+    public event Action<int> TrainingCourseEnded;
+
+    //Changing to the player gameplay
+    public event Action FinishedTraining;
 
     //Events for A.I. Behaviours
     public event Action SetAiBehaviour;
@@ -64,19 +69,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnTrainingCourseStart()
+    public void OnTrainingCourseStart(int ID)
     {
         if (TrainingCourseStarted != null)
         {
-            TrainingCourseStarted();
+            TrainingCourseStarted(ID);
         }
     }
 
-    public void OnTrainingCourseEnd()
+    public void OnTrainingCourseEnd(int ID)
     {
         if (TrainingCourseEnded != null)
         {
-            TrainingCourseEnded();
+            TrainingCourseEnded(ID);
+        }
+    }
+
+    public void OnPlayerFinishedTraining()
+    {
+        if (FinishedTraining != null)
+        {
+            FinishedTraining();
         }
     }
 

@@ -10,8 +10,6 @@ public class Target : MonoBehaviour
 {
     #region Variables
 
-    //private Target instance;
-
     public bool hasTargetBeenHit = false;
     public bool isPlayerTraining = false;
 
@@ -46,7 +44,7 @@ public class Target : MonoBehaviour
         GameManager.Instance.OnTargetHit += ThisTargetHasBeenHit;
         GameManager.Instance.AfterTargetHit += DisableThisTarget;
         targetTriggerScript = GetComponent<TargetTrigger>();
-        targetGuid = targetTriggerScript.targetGuid;
+        //targetGuid = targetTriggerScript.GetThisTargetsGuid();
 
         //defaultTargetHealth = setTargetHealth;
     }
