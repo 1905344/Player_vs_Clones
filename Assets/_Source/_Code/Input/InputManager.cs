@@ -68,6 +68,7 @@ public class InputManager : MonoBehaviour
     public bool isHoldingFireButton = false;
 
     public bool isPlayerInTrainingCourse = false;
+    private int getTrainingCourseID;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -226,6 +227,8 @@ public class InputManager : MonoBehaviour
 
     private void StartTraining(InputAction.CallbackContext context)
     {
+        getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+
         if (isPlayerInTrainingCourse)
         {
             return;
@@ -234,7 +237,7 @@ public class InputManager : MonoBehaviour
         {
             isPlayerInTrainingCourse = true;
             //Trigger the start training course event
-            //GameManager.Instance.OnTrainingCourseStart();
+            GameManager.Instance.OnTrainingCourseStart(getTrainingCourseID);
         }
         
     }

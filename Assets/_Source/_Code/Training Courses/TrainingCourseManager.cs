@@ -4,8 +4,6 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.EventSystems;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 
 public class TrainingCourseManager : MonoBehaviour
 {
@@ -76,6 +74,8 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [SerializeField] private bool hasPlayerStartedTrainingCourse = false;
+    [SerializeField] private bool hasPlayerCrossedFinishingLine = false;
+    [SerializeField] private bool hasPlayerHitAllTargets = false;
     [SerializeField] private bool isTrainingCourseAllSetup = false;
     [SerializeField] private bool isTrainingCourseComplete = false;
 
@@ -87,7 +87,7 @@ public class TrainingCourseManager : MonoBehaviour
     [SerializeField] private bool isTrainingCourseThreeComplete = false;
     [SerializeField] private bool isTrainingComplete = false;
 
-    private int currentTrainingCourse = 0;
+    public int currentTrainingCourse = 0;
 
     #endregion
 
@@ -108,8 +108,11 @@ public class TrainingCourseManager : MonoBehaviour
         inputManager = InputManager.Instance;
         GameManager.Instance.OnTargetHit += TargetHit;
 
+        //Associating the functions for the events in the Game Manager
         GameManager.Instance.TrainingCourseStarted += LoadTrainingCourse;
         GameManager.Instance.TrainingCourseEnded += OnTrainingCourseFinished;
+        GameManager.Instance.FinishedTraining += OnTrainingComplete;
+
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
 
         if (!isTrainingCourseOneComplete)
@@ -174,17 +177,18 @@ public class TrainingCourseManager : MonoBehaviour
 
     #endregion
 
-    #region Start, Restart and Next Training Course
+    #region Training Course Functions
+
+    #region Start, Finish and Restart Training Course
 
     private void OnStartTrainingCourse(int trainingCourseID)
     {
-        hasPlayerStartedTrainingCourse = true;
         isTrainingCourseComplete = false;
+        hasPlayerCrossedFinishingLine = false;
+
         trainingCourseGunManager.isPlayerInTrainingCourse = true;
 
         countdownTimerActive = true;
-
-        SetTargetLists(trainingCourseID);
 
         if (currentTargetList.Count > 0)
         {
@@ -192,7 +196,11 @@ public class TrainingCourseManager : MonoBehaviour
             Debug.LogError("TrainingCourseManager: Training course cannot setup because the target game object list is not clear!");
             Debug.Break();
         }
-
+        else
+        {
+            SetTargetLists(trainingCourseID);
+        }
+        
         if (countdownTimer == 0)
         {
             countdownTimer = countdownTimerAmount;
@@ -204,6 +212,9 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void OnTrainingCourseFinished(int trainingCourseID)
     {
+        isTrainingCourseComplete = true;
+        hasPlayerCrossedFinishingLine = true;
+
         if (isTrainingCourseComplete)
         {
             //Clear the lists for targets
@@ -257,6 +268,11 @@ public class TrainingCourseManager : MonoBehaviour
         LoadTrainingCourse(courseID);
     }
 
+
+    #endregion
+
+    #region Next and Load Training Courses and All Training Courses Completed
+
     private void NextTrainingCourse(int courseID)
     {
         if (!isTrainingCourseComplete)
@@ -268,10 +284,6 @@ public class TrainingCourseManager : MonoBehaviour
             LoadTrainingCourse(courseID);
         }
     }
-
-    #endregion
-
-    #region Training Course Functions
 
     private void LoadTrainingCourse(int courseID)
     {
@@ -313,6 +325,7 @@ public class TrainingCourseManager : MonoBehaviour
             return;
         }
     }
+    #endregion
 
     #endregion
 
@@ -367,10 +380,20 @@ public class TrainingCourseManager : MonoBehaviour
     private void ClearTargetLists()
     {
         //Clear the lists for targets
-        currentTargetList.Clear();
-        currentTargetList.Clear();
-        targetTriggerScriptList.Clear();
-        targetGuidList.Clear();
+        if (currentTargetList.Count > 0)
+        {
+            currentTargetList.Clear();
+        }
+
+        if (targetTriggerScriptList != null && targetTriggerScriptList.Count > 0)
+        {
+            targetTriggerScriptList.Clear();
+        }
+
+        if (targetGuidList != null && targetGuidList.Count > 0)
+        {
+            targetGuidList.Clear();
+        }
     }
 
     private void SetTargetLists(int courseID)
@@ -433,35 +456,35 @@ public class TrainingCourseManager : MonoBehaviour
 
     void Update()
     {
-        if (hasPlayerStartedTrainingCourse && countdownTimerActive && countdownTimer > 0f)
+        if (inputManager.PlayerStartedTrainingCourse())
+        {
+            hasPlayerStartedTrainingCourse = true;
+        }
+
+        if (hasPlayerStartedTrainingCourse && countdownTimerActive && countdownTimer > 0f && !hasPlayerCrossedFinishingLine)
         {
             CountdownTimer();
 
-            if (targetHitCount > 0)
+            if (targetHitCount != 0)
             {
                 if (targetHitCount == totalTargetCount)
                 {
                     Debug.Log("All targets hit!");
-                    isTrainingCourseComplete = true;
-                    countdownTimerActive = false;
-                    NextTrainingCourse(currentTrainingCourse);
+                    hasPlayerHitAllTargets = true;
+                    //countdownTimerActive = false;
+                    //NextTrainingCourse(currentTrainingCourse);
                 }
             }
         }
-        else if (hasPlayerStartedTrainingCourse && !countdownTimerActive && countdownTimer <= 0f)
-        {
-            if (targetHitCount != totalTargetCount)
-            {
-                Debug.Log("Player missed some targets!");
-                isTrainingCourseComplete = false;
-                countdownTimerActive = false;
-                RestartTrainingCourse(currentTrainingCourse);
-            }
-        }
-
-        //if (isTrainingComplete)
+        //else if (hasPlayerStartedTrainingCourse && !countdownTimerActive && countdownTimer <= 0f)
         //{
-        //    OnTrainingComplete();
+        //    if (targetHitCount != totalTargetCount)
+        //    {
+        //        Debug.Log("Player missed some targets!");
+        //        isTrainingCourseComplete = false;
+        //        countdownTimerActive = false;
+        //        RestartTrainingCourse(currentTrainingCourse);
+        //    }
         //}
     }
 }

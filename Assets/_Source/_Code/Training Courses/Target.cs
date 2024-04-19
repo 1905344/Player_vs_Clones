@@ -44,9 +44,6 @@ public class Target : MonoBehaviour
         GameManager.Instance.OnTargetHit += ThisTargetHasBeenHit;
         GameManager.Instance.AfterTargetHit += DisableThisTarget;
         targetTriggerScript = GetComponent<TargetTrigger>();
-        //targetGuid = targetTriggerScript.GetThisTargetsGuid();
-
-        //defaultTargetHealth = setTargetHealth;
     }
 
     private void ThisTargetHasBeenHit (Guid guid, int damage)
