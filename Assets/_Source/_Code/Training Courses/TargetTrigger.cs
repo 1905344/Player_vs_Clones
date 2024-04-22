@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class TargetTrigger : MonoBehaviour
@@ -45,7 +42,7 @@ public class TargetTrigger : MonoBehaviour
 
     public void Start()
     {
-        targetGameObject.GetComponent<Target>().targetGuid = targetGuid;
+        //targetGameObject.GetComponent<Target>().targetGuid = targetGuid;
     }
 
     public void ReportTarget()
@@ -55,13 +52,12 @@ public class TargetTrigger : MonoBehaviour
         Debug.Log("Target " + targetListID + " reporting!");
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
-        GameManager.Instance.TargetHit(targetGuid, targetListID);
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        GameManager.Instance.OnAfterTargetHit();
+        if (other.tag == "Gun")
+        {
+            //GameManager.Instance.TargetHit(targetGuid, 0);
+            Debug.Log("TargetTrigger: Target hit!");
+        }
     }
 }

@@ -26,10 +26,6 @@ public class InputManager : MonoBehaviour
     public bool isGamepad = false;
     public bool isKeyboard = true;
 
-    //Input Action References
-    public InputAction fireGunButton;
-    public InputAction sprintButton;
-
     [SerializeField] public string _currentControlScheme;
 
     [Space(15)]
@@ -68,7 +64,7 @@ public class InputManager : MonoBehaviour
     public bool isHoldingFireButton = false;
 
     public bool isPlayerInTrainingCourse = false;
-    private int getTrainingCourseID;
+    private int getTrainingCourseID = 1;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -115,7 +111,7 @@ public class InputManager : MonoBehaviour
 
     public bool PlayerStartedTrainingCourse()
     {
-        return playerActions.Player.StartTrainingCourse.triggered;
+        return playerActions.Training.StartTrainingCourse.triggered;
     }
 
     public bool isPlayerSprintingThisFrame { get; private set; }
@@ -124,12 +120,6 @@ public class InputManager : MonoBehaviour
     public bool IsPlayerTappingTheFireButton { get; private set; }
 
     #endregion
-
-    public void OnControlsChanged(PlayerInput input)
-    {
-        isGamepad = input.currentControlScheme.Equals("Gamepad");
-        isKeyboard = input.currentControlScheme.Equals("Keyboard");
-    }
 
     private void Awake()
     {
@@ -144,21 +134,75 @@ public class InputManager : MonoBehaviour
 
         playerActions = new PlayerControls();
 
+        //Sprinting
         playerActions.Player.Sprint.performed += SprintThisFrame;
         playerActions.Player.Sprint.canceled += StopSprintingThisFrame;
+
+        //Shooting/Pressing the fire button
         playerActions.Player.Fire.started += FiringGunThisFrame;
         playerActions.Player.Fire.performed += StopFiringGunThisFrame;
 
-        playerActions.Player.StartTrainingCourse.performed += StartTraining;
+        //Starting the training course
+        playerActions.Training.StartTrainingCourse.performed += StartTraining;
+
+        //Game manager event for when the player has completed all the training courses
+        GameManager.Instance.FinishedTraining += OnFinishedTraining;
         
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        if (!isPlayerInTrainingCourse)
-        {
-            playerActions.Player.StartTrainingCourse.Enable();
-        }
+        playerActions.Training.StartTrainingCourse.Enable();
+        ToggleActionMap(playerActions.Training);
     }
+
+    private void Start()
+    {
+        #region Gun action interaction context
+
+        //fireGunButton.action.started += context =>
+        //{
+        //    if (context.interaction is TapInteraction)
+        //    {
+        //        IsPlayerHoldingTheFireButton = false;
+        //        IsPlayerTappingTheFireButton = true;
+
+        //        Debug.Log("Player is tapping the fire button.");
+        //    }
+        //    else if (context.interaction is HoldInteraction)
+        //    {
+        //        IsPlayerHoldingTheFireButton = true;
+        //        IsPlayerTappingTheFireButton = false;
+        //        Debug.Log("Player is holding the fire button.");
+        //    }
+        //};
+
+        #endregion
+
+        ToggleActionMap(playerActions.UI);
+
+        vCam.SetFocalLength(_FOV);
+        Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+    }
+
+    #region OnEnable and OnDisable
+
+    public void OnEnable()
+    {
+        ToggleActionMap(playerActions.Player);
+        playerActions.Training.Disable();
+        playerActions.Player.Enable();
+    }
+
+    public void OnDisable()
+    {
+        ToggleActionMap(playerActions.Training);
+        playerActions.Training.Enable();
+        playerActions.Player.Disable();
+    }
+
+    #endregion
 
     #region Input
 
@@ -223,10 +267,11 @@ public class InputManager : MonoBehaviour
 
     #endregion
 
-    #region Starting the Training Course
+    #region Starting the Training Course and Disabling the Start Training Course Button
 
     private void StartTraining(InputAction.CallbackContext context)
     {
+        OnEnable();
         getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
 
         if (isPlayerInTrainingCourse)
@@ -236,56 +281,35 @@ public class InputManager : MonoBehaviour
         else
         {
             isPlayerInTrainingCourse = true;
+            getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+            Debug.Log("InputManager: The current training course is: " + getTrainingCourseID);
             //Trigger the start training course event
             GameManager.Instance.OnTrainingCourseStart(getTrainingCourseID);
         }
-        
+    }
+
+    public void OnFinishedTraining()
+    {
+        OnDisable();
+        playerActions.Training.Disable();
+        playerActions.Player.Fire.Disable();
     }
 
     #endregion
 
     #endregion
 
-    private void Start()
+    #region Input Device Changed
+
+    public void OnControlsChanged(PlayerInput input)
     {
-        #region Gun action interaction context
-
-        //fireGunButton.action.started += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        IsPlayerHoldingTheFireButton = false;
-        //        IsPlayerTappingTheFireButton = true;
-
-        //        Debug.Log("Player is tapping the fire button.");
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        IsPlayerHoldingTheFireButton = true;
-        //        IsPlayerTappingTheFireButton = false;
-        //        Debug.Log("Player is holding the fire button.");
-        //    }
-        //};
-
-        #endregion
-
-        ToggleActionMap(playerActions.UI);
-
-        vCam.SetFocalLength(_FOV);
-        Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
-
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        isGamepad = input.currentControlScheme.Equals("Gamepad");
+        isKeyboard = input.currentControlScheme.Equals("Keyboard");
     }
 
-    public void OnEnable()
-    {
-        playerActions.Enable();
-    }
+    #endregion
 
-    public void OnDisable()
-    {
-        playerActions.Disable();
-    }
+    #region Toggle Action Maps
 
     public static void ToggleActionMap(InputActionMap actionMap)
     {
@@ -299,6 +323,8 @@ public class InputManager : MonoBehaviour
         actionMap.Enable();
     }
 
+    #endregion
+    
     private void Update()
     {
         #region Update the first person camera (Cinemachine virtual camera) FOV (Field Of View)
@@ -332,12 +358,21 @@ public class InputManager : MonoBehaviour
 
         if (isPlayerInTrainingCourse)
         {
-            playerActions.Player.StartTrainingCourse.Disable();
+            playerActions.Training.StartTrainingCourse.Disable();
         }
 
         #endregion
 
         //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
+
+        if (isPlayerInTrainingCourse)
+        {
+            ToggleActionMap(playerActions.Player);
+        }
+        else
+        {
+            ToggleActionMap(playerActions.Training);
+        }
 
     }
 }

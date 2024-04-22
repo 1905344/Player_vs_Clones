@@ -4,6 +4,10 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.EventSystems;
+using Cinemachine.Examples;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public class TrainingCourseManager : MonoBehaviour
 {
@@ -27,13 +31,26 @@ public class TrainingCourseManager : MonoBehaviour
 
     [Header("Player Character Reference")]
     [SerializeField] private GameObject playerCharacter;
+    private FirstPersonMovement playerMovementScript;
 
     [Space(15)]
 
     [Header("Training Course Starting Position Transforms")]
-    [SerializeField] private Transform trainingCourseOneStartingPosition;
-    [SerializeField] private Transform trainingCourseTwoStartingPosition;
-    [SerializeField] private Transform trainingCourseThreeStartingPosition;
+    [SerializeField] private GameObject trainingCourseOneStartingPosition;
+    [SerializeField] private GameObject trainingCourseTwoStartingPosition;
+    [SerializeField] private GameObject trainingCourseThreeStartingPosition;
+
+
+    [Space(10)]
+
+    [Header("Training Course")]
+    [SerializeField] private GameObject trainingCourseOneFinishingPosition;
+    [SerializeField] private GameObject trainingCourseTwoFinishingPosition;
+    [SerializeField] private GameObject trainingCourseThreeFinishingPosition;
+
+    [Space(15)]
+
+    [Header("Starting Player Position After Completing Training")]
     [SerializeField] private Transform playerStartingPositionAfterTraining;
 
     [Space(15)]
@@ -58,17 +75,16 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [Header("Targets")]
-    //private GameObject _target;
-    [SerializeField] private int totalTargetCount;
-    [SerializeField] private int targetHitCount;
+    [SerializeField] private int totalTargetCount = 0;
+    [SerializeField] private int targetHitCount = 0;
     [SerializeField] private int currentScore;
     [SerializeField] public List<GameObject> currentTargetList;
     [SerializeField] public List<GameObject> courseOnetargetList;
     [SerializeField] public List<GameObject> courseTwotargetList;
     [SerializeField] public List<GameObject> courseThreetargetList;
 
-    private List<TargetTrigger> targetTriggerScriptList;
-    private List<Guid> targetGuidList;
+    [SerializeField] private List<Target> targetScriptList;
+    [SerializeField] private List<Guid> targetGuidList;
     private bool checkForAllTargets = false;
 
     [Space(15)]
@@ -89,6 +105,8 @@ public class TrainingCourseManager : MonoBehaviour
 
     public int currentTrainingCourse = 0;
 
+    private bool updateOnScreenText = false;
+
     #endregion
 
     private void Awake()
@@ -101,6 +119,15 @@ public class TrainingCourseManager : MonoBehaviour
         {
             _instance = this;
         }
+
+        if (!isTrainingCourseOneComplete)
+        {
+            currentTrainingCourse = 1;
+        }
+
+        currentTargetList = new List<GameObject>();
+        targetScriptList = new List<Target>();
+        targetGuidList = new List<Guid>();
     }
 
     private void Start()
@@ -114,11 +141,10 @@ public class TrainingCourseManager : MonoBehaviour
         GameManager.Instance.FinishedTraining += OnTrainingComplete;
 
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
+        playerMovementScript = playerCharacter.GetComponent<FirstPersonMovement>();
+        trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
 
-        if (!isTrainingCourseOneComplete)
-        {
-            currentTrainingCourse = 1;
-        }
+
     }
 
     #region Countdown Timer Functions
@@ -129,7 +155,6 @@ public class TrainingCourseManager : MonoBehaviour
         {
             if (countdownTimer > 0)
             {
-                inputManager.OnEnable();
                 countdownTimer -= Time.deltaTime;
                 countdownTimerText.gameObject.SetActive(true);
                 DisplayCountDownTimer(countdownTimer);
@@ -158,21 +183,17 @@ public class TrainingCourseManager : MonoBehaviour
     private void OnCountdownTimerFinished()
     {
         countdownTimerText.text = string.Format("{0:00}:{1:00}:{2:000}", 0, 0, 0);
-        isTrainingCourseComplete = true;
 
-        //This if statement needs to be changed to check if the 
-        //player has hit all of the targets and then to trigger
-        //some other check
-        //if (targetHitCount == totalTargetCount)
-        //{
-        //    isTrainingCourseComplete = true;
-        //    NextTrainingCourse();
-        //}
-        //else
-        //{
-        //    isTrainingCourseComplete = false;
-        //    RestartTrainingCourse();
-        //}
+        if (hasPlayerCrossedFinishingLine)
+        {
+            isTrainingCourseComplete = true;
+            NextTrainingCourse(currentTrainingCourse);
+        }
+        else
+        {
+            isTrainingCourseComplete = false;
+            RestartTrainingCourse(currentTrainingCourse);
+        }
     }
 
     #endregion
@@ -186,25 +207,23 @@ public class TrainingCourseManager : MonoBehaviour
         isTrainingCourseComplete = false;
         hasPlayerCrossedFinishingLine = false;
 
+        trainingCourseGunManager.gameObject.SetActive(true);
+        trainingCourseGunManager.EnableGun(trainingCourseID);
         trainingCourseGunManager.isPlayerInTrainingCourse = true;
+
+        playerMovementScript.EnablePlayerMovement();
 
         countdownTimerActive = true;
 
-        if (currentTargetList.Count > 0)
-        {
-            //If the target list is somehow not empty
-            Debug.LogError("TrainingCourseManager: Training course cannot setup because the target game object list is not clear!");
-            Debug.Break();
-        }
-        else
-        {
-            SetTargetLists(trainingCourseID);
-        }
-        
+        SetTargetLists(trainingCourseID);
+
         if (countdownTimer == 0)
         {
             countdownTimer = countdownTimerAmount;
         }
+
+        updateOnScreenText = true;
+        isTrainingCourseAllSetup = true;
 
         //If instantiating the targets
         //currentTargetList = new List<GameObject>();
@@ -215,10 +234,14 @@ public class TrainingCourseManager : MonoBehaviour
         isTrainingCourseComplete = true;
         hasPlayerCrossedFinishingLine = true;
 
+        playerMovementScript.DisablePlayerMovement();
+        trainingCourseGunManager.DisableGun();
+        trainingCourseGunManager.gameObject.SetActive(false);
+
         if (isTrainingCourseComplete)
         {
             //Clear the lists for targets
-            ClearTargetLists();
+            //ClearTargetLists();
 
             if (trainingCourseID == 1)
             {
@@ -239,12 +262,12 @@ public class TrainingCourseManager : MonoBehaviour
             }
 
             hasPlayerStartedTrainingCourse = false;
-            isTrainingCourseAllSetup = false;
             countdownTimerActive = false;
             hasPlayerStartedTrainingCourse = false;
-            inputManager.isPlayerInTrainingCourse = false;
 
+            inputManager.isPlayerInTrainingCourse = false;
             trainingCourseGunManager.isPlayerInTrainingCourse = false;
+
             NextTrainingCourse(currentTrainingCourse);
         }
     }
@@ -256,6 +279,7 @@ public class TrainingCourseManager : MonoBehaviour
         isTrainingCourseAllSetup = false;
         isTrainingCourseComplete = false;
         countdownTimerActive = false;
+        updateOnScreenText = true;
 
         trainingCourseGunManager.isPlayerInTrainingCourse = false;
         inputManager.isPlayerInTrainingCourse = false;
@@ -287,22 +311,30 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void LoadTrainingCourse(int courseID)
     {
-        if (!isTrainingCourseOneComplete && courseID == 1)
+        ClearTargetLists();
+
+        if (!isTrainingCourseOneComplete && (courseID == 1))
         {
             currentTrainingCourse = courseID;
-            playerCharacter.transform.position = trainingCourseOneStartingPosition.position;
+            EnableStartingPoints(courseID);
+            playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
+            EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
         }
-        else if (isTrainingCourseOneComplete && courseID == 2)
+        else if (isTrainingCourseOneComplete && (courseID == 2))
         {
             currentTrainingCourse = courseID;
-            playerCharacter.transform.position = trainingCourseTwoStartingPosition.position;
+            playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
+            EnableStartingPoints(courseID);
+            EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
         }
-        else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete)
+        else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && (courseID == 3))
         {
             currentTrainingCourse = courseID;
-            playerCharacter.transform.position = trainingCourseThreeStartingPosition.position;
+            playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
+            EnableStartingPoints(courseID);
+            EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
         }
         else if (isTrainingCourseThreeComplete && courseID == 3)
@@ -327,6 +359,99 @@ public class TrainingCourseManager : MonoBehaviour
     }
     #endregion
 
+    #region Enabling and Disabling Starting Points and Finishing Points For Each Training Course
+
+    #region Starting Points
+    private void EnableStartingPoints(int trainingCourseID)
+    {
+        if (!hasPlayerStartedTrainingCourse && !isTrainingCourseAllSetup && !hasPlayerCrossedFinishingLine)
+        {
+            if (trainingCourseID == 1)
+            {
+                trainingCourseOneStartingPosition.SetActive(true);
+            }
+            else if (trainingCourseID == 2)
+            {
+                trainingCourseTwoStartingPosition.SetActive(true);
+            }
+            else if (trainingCourseID == 3)
+            {
+                trainingCourseThreeStartingPosition.SetActive(true);
+            }
+
+        }
+    }
+
+    private void DisableStartingPoints(int courseID)
+    {
+        if (hasPlayerStartedTrainingCourse && isTrainingCourseAllSetup && !hasPlayerCrossedFinishingLine)
+        {
+            if (courseID == 1)
+            {
+                trainingCourseOneStartingPosition.SetActive(false);
+            }
+            else if (courseID == 2)
+            {
+                trainingCourseTwoStartingPosition.SetActive(false);
+            }
+            else if (courseID == 3)
+            {
+                trainingCourseThreeStartingPosition.SetActive(false);
+            }
+
+        }
+
+        isTrainingCourseAllSetup = false;
+    }
+
+    #endregion
+
+    #region Finishing Points
+
+    private void EnableFinishingPoints(int trainingCourseID)
+    {
+        if (hasPlayerStartedTrainingCourse && !isTrainingCourseAllSetup && !hasPlayerCrossedFinishingLine)
+        {
+            if (trainingCourseID == 1)
+            {
+                trainingCourseOneFinishingPosition.SetActive(true);
+            }
+            else if (trainingCourseID == 2)
+            {
+                trainingCourseTwoFinishingPosition.SetActive(true);
+            }
+            else if (trainingCourseID == 3)
+            {
+                trainingCourseThreeFinishingPosition.SetActive(true);
+            }
+        }
+    }
+
+    private void DisableFinishingPoints(int trainingCourseID)
+    {
+        if (hasPlayerStartedTrainingCourse && hasPlayerCrossedFinishingLine)
+        {
+            if (trainingCourseID == 1)
+            {
+                trainingCourseOneFinishingPosition.SetActive(false);
+            }
+            else if (trainingCourseID == 2)
+            {
+                trainingCourseTwoFinishingPosition.SetActive(false);
+            }
+            else if (trainingCourseID == 3)
+            {
+                trainingCourseThreeFinishingPosition.SetActive(false);
+            }
+
+            hasPlayerCrossedFinishingLine = false;
+        }
+    }
+
+    #endregion
+
+    #endregion
+
     #endregion
 
     #region Target Functions
@@ -342,7 +467,6 @@ public class TrainingCourseManager : MonoBehaviour
     public void TargetHit(Guid guid, int damage)
     {
         targetHitCount++;
-        targetHitText.text = ("Targets hit: " + targetHitCount + " / " + totalTargetCount);
 
         targetGuidList.Remove(guid);
 
@@ -356,14 +480,14 @@ public class TrainingCourseManager : MonoBehaviour
             }
         }
 
-        foreach (TargetTrigger targetTrigger in targetTriggerScriptList)
+        foreach (Target targetScript in targetScriptList)
         {
-            Guid getTargetGuid = targetTrigger.targetGuid;
-            targetTriggerScriptList.Add(targetTrigger);
+            Guid getTargetGuid = targetScript.targetGuid;
+            targetScriptList.Add(targetScript);
 
             if (getTargetGuid == guid)
             {
-                targetTriggerScriptList.Remove(targetTrigger);
+                targetScriptList.Remove(targetScript);
             }
         }
     }
@@ -373,7 +497,7 @@ public class TrainingCourseManager : MonoBehaviour
         if (hasPlayerStartedTrainingCourse && (countdownTimer != 0))
         {
             currentScore += updateScore;
-            currentScoreText.text = ("Score: " + currentScore);
+            updateOnScreenText = true;
         }
     }
 
@@ -385,12 +509,12 @@ public class TrainingCourseManager : MonoBehaviour
             currentTargetList.Clear();
         }
 
-        if (targetTriggerScriptList != null && targetTriggerScriptList.Count > 0)
+        if (targetScriptList.Count > 0)
         {
-            targetTriggerScriptList.Clear();
+            targetScriptList.Clear();
         }
 
-        if (targetGuidList != null && targetGuidList.Count > 0)
+        if (targetGuidList.Count > 0)
         {
             targetGuidList.Clear();
         }
@@ -405,41 +529,68 @@ public class TrainingCourseManager : MonoBehaviour
             Debug.Break();
         }
 
-        currentTargetList = new List<GameObject>();
-        targetTriggerScriptList = new List<TargetTrigger>();
-        targetGuidList = new List<Guid>();
-
         if (courseID == 1)
         {
             currentTargetList = courseOnetargetList;
+
+            foreach (GameObject target in courseOnetargetList)
+            {
+                targetScriptList.Add(target.GetComponent<Target>());
+            }
+
+            if (currentTargetList.Count != courseOnetargetList.Count)
+            {
+                Debug.LogError("TrainingCourseManager: Incorrect number of targets for the first training course!");
+            }
         }
         else if (courseID == 2)
         {
             currentTargetList = courseTwotargetList;
+
+            foreach (GameObject target in courseTwotargetList)
+            {
+                targetScriptList.Add(target.GetComponent<Target>());
+            }
         }
         else if (courseID == 3)
         {
             currentTargetList = courseThreetargetList;
+
+            foreach (GameObject target in courseThreetargetList)
+            {
+                targetScriptList.Add(target.GetComponent<Target>());
+            }
         }
+
+        totalTargetCount = currentTargetList.Count;
 
         //Populating the list for each of the scripts from the targets
         foreach (GameObject target in currentTargetList)
         {
-            targetTriggerScriptList.Add(target.GetComponentInChildren<TargetTrigger>());
-            target.GetComponent<Target>().isPlayerTraining = true;
+            target.gameObject.SetActive(true);
+
+            if (targetScriptList.Count != currentTargetList.Count)
+            {
+                Debug.LogError("Too many target scripts in the target script list!");
+            }
         }
 
-        //Setting and Checking Target IDs in the Target Trigger Scripts
-        foreach (TargetTrigger targetTriggerScript in targetTriggerScriptList)
+        isTrainingCourseAllSetup = true;
+
+        //Setting and Checking Target IDs in the Target Scripts
+        foreach (Target targetScript in targetScriptList)
         {
             for (int i = 0; i < currentTargetList.Count; i++)
             {
-                targetTriggerScript.SetTargetID(i);
-                targetTriggerScript.ReportTarget();
-                targetGuidList.Add(targetTriggerScript.GetThisTargetsGuid());
+                targetScript.SetTargetID(i);
             }
 
-            if ((targetTriggerScriptList.Count != currentTargetList.Count))
+            targetScript.isPlayerTraining = true;
+            targetScript.targetGuid = Guid.NewGuid();
+            targetGuidList.Add(targetScript.targetGuid);
+            targetScript.ReportTarget();
+
+            if ((targetScriptList.Count != currentTargetList.Count))
             {
                 Debug.LogError("TrainingCourseManager: Target script list count is not equal to the target game object list count!");
                 break;
@@ -450,6 +601,18 @@ public class TrainingCourseManager : MonoBehaviour
                 continue;
             }
         }
+    }
+
+    #endregion
+
+    #region
+
+    private void SetUiText()
+    {
+        currentScoreText.text = "Score: " + currentScore.ToString();
+        targetHitText.text = ("Targets hit: " + targetHitCount.ToString() + " / " + totalTargetCount.ToString());
+
+        updateOnScreenText = false;
     }
 
     #endregion
@@ -476,15 +639,20 @@ public class TrainingCourseManager : MonoBehaviour
                 }
             }
         }
-        //else if (hasPlayerStartedTrainingCourse && !countdownTimerActive && countdownTimer <= 0f)
-        //{
-        //    if (targetHitCount != totalTargetCount)
-        //    {
-        //        Debug.Log("Player missed some targets!");
-        //        isTrainingCourseComplete = false;
-        //        countdownTimerActive = false;
-        //        RestartTrainingCourse(currentTrainingCourse);
-        //    }
-        //}
+
+        if (updateOnScreenText)
+        {
+            SetUiText();
+        }
+
+        if (isTrainingCourseAllSetup)
+        {
+            DisableStartingPoints(currentTrainingCourse);
+        }
+
+        if (hasPlayerCrossedFinishingLine)
+        {
+            DisableFinishingPoints(currentTrainingCourse);
+        }
     }
 }

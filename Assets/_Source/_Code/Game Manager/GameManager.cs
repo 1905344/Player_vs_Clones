@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -25,7 +23,6 @@ public class GameManager : MonoBehaviour
 
     //Events for when a target is hit
     public event Action<Guid, int> OnTargetHit;
-    public event Action AfterTargetHit;
 
     //Ending training courses
     public event Action<int> TrainingCourseStarted;
@@ -58,14 +55,6 @@ public class GameManager : MonoBehaviour
         if (OnTargetHit != null)
         {
             OnTargetHit(guid, damage);
-        }
-    }
-
-    public void OnAfterTargetHit()
-    {
-        if (AfterTargetHit != null)
-        {
-            AfterTargetHit();
         }
     }
 

@@ -24,13 +24,20 @@ public class FinishTrainingCourseTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (courseID < 3 && courseID != 0)
+        if (other.tag == "Player")
         {
-            GameManager.Instance.OnTrainingCourseEnd(courseID);
+            if (courseID < 3 && courseID != 0)
+            {
+                GameManager.Instance.OnTrainingCourseEnd(courseID);
+            }
+            else if (courseID == 3 && courseID != 0)
+            {
+                GameManager.Instance.OnPlayerFinishedTraining();
+            }
         }
-        else if (courseID == 3 && courseID != 0)
+        else
         {
-            GameManager.Instance.OnPlayerFinishedTraining();
+            return;
         }
     }
 }

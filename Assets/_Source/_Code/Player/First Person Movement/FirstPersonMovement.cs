@@ -42,8 +42,8 @@ public class FirstPersonMovement : MonoBehaviour
     [Space(15)]
 
     [Header("Debugging")]
-    [SerializeField] private bool disablePlayerMovement = false;
-    [SerializeField] private bool disablePlayerJumping = false;
+    [SerializeField] private bool disablePlayerMovement = true;
+    [SerializeField] private bool disablePlayerJumping = true;
     [SerializeField] private bool onGround;
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
@@ -63,24 +63,21 @@ public class FirstPersonMovement : MonoBehaviour
     private void Start()
     {
         inputManager = InputManager.Instance;
-        GameManager.Instance.TrainingCourseStarted += EnablePlayerMovement;
-        GameManager.Instance.TrainingCourseEnded += DisablePlayerMovement;
-
         cameraTransform = Camera.main.transform;
     }
 
     #region Enable and Disable Player Movement
 
-    private void EnablePlayerMovement(int ID)
-    {
-        disablePlayerMovement = true;
-        disablePlayerJumping = true;
-    }
-
-    private void DisablePlayerMovement(int ID)
+    public void EnablePlayerMovement()
     {
         disablePlayerMovement = false;
         disablePlayerJumping = false;
+    }
+
+    public void DisablePlayerMovement()
+    {
+        disablePlayerMovement = true;
+        disablePlayerJumping = true;
     }
 
     #endregion
@@ -89,14 +86,14 @@ public class FirstPersonMovement : MonoBehaviour
     {
         #region Disable Movement
 
-        if (disablePlayerMovement)
-        {
-            inputManager.OnDisable();
-        }
-        else
-        {
-            inputManager.OnEnable();
-        }
+        //if (disablePlayerMovement)
+        //{
+        //    inputManager.OnDisable();
+        //}
+        //else
+        //{
+        //    inputManager.OnEnable();
+        //}
 
         #endregion
 
@@ -175,6 +172,11 @@ public class FirstPersonMovement : MonoBehaviour
         playerVelocity.y += playerGravity * Time.deltaTime;
 
         #endregion
+
+        if (inputManager.PlayerStartedTrainingCourse() )
+        {
+            EnablePlayerMovement();
+        }
 
     }
 }

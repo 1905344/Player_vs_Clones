@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7814374373575129692}
   m_Layer: 0
   m_Name: Model
-  m_TagString: Untagged
+  m_TagString: Gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1775,7 +1775,7 @@ GameObject:
   - component: {fileID: 9179485067189152711}
   m_Layer: 0
   m_Name: Muzzle
-  m_TagString: Untagged
+  m_TagString: Gun
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1807,7 +1807,7 @@ GameObject:
   - component: {fileID: 1487469022151069452}
   m_Layer: 0
   m_Name: Gun
-  m_TagString: Untagged
+  m_TagString: Gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1841,7 +1841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24d479746b7e0c74fb7f2ab87ff010c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vCam: {fileID: 0}
+  _camera: {fileID: 0}
   muzzle: {fileID: 9179485067189152711}
   isEnemy:
     serializedVersion: 2
@@ -1849,21 +1849,23 @@ MonoBehaviour:
   isTarget:
     serializedVersion: 2
     m_Bits: 512
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
   muzzleFlash: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4,
     type: 3}
   bulletHoleDecal: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980,
     type: 3}
   bulletsRemainingText: {fileID: 0}
-  cameraShakeMagnitude: 3
   cameraShakeAmplitude: 5
-  bulletDamage: 0
-  timeBetweenBullets: 0
-  timeBetweenShooting: 0
+  cameraShakeMagnitude: 3
+  bulletDamage: 5
+  timeBetweenBullets: 0.3
+  timeBetweenShooting: 0.1
   bulletSpread: 0
   bulletRange: 0
   gunReloadTime: 0
-  magazineClipSize: 0
-  bulletsPerLeftMouseTap: 0
+  magazineClipSize: 27
+  bulletsPerLeftMouseTap: 1
   bulletsRemaining: 0
   bulletsFired: 0
   allowFireButtonHold: 0
@@ -1871,3 +1873,7 @@ MonoBehaviour:
   canShoot: 0
   isReloading: 0
   isPlayerInTrainingCourse: 0
+  updateGunPosition: 0
+  gunInLeftHand: 1
+  gunInRightHand: 0
+  getCurrentCourseID: 0

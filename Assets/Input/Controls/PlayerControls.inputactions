@@ -58,15 +58,6 @@
                     "processors": "",
                     "interactions": "Tap,Hold(duration=0.55)",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Start Training Course",
-                    "type": "Button",
-                    "id": "2cacd252-9f84-4796-a871-efb0fb8813e0",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -309,17 +300,6 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Sprint",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "30ac7d5c-095f-42a3-9050-3d2bde46fe06",
-                    "path": "<Keyboard>/enter",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Start Training Course",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -836,6 +816,34 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Training",
+            "id": "a165801d-819f-4a90-b7fb-3d61e3cfda8e",
+            "actions": [
+                {
+                    "name": "Start Training Course",
+                    "type": "Button",
+                    "id": "1d9312ed-cbaa-4969-95d2-c38d6ada43f9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b2bbd057-ffe4-4b8d-b488-29461c586c25",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Start Training Course",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
