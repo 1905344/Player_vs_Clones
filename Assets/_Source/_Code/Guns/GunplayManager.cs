@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using Cinemachine;
+using Unity.VisualScripting;
 
 public class GunplayManager : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class GunplayManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform muzzle;
-    [SerializeField] private RaycastHit _raycastHit;
+    private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
     [SerializeField] private LayerMask isTarget;
 
@@ -232,6 +233,12 @@ public class GunplayManager : MonoBehaviour
 
     #region Gun Functions
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        //Gizmos.DrawLine(_camera.transform.position, _camera.transform.position + _camera.transform.forward * bulletRange);
+    }
+
     private void FireGun()
     {
         canShoot = false;
@@ -243,7 +250,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Calculate bullet spread direction
 
-        Vector3 spreadDirection = _camera.transform.forward + new Vector3(x, y, 0);
+        Vector3 spreadDirection = _camera.transform.forward;
 
         #endregion
 
@@ -251,10 +258,15 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
+        //Debug.DrawLine(_camera.transform.position, spreadDirection * bulletRange, Color.red,5f);
+
         if (isPlayerInTrainingCourse)
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
+                Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+
+
                 Debug.Log("Bullet hit: " + _raycastHit.collider.name);
 
                 if (_raycastHit.collider.CompareTag("Target"))

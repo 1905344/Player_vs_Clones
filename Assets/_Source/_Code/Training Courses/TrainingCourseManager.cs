@@ -8,6 +8,7 @@ using Cinemachine.Examples;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
+using System.Linq;
 
 public class TrainingCourseManager : MonoBehaviour
 {
@@ -470,26 +471,60 @@ public class TrainingCourseManager : MonoBehaviour
 
         targetGuidList.Remove(guid);
 
-        foreach (GameObject target in currentTargetList)
+        GameObject currentTarget = null;
+        foreach(var target in currentTargetList)
         {
-            Guid getTargetGuid = target.GetComponent<Target>().targetGuid;
-
-            if (getTargetGuid == guid)
+            if(target.GetComponent<Target>().targetGuid == guid)
             {
-                Destroy(target.transform);
+                currentTarget = target.gameObject;
+                break;
             }
         }
+        if(currentTarget != null)
+        {
+            currentTargetList.Remove(currentTarget);
+            Destroy(currentTarget);
+        }
 
+
+        //foreach (GameObject target in currentTargetList)
+        //{
+        //    Guid getTargetGuid = target.GetComponent<Target>().targetGuid;
+
+        //    if (getTargetGuid == guid)
+        //    {
+        //        //Destroy(target.transform);
+        //    }
+        //}
+
+        Target targetToRemove = null;
         foreach (Target targetScript in targetScriptList)
         {
-            Guid getTargetGuid = targetScript.targetGuid;
-            targetScriptList.Add(targetScript);
-
-            if (getTargetGuid == guid)
+            if(targetScript.targetGuid == guid)
             {
-                targetScriptList.Remove(targetScript);
+                targetToRemove = targetScript;
             }
         }
+        if(targetToRemove != null)
+        {
+            targetScriptList.Remove(targetToRemove);
+        }
+
+        //var targetsToRemove = new List<Target>();
+        //foreach (Target targetScript in targetScriptList)
+        //{
+        //    Guid getTargetGuid = targetScript.targetGuid;
+
+        //    if (getTargetGuid == guid)
+        //    {
+        //        targetsToRemove.Add(targetScript);
+        //    }
+        //}
+
+        //foreach (var item in targetsToRemove)
+        //{
+        //    targetScriptList.Remove(item);
+        //}
     }
 
     public void UpdateScore(int updateScore)
@@ -578,12 +613,10 @@ public class TrainingCourseManager : MonoBehaviour
         isTrainingCourseAllSetup = true;
 
         //Setting and Checking Target IDs in the Target Scripts
-        foreach (Target targetScript in targetScriptList)
+        for(int i = 0; i < currentTargetList.Count; i++)
         {
-            for (int i = 0; i < currentTargetList.Count; i++)
-            {
-                targetScript.SetTargetID(i);
-            }
+            var targetScript = targetScriptList[i];
+            targetScript.SetTargetID(i + 1);
 
             targetScript.isPlayerTraining = true;
             targetScript.targetGuid = Guid.NewGuid();
@@ -601,6 +634,31 @@ public class TrainingCourseManager : MonoBehaviour
                 continue;
             }
         }
+
+
+        //foreach (Target targetScript in targetScriptList)
+        //{
+        //    for (int i = 0; i < currentTargetList.Count; i++)
+        //    {
+        //        targetScript.SetTargetID(i);
+        //    }
+
+        //    targetScript.isPlayerTraining = true;
+        //    targetScript.targetGuid = Guid.NewGuid();
+        //    targetGuidList.Add(targetScript.targetGuid);
+        //    targetScript.ReportTarget();
+
+        //    if ((targetScriptList.Count != currentTargetList.Count))
+        //    {
+        //        Debug.LogError("TrainingCourseManager: Target script list count is not equal to the target game object list count!");
+        //        break;
+        //    }
+        //    else
+        //    {
+        //        isTrainingCourseAllSetup = true;
+        //        continue;
+        //    }
+        //}
     }
 
     #endregion

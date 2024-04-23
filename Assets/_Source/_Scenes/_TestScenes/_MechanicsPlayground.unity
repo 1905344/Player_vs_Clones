@@ -10960,7 +10960,7 @@ MonoBehaviour:
   isKeyboard: 1
   _currentControlScheme: 
   mouseAcceleration: 0
-  invertMouseY: 0
+  invertMouseY: 1
   mouseHorizontalSensitivity: 0.3
   mouseVerticalSensitivity: 0.3
   vCam: {fileID: 731941751}
@@ -11196,6 +11196,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1341869769842038, guid: 8b7a1ffda5bb7474b8fae646c45ce7b4,
         type: 3}
+    - target: {fileID: 1487469022151069452, guid: b4d25fc628933c34b87de6735d639419,
+        type: 3}
+      propertyPath: isTarget.m_Bits
+      value: 1024
+      objectReference: {fileID: 0}
     - target: {fileID: 1487469022151069452, guid: b4d25fc628933c34b87de6735d639419,
         type: 3}
       propertyPath: cinemachineShake

@@ -53,6 +53,7 @@ public class Target : MonoBehaviour
     private void Awake()
     {
         defaultTargetHealth = setTargetHealth;
+        courseManager = TrainingCourseManager.Instance;
     }
 
     private void Start()
@@ -69,6 +70,11 @@ public class Target : MonoBehaviour
 
     private void ThisTargetHasBeenHit (Guid guid, int damage)
     {
+        if (guid != targetGuid)
+        {
+            return;
+        }
+
         //Find where the bullet hit the target and set the final score
         defaultTargetHealth -= damage;
 
