@@ -4,11 +4,6 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.EventSystems;
-using Cinemachine.Examples;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.UIElements;
-using Unity.VisualScripting;
-using System.Linq;
 
 public class TrainingCourseManager : MonoBehaviour
 {
@@ -142,9 +137,8 @@ public class TrainingCourseManager : MonoBehaviour
         GameManager.Instance.FinishedTraining += OnTrainingComplete;
 
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
-        playerMovementScript = playerCharacter.GetComponent<FirstPersonMovement>();
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
-
+        playerMovementScript = playerCharacter.GetComponent<FirstPersonMovement>();
 
     }
 
@@ -312,6 +306,8 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void LoadTrainingCourse(int courseID)
     {
+        courseID = currentTrainingCourse;
+
         ClearTargetLists();
 
         if (!isTrainingCourseOneComplete && (courseID == 1))
@@ -363,6 +359,7 @@ public class TrainingCourseManager : MonoBehaviour
     #region Enabling and Disabling Starting Points and Finishing Points For Each Training Course
 
     #region Starting Points
+
     private void EnableStartingPoints(int trainingCourseID)
     {
         if (!hasPlayerStartedTrainingCourse && !isTrainingCourseAllSetup && !hasPlayerCrossedFinishingLine)
@@ -486,17 +483,6 @@ public class TrainingCourseManager : MonoBehaviour
             Destroy(currentTarget);
         }
 
-
-        //foreach (GameObject target in currentTargetList)
-        //{
-        //    Guid getTargetGuid = target.GetComponent<Target>().targetGuid;
-
-        //    if (getTargetGuid == guid)
-        //    {
-        //        //Destroy(target.transform);
-        //    }
-        //}
-
         Target targetToRemove = null;
         foreach (Target targetScript in targetScriptList)
         {
@@ -509,22 +495,6 @@ public class TrainingCourseManager : MonoBehaviour
         {
             targetScriptList.Remove(targetToRemove);
         }
-
-        //var targetsToRemove = new List<Target>();
-        //foreach (Target targetScript in targetScriptList)
-        //{
-        //    Guid getTargetGuid = targetScript.targetGuid;
-
-        //    if (getTargetGuid == guid)
-        //    {
-        //        targetsToRemove.Add(targetScript);
-        //    }
-        //}
-
-        //foreach (var item in targetsToRemove)
-        //{
-        //    targetScriptList.Remove(item);
-        //}
     }
 
     public void UpdateScore(int updateScore)
@@ -634,36 +604,11 @@ public class TrainingCourseManager : MonoBehaviour
                 continue;
             }
         }
-
-
-        //foreach (Target targetScript in targetScriptList)
-        //{
-        //    for (int i = 0; i < currentTargetList.Count; i++)
-        //    {
-        //        targetScript.SetTargetID(i);
-        //    }
-
-        //    targetScript.isPlayerTraining = true;
-        //    targetScript.targetGuid = Guid.NewGuid();
-        //    targetGuidList.Add(targetScript.targetGuid);
-        //    targetScript.ReportTarget();
-
-        //    if ((targetScriptList.Count != currentTargetList.Count))
-        //    {
-        //        Debug.LogError("TrainingCourseManager: Target script list count is not equal to the target game object list count!");
-        //        break;
-        //    }
-        //    else
-        //    {
-        //        isTrainingCourseAllSetup = true;
-        //        continue;
-        //    }
-        //}
     }
 
     #endregion
 
-    #region
+    #region Setting and Updating the U.I. Text Elements
 
     private void SetUiText()
     {
@@ -692,8 +637,6 @@ public class TrainingCourseManager : MonoBehaviour
                 {
                     Debug.Log("All targets hit!");
                     hasPlayerHitAllTargets = true;
-                    //countdownTimerActive = false;
-                    //NextTrainingCourse(currentTrainingCourse);
                 }
             }
         }
