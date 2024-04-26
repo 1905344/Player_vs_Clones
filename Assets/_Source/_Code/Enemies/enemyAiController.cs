@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,8 +7,8 @@ public class enemyAiController : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] public NavMeshAgent meshAgent;
-    [SerializeField] public Transform playerCharacter;
+    private NavMeshAgent meshAgent;
+    private Transform playerCharacter;
     [SerializeField] public LayerMask groundLayerMask;
     [SerializeField] public LayerMask playerLayerMask;
     [SerializeField] private float enemyHealth;
@@ -38,7 +37,7 @@ public class enemyAiController : MonoBehaviour
 
     private void Awake()
     {
-        playerCharacter = GameObject.Find("GamePlayer").transform;
+        playerCharacter = GameObject.Find("Player").transform;
         meshAgent = GetComponent<NavMeshAgent>();
     }
 
@@ -83,6 +82,8 @@ public class enemyAiController : MonoBehaviour
             
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+
+            //Debug.DrawLine(transform.forward, projectile.transform.position, Color.red, 5f);
 
             hasAttackedAlready = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);

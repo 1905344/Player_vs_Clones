@@ -64,6 +64,7 @@ public class InputManager : MonoBehaviour
     public bool isHoldingFireButton = false;
 
     public bool isPlayerInTrainingCourse = false;
+    public bool isPlayerFinishedTraining = false;
     private int getTrainingCourseID = 1;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
@@ -157,27 +158,6 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
-        #region Gun action interaction context
-
-        //fireGunButton.action.started += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        IsPlayerHoldingTheFireButton = false;
-        //        IsPlayerTappingTheFireButton = true;
-
-        //        Debug.Log("Player is tapping the fire button.");
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        IsPlayerHoldingTheFireButton = true;
-        //        IsPlayerTappingTheFireButton = false;
-        //        Debug.Log("Player is holding the fire button.");
-        //    }
-        //};
-
-        #endregion
-
         ToggleActionMap(playerActions.UI);
 
         vCam.SetFocalLength(_FOV);
@@ -290,7 +270,8 @@ public class InputManager : MonoBehaviour
 
     public void OnFinishedTraining()
     {
-        OnDisable();
+        OnEnable();
+        isPlayerFinishedTraining = true;
         playerActions.Training.Disable();
         playerActions.Player.Fire.Disable();
     }
@@ -369,9 +350,13 @@ public class InputManager : MonoBehaviour
         {
             ToggleActionMap(playerActions.Player);
         }
-        else
+        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining)
         {
             ToggleActionMap(playerActions.Training);
+        }
+        else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining)
+        {
+            ToggleActionMap(playerActions.Player);
         }
 
     }

@@ -26,14 +26,19 @@ public class FinishTrainingCourseTrigger : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            if (courseID < 3 && courseID != 0)
+            if (courseID <= 3 && courseID != 0)
             {
                 GameManager.Instance.OnTrainingCourseEnd(courseID);
             }
-            else if (courseID == 3 && courseID != 0)
+            
+            if (courseID == 3 && courseID != 0)
             {
+                TrainingCourseManager.Instance.isTrainingComplete = true;
                 GameManager.Instance.OnPlayerFinishedTraining();
+                Debug.Log("Player has crossed the final finishing line.");
             }
+
+            gameObject.SetActive(false);
         }
         else
         {

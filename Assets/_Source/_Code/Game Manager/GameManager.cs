@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     //Ending training courses
     public event Action<int> TrainingCourseStarted;
+    public event Action<int> TrainingCourseRestarted;
     public event Action<int> TrainingCourseEnded;
 
     //Changing to the player gameplay
@@ -33,6 +34,9 @@ public class GameManager : MonoBehaviour
 
     //Events for A.I. Behaviours
     public event Action SetAiBehaviour;
+
+    //Events for the asymmetrical gameplay
+    public event Action onAttackPlayer;
 
     #endregion
 
@@ -63,6 +67,14 @@ public class GameManager : MonoBehaviour
         if (TrainingCourseStarted != null)
         {
             TrainingCourseStarted(ID);
+        }
+    }
+
+    public void OnTrainingCourseRestart(int ID)
+    {
+        if (TrainingCourseRestarted != null)
+        {
+            TrainingCourseRestarted(ID);
         }
     }
 

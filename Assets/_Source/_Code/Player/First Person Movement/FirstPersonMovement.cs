@@ -64,6 +64,7 @@ public class FirstPersonMovement : MonoBehaviour
     {
         inputManager = InputManager.Instance;
         cameraTransform = Camera.main.transform;
+        GameManager.Instance.SetAiBehaviour += EnablePlayerMovement;
     }
 
     #region Enable and Disable Player Movement
@@ -84,19 +85,6 @@ public class FirstPersonMovement : MonoBehaviour
 
     private void Update()
     {
-        #region Disable Movement
-
-        //if (disablePlayerMovement)
-        //{
-        //    inputManager.OnDisable();
-        //}
-        //else
-        //{
-        //    inputManager.OnEnable();
-        //}
-
-        #endregion
-
         #region Disable Jumping
 
         if (disablePlayerJumping)
