@@ -11,8 +11,6 @@ public class Target : MonoBehaviour
     public bool hasTargetBeenHit = false;
     public bool isPlayerTraining = false;
 
-    private TrainingCourseManager courseManager;
-
     [Header("Score Value for This Target")]
     [SerializeField] public int targetScoreValue;
 
@@ -53,7 +51,6 @@ public class Target : MonoBehaviour
     private void Awake()
     {
         defaultTargetHealth = setTargetHealth;
-        courseManager = TrainingCourseManager.Instance;
     }
 
     private void Start()
@@ -98,7 +95,7 @@ public class Target : MonoBehaviour
 
     public void DisableThisTarget()
     {
-        courseManager.UpdateScore(targetScoreValue);
+        TrainingCourseManager.Instance.UpdateScore(targetScoreValue);
         
         Debug.Log("Target " + targetListID + " hit.");
 

@@ -19,16 +19,16 @@ public class FirstPersonMovement : MonoBehaviour
     [Header("Movement Variables")]
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
-    [SerializeField] private float moveSpeed = 12f;
-    [SerializeField] private float sprintSpeed = 20f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float sprintSpeed;
     [SerializeField] private float movementSpeed;
     private float directionX;
     private float directionZ;
-    [SerializeField] private float playerGravity = -9.81f;
+    [SerializeField] private float playerGravity;
     
     [Space(10)]    
 
-    [SerializeField] private float jumpHeight = 1f;
+    [SerializeField] private float jumpHeight;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float timeToJumpApex;
 
@@ -103,11 +103,7 @@ public class FirstPersonMovement : MonoBehaviour
         {
             jumpHeight = 0;
         }
-        else
-        {
-            jumpHeight = 1f;
-        }
-
+        
         #endregion
 
         #region Ground Check

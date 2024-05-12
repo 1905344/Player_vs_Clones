@@ -57,7 +57,10 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [Header("TMP Text References")]
-    [SerializeField] private TextMeshProUGUI countdownTimerText;
+    [SerializeField] private TextMeshProUGUI tutorialText;
+    [SerializeField] private TextMeshProUGUI timeTitleText;
+    [SerializeField] private TextMeshProUGUI countupTimerText;
+    [SerializeField] private TextMeshProUGUI previousTimeText;
     [SerializeField] private TextMeshProUGUI targetHitText;
     [SerializeField] private TextMeshProUGUI currentScoreText;
 
@@ -66,12 +69,24 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [Header("Countdown Timer")]
-    [SerializeField, Tooltip("The amount of time in the countdown timer for the first training course.")] private float firstTrainingCourseTimer;
-    [SerializeField, Tooltip("The amount of time in the countdown timer for the second training course.")] private float secondTrainingCourseTimer;
-    [SerializeField, Tooltip("The amount of time in the countdown timer for the third training course.")] private float thirdTrainingCourseTimer;
-    [SerializeField, Tooltip("The amount of time in the default countdown timer.")] private float countdownTimerAmount;
-    [SerializeField] private bool countdownTimerActive = false;
-    private float countdownTimer;
+    [SerializeField, Tooltip("The par time for the first training course.")] private float firstTrainingCourseParTime;
+    [SerializeField, Tooltip("The par time for the second training course.")] private float secondTrainingCourseParTime;
+    [SerializeField, Tooltip("The par time for the third training course.")] private float thirdTrainingCourseParTime;
+    [SerializeField] private bool countupTimerActive = false;
+    private float countupTimer;
+
+    [Space(5)]
+
+    [SerializeField, Tooltip("The previous time set for the first training course.")] private float firstTrainingCoursePreviousTime;
+    [SerializeField, Tooltip("The previous time set for the second training course.")] private float secondTrainingCoursePreviousTime;
+    [SerializeField, Tooltip("The previous time set for the third training course.")] private float thirdTrainingCoursePreviousTime;
+
+    [Space(5)]
+
+    [SerializeField] public bool achievedParTimeForFirstCourse = false;
+    [SerializeField] public bool achievedParTimeForSecondCourse = false;
+    [SerializeField] public bool achievedParTimeForThirdCourse = false;
+    [SerializeField] public bool achievedParTimeForAllCourses = false;
 
     [Space(15)]
 
@@ -139,61 +154,50 @@ public class TrainingCourseManager : MonoBehaviour
         //Associating the functions for the events in the Game Manager
         GameManager.Instance.TrainingCourseStarted += LoadTrainingCourse;
         GameManager.Instance.TrainingCourseEnded += OnTrainingCourseFinished;
+        GameManager.Instance.TrainingCourseEnded += SetPlayerPositionOnCourseFinish;
         GameManager.Instance.FinishedTraining += OnTrainingComplete;
 
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
         playerMovementScript = playerCharacter.GetComponent<FirstPersonMovement>();
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
 
-
+        FirstTimeTutorialText();
     }
 
     #region Countdown Timer Functions
 
-    public void CountdownTimer()
+    public void CountUpTimer()
     {
-        if (countdownTimerActive)
+        if (countupTimerActive)
         {
-            if (countdownTimer > 0)
-            {
-                countdownTimer -= Time.deltaTime;
-                countdownTimerText.gameObject.SetActive(true);
-                DisplayCountDownTimer(countdownTimer);
-            }
-            else
-            {
-                countdownTimer = 0;
-                inputManager.OnDisable();
-                hasPlayerStartedTrainingCourse = false;
-                countdownTimerActive = false;
-                OnCountdownTimerFinished();
-            }
+            countupTimer += Time.deltaTime;
+            countupTimerText.gameObject.SetActive(true);
+            DisplayCountUpTimer();
         }
     }
 
-    private void DisplayCountDownTimer(float countTime)
+    private void DisplayCountUpTimer()
     {
-        countTime += 0;
-        float minutes = Mathf.FloorToInt(countTime / 60);
-        float seconds = Mathf.FloorToInt(countTime % 60);
-        float milliseconds = (countTime % 1) * 1000;
+        TimeSpan time = TimeSpan.FromSeconds(countupTimer);
+        countupTimer += 0;
 
-        countdownTimerText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+        countupTimerText.text = time.Minutes.ToString() + ":" + time.Seconds.ToString() + ":" + time.Milliseconds.ToString();
+
+        if (time.Minutes >= 59)
+        {
+            countupTimerText.text = time.Hours.ToString() + ":" + time.Minutes.ToString() + ":" + time.Seconds.ToString() + ":" + time.Milliseconds.ToString();
+        }
     }
 
-    private void OnCountdownTimerFinished()
+    private void StopCountUpTimer()
     {
-        countdownTimerText.text = string.Format("{0:00}:{1:00}:{2:000}", 0, 0, 0);
+        countupTimerActive = false;
 
         if (hasPlayerCrossedFinishingLine)
         {
+            CheckForParTime(countupTimer);
             isTrainingCourseComplete = true;
             NextTrainingCourse(currentTrainingCourse);
-        }
-        else
-        {
-            isTrainingCourseComplete = false;
-            RestartTrainingCourse(currentTrainingCourse);
         }
     }
 
@@ -205,6 +209,9 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void OnStartTrainingCourse(int trainingCourseID)
     {
+        tutorialText.gameObject.SetActive(false);
+        timeTitleText.gameObject.SetActive(true);
+
         isTrainingCourseComplete = false;
         hasPlayerCrossedFinishingLine = false;
 
@@ -214,13 +221,13 @@ public class TrainingCourseManager : MonoBehaviour
 
         playerMovementScript.EnablePlayerMovement();
 
-        countdownTimerActive = true;
+        countupTimerActive = true;
 
         SetTargetLists(trainingCourseID);
 
-        if (countdownTimer == 0)
+        if (countupTimer > 0)
         {
-            countdownTimer = countdownTimerAmount;
+            countupTimer = 0f;
         }
 
         updateOnScreenText = true;
@@ -232,6 +239,10 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void OnTrainingCourseFinished(int trainingCourseID)
     {
+        StopCountUpTimer();
+        inputManager.OnDisable();
+        hasPlayerStartedTrainingCourse = false;
+
         isTrainingCourseComplete = true;
         hasPlayerCrossedFinishingLine = true;
 
@@ -239,48 +250,44 @@ public class TrainingCourseManager : MonoBehaviour
         trainingCourseGunManager.DisableGun();
         trainingCourseGunManager.gameObject.SetActive(false);
 
-        if (isTrainingCourseComplete)
+        if (trainingCourseID == 1)
         {
-            //Clear the lists for targets
-            //ClearTargetLists();
-
-            if (trainingCourseID == 1)
-            {
-                isTrainingCourseOneComplete = true;
-            }
-            else if (trainingCourseID == 2)
-            {
-                isTrainingCourseTwoComplete = true;
-            }
-            else if (trainingCourseID == 3)
-            {
-                isTrainingCourseThreeComplete = true;
-            }
-
-            foreach (GameObject target in currentTargetList)
-            {
-                target.GetComponent<Target>().isPlayerTraining = false;
-            }
-
-            hasPlayerStartedTrainingCourse = false;
-            countdownTimerActive = false;
-            hasPlayerStartedTrainingCourse = false;
-
-            inputManager.isPlayerInTrainingCourse = false;
-            trainingCourseGunManager.isPlayerInTrainingCourse = false;
-
-            NextTrainingCourse(currentTrainingCourse);
+            isTrainingCourseOneComplete = true;
         }
+        else if (trainingCourseID == 2)
+        {
+            isTrainingCourseTwoComplete = true;
+        }
+        else if (trainingCourseID == 3)
+        {
+            isTrainingCourseThreeComplete = true;
+        }
+
+        foreach (GameObject target in currentTargetList)
+        {
+            target.GetComponent<Target>().isPlayerTraining = false;
+        }
+
+        hasPlayerStartedTrainingCourse = false;
+        countupTimerActive = false;
+        hasPlayerStartedTrainingCourse = false;
+
+        inputManager.isPlayerInTrainingCourse = false;
+        trainingCourseGunManager.isPlayerInTrainingCourse = false;
+
+        NextTrainingCourse(currentTrainingCourse);
     }
 
-    private void RestartTrainingCourse(int courseID)
+    public void RestartTrainingCourse()
     {
-        //Reset the training course if the player fails to complete it in time
+        //Reset the training course
         hasPlayerStartedTrainingCourse = false;
         isTrainingCourseAllSetup = false;
         isTrainingCourseComplete = false;
-        countdownTimerActive = false;
+        countupTimerActive = false;
         updateOnScreenText = true;
+
+        countupTimer = 0f;
 
         trainingCourseGunManager.isPlayerInTrainingCourse = false;
         inputManager.isPlayerInTrainingCourse = false;
@@ -290,7 +297,7 @@ public class TrainingCourseManager : MonoBehaviour
             target.GetComponent<Target>().isPlayerTraining = false;
         }
 
-        LoadTrainingCourse(courseID);
+        LoadTrainingCourse(currentTrainingCourse);
     }
 
 
@@ -318,14 +325,14 @@ public class TrainingCourseManager : MonoBehaviour
         {
             currentTrainingCourse = courseID;
             EnableStartingPoints(courseID);
-            playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
+            //playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
             EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
         }
         else if (isTrainingCourseOneComplete && (courseID == 2))
         {
             currentTrainingCourse = courseID;
-            playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
+            //playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
             EnableStartingPoints(courseID);
             EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
@@ -333,7 +340,7 @@ public class TrainingCourseManager : MonoBehaviour
         else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && (courseID == 3))
         {
             currentTrainingCourse = courseID;
-            playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
+            //playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
             EnableStartingPoints(courseID);
             EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
@@ -453,6 +460,46 @@ public class TrainingCourseManager : MonoBehaviour
 
     #endregion
 
+    #region Check for Par Time
+
+    private void CheckForParTime(float compareTime)
+    {
+        if (currentTrainingCourse == 1)
+        {
+            if (compareTime <= firstTrainingCourseParTime)
+            {
+                achievedParTimeForFirstCourse = true;
+            }
+
+            firstTrainingCoursePreviousTime = compareTime;
+        }
+        else if (currentTrainingCourse == 2)
+        {
+            if (compareTime <= secondTrainingCourseParTime)
+            {
+                achievedParTimeForSecondCourse = true;
+            }
+
+            secondTrainingCoursePreviousTime = compareTime;
+        }
+        else if (currentTrainingCourse == 3)
+        {
+            if (compareTime <= thirdTrainingCourseParTime)
+            {
+                achievedParTimeForThirdCourse = true;
+            }
+
+            thirdTrainingCoursePreviousTime = compareTime;
+        }
+
+        if (achievedParTimeForFirstCourse && achievedParTimeForSecondCourse && achievedParTimeForThirdCourse)
+        {
+            achievedParTimeForAllCourses = true;
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region Target Functions
@@ -487,16 +534,6 @@ public class TrainingCourseManager : MonoBehaviour
         }
 
 
-        //foreach (GameObject target in currentTargetList)
-        //{
-        //    Guid getTargetGuid = target.GetComponent<Target>().targetGuid;
-
-        //    if (getTargetGuid == guid)
-        //    {
-        //        //Destroy(target.transform);
-        //    }
-        //}
-
         Target targetToRemove = null;
         foreach (Target targetScript in targetScriptList)
         {
@@ -509,27 +546,11 @@ public class TrainingCourseManager : MonoBehaviour
         {
             targetScriptList.Remove(targetToRemove);
         }
-
-        //var targetsToRemove = new List<Target>();
-        //foreach (Target targetScript in targetScriptList)
-        //{
-        //    Guid getTargetGuid = targetScript.targetGuid;
-
-        //    if (getTargetGuid == guid)
-        //    {
-        //        targetsToRemove.Add(targetScript);
-        //    }
-        //}
-
-        //foreach (var item in targetsToRemove)
-        //{
-        //    targetScriptList.Remove(item);
-        //}
     }
 
     public void UpdateScore(int updateScore)
     {
-        if (hasPlayerStartedTrainingCourse && (countdownTimer != 0))
+        if (hasPlayerStartedTrainingCourse && (countupTimer != 0))
         {
             currentScore += updateScore;
             updateOnScreenText = true;
@@ -634,46 +655,63 @@ public class TrainingCourseManager : MonoBehaviour
                 continue;
             }
         }
-
-
-        //foreach (Target targetScript in targetScriptList)
-        //{
-        //    for (int i = 0; i < currentTargetList.Count; i++)
-        //    {
-        //        targetScript.SetTargetID(i);
-        //    }
-
-        //    targetScript.isPlayerTraining = true;
-        //    targetScript.targetGuid = Guid.NewGuid();
-        //    targetGuidList.Add(targetScript.targetGuid);
-        //    targetScript.ReportTarget();
-
-        //    if ((targetScriptList.Count != currentTargetList.Count))
-        //    {
-        //        Debug.LogError("TrainingCourseManager: Target script list count is not equal to the target game object list count!");
-        //        break;
-        //    }
-        //    else
-        //    {
-        //        isTrainingCourseAllSetup = true;
-        //        continue;
-        //    }
-        //}
     }
 
     #endregion
 
-    #region
+    #region Setting and Updating U.I. Elements
 
     private void SetUiText()
     {
         currentScoreText.text = "Score: " + currentScore.ToString();
         targetHitText.text = ("Targets hit: " + targetHitCount.ToString() + " / " + totalTargetCount.ToString());
 
+        if (currentTrainingCourse == 1 && firstTrainingCoursePreviousTime > 0f)
+        {
+            previousTimeText.text = "Previous time: " + firstTrainingCoursePreviousTime;
+        }
+        else if (currentTrainingCourse == 2 && secondTrainingCoursePreviousTime > 0f)
+        {
+            previousTimeText.text = "Previous time: " + secondTrainingCoursePreviousTime;
+        }
+        else if (currentTrainingCourse == 3 && thirdTrainingCoursePreviousTime > 0f)
+        {
+            previousTimeText.text = "Previous time: " + thirdTrainingCoursePreviousTime;
+        }
+
         updateOnScreenText = false;
     }
 
+    private void FirstTimeTutorialText()
+    {
+        if (currentTrainingCourse == 1)
+        {
+            tutorialText.gameObject.SetActive(true);
+            timeTitleText.gameObject.SetActive(false);
+        }
+        else
+        {
+            tutorialText.gameObject.SetActive(false);
+        }
+    }
+
     #endregion
+
+    private void SetPlayerPositionOnCourseFinish(int courseID)
+    {
+        if (!isTrainingCourseOneComplete && (courseID == 1))
+        {
+            playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
+        }
+        else if (isTrainingCourseOneComplete && (courseID == 2))
+        {
+            playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
+        }
+        else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && (courseID == 3))
+        {
+            playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
+        }
+    }
 
     void Update()
     {
@@ -682,9 +720,9 @@ public class TrainingCourseManager : MonoBehaviour
             hasPlayerStartedTrainingCourse = true;
         }
 
-        if (hasPlayerStartedTrainingCourse && countdownTimerActive && countdownTimer > 0f && !hasPlayerCrossedFinishingLine)
+        if (hasPlayerStartedTrainingCourse && countupTimerActive && !hasPlayerCrossedFinishingLine)
         {
-            CountdownTimer();
+            CountUpTimer();
 
             if (targetHitCount != 0)
             {
@@ -692,8 +730,6 @@ public class TrainingCourseManager : MonoBehaviour
                 {
                     Debug.Log("All targets hit!");
                     hasPlayerHitAllTargets = true;
-                    //countdownTimerActive = false;
-                    //NextTrainingCourse(currentTrainingCourse);
                 }
             }
         }
@@ -711,6 +747,8 @@ public class TrainingCourseManager : MonoBehaviour
         if (hasPlayerCrossedFinishingLine)
         {
             DisableFinishingPoints(currentTrainingCourse);
+            StopCountUpTimer();
+
         }
     }
 }
