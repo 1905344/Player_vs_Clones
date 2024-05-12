@@ -115,22 +115,22 @@ public class InputManager : MonoBehaviour
         return playerActions.Training.StartTrainingCourse.triggered;
     }
 
-    public bool PlayerPressedPauseButtonThisFrame()
+    public bool PlayerPressedPauseDuringTraining()
     {
-        if (isPlayerInTrainingCourse)
-        {
-            return playerActions.Training.PauseGame.triggered;
-        }
-        else
-        {
-            return playerActions.Player.PauseGame.triggered;
-        }
+        return playerActions.Training.PauseGame.triggered;
+    }
+
+    public bool PlayerPressedPauseOutsideTraining()
+    {
+        return playerActions.Player.PauseGame.triggered;
     }
 
     public bool isPlayerSprintingThisFrame { get; private set; }
 
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
+
+    public bool pauseGame = false;
 
     #endregion
 
@@ -160,7 +160,14 @@ public class InputManager : MonoBehaviour
 
         //Game manager event for when the player has completed all the training courses
         GameManager.Instance.FinishedTraining += OnFinishedTraining;
-        
+
+        //Pause and Resume Game
+        playerActions.Training.PauseGame.performed += OnPause;
+        playerActions.Player.PauseGame.performed += OnPause;
+
+        playerActions.Player.PauseGame.performed -= OnPause;
+        playerActions.Training.PauseGame.performed -= OnResume;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -317,7 +324,46 @@ public class InputManager : MonoBehaviour
     }
 
     #endregion
-    
+
+    #region OnPause and OnResume
+
+    private void OnPause(InputAction.CallbackContext context)
+    {
+        ToggleActionMap(playerActions.UI);
+        GameManager.Instance.OnPause();
+        pauseGame = true;
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    private void OnResume(InputAction.CallbackContext context)
+    {
+        if (pauseGame)
+        {
+            if (isPlayerInTrainingCourse)
+            {
+                ToggleActionMap(playerActions.Training);
+                GameManager.Instance.OnResume();
+                pauseGame = false;
+
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            else
+            {
+                ToggleActionMap(playerActions.Player);
+                GameManager.Instance.OnResume();
+                pauseGame = false;
+
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+    }
+
+    #endregion
+
     private void Update()
     {
         #region Update the first person camera (Cinemachine virtual camera) FOV (Field Of View)

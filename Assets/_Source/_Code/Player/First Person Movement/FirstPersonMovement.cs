@@ -49,9 +49,6 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private bool isJumping;
     [SerializeField] private bool isSprinting;
 
-    //Input manager
-    private InputManager inputManager;
-
     #endregion
 
     private void Awake()
@@ -62,7 +59,6 @@ public class FirstPersonMovement : MonoBehaviour
 
     private void Start()
     {
-        inputManager = InputManager.Instance;
         cameraTransform = Camera.main.transform;
         GameManager.Instance.SetAiBehaviour += EnablePlayerMovement;
     }
@@ -109,7 +105,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         #region Player Movement and Sprinting
 
-        playerMovement = inputManager.GetPlayerMovement();
+        playerMovement = InputManager.Instance.GetPlayerMovement();
         characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
         characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
@@ -117,7 +113,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         //Sprinting
 
-        isSprinting = inputManager.isPlayerSprintingThisFrame;
+        isSprinting = InputManager.Instance.isPlayerSprintingThisFrame;
 
         if (isSprinting)
         {
@@ -140,7 +136,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         #region Player Jumping
 
-        if (inputManager.PlayerJumped() && onGround && canJump)
+        if (InputManager.Instance.PlayerJumped() && onGround && canJump)
         {
             //Debug.Log("Jumping!");
             canJump = false;
@@ -157,7 +153,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         #endregion
 
-        if (inputManager.PlayerStartedTrainingCourse() )
+        if (InputManager.Instance.PlayerStartedTrainingCourse() )
         {
             EnablePlayerMovement();
         }

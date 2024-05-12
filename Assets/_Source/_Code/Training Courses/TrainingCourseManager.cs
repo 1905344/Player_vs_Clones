@@ -58,7 +58,10 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [Header("TMP Text References")]
-    [SerializeField] private TextMeshProUGUI countdownTimerText;
+    [SerializeField] private TextMeshProUGUI tutorialText;
+    [SerializeField] private TextMeshProUGUI timeTitleText;
+    [SerializeField] private TextMeshProUGUI countupTimerText;
+    [SerializeField] private TextMeshProUGUI previousTimeText;
     [SerializeField] private TextMeshProUGUI targetHitText;
     [SerializeField] private TextMeshProUGUI currentScoreText;
 
@@ -67,12 +70,17 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(15)]
 
     [Header("Countdown Timer")]
-    [SerializeField, Tooltip("The amount of time in the countdown timer for the first training course.")] private float firstTrainingCourseTimer;
-    [SerializeField, Tooltip("The amount of time in the countdown timer for the second training course.")] private float secondTrainingCourseTimer;
-    [SerializeField, Tooltip("The amount of time in the countdown timer for the third training course.")] private float thirdTrainingCourseTimer;
-    [SerializeField, Tooltip("The amount of time in the default countdown timer.")] private float countdownTimerAmount;
-    [SerializeField] private bool countdownTimerActive = false;
-    private float countdownTimer;
+    [SerializeField, Tooltip("The par time for the first training course.")] private float firstTrainingCourseParTime;
+    [SerializeField, Tooltip("The par time for the second training course.")] private float secondTrainingCourseParTime;
+    [SerializeField, Tooltip("The par time for the third training course.")] private float thirdTrainingCourseParTime;
+    [SerializeField] private bool countupTimerActive = false;
+    private float countupTimer;
+
+    [Space(5)]
+
+    [SerializeField, Tooltip("The previous time set for the first training course.")] private float firstTrainingCoursePreviousTime;
+    [SerializeField, Tooltip("The previous time set for the second training course.")] private float secondTrainingCoursePreviousTime;
+    [SerializeField, Tooltip("The previous time set for the third training course.")] private float thirdTrainingCoursePreviousTime;
 
     [Space(15)]
 
@@ -188,6 +196,8 @@ public class TrainingCourseManager : MonoBehaviour
         trainingCourseOneStartPositionTransform = trainingCourseOneStartingPosition.GetComponent<Transform>();
         trainingCourseTwoStartPositionTransform = trainingCourseTwoStartingPosition.GetComponent<Transform>();
         trainingCourseThreeStartPositionTransform = trainingCourseThreeStartingPosition.GetComponent<Transform>();
+
+        FirstTimeTutorialText();
     }
 
     public void DisableTrainingCourseManager()
@@ -197,68 +207,38 @@ public class TrainingCourseManager : MonoBehaviour
 
     #region Countdown Timer Functions
 
-    public void CountdownTimer()
+    public void CountUpTimer()
     {
-        if (countdownTimerActive)
+        if (countupTimerActive)
         {
-            if (countdownTimer > 0)
-            {
-                countdownTimer -= Time.deltaTime;
-                countdownTimerText.gameObject.SetActive(true);
-                DisplayCountDownTimer(countdownTimer);
-            }
-            else
-            {
-                countdownTimer = 0;
-                inputManager.OnDisable();
-                hasPlayerStartedTrainingCourse = false;
-                countdownTimerActive = false;
-                OnCountdownTimerFinished();
-            }
+            countupTimer += Time.deltaTime;
+            countupTimerText.gameObject.SetActive(true);
+            DisplayCountUpTimer();
         }
     }
 
-    private void DisplayCountDownTimer(float countTime)
+    private void DisplayCountUpTimer()
     {
-        countTime += 0;
-        float minutes = Mathf.FloorToInt(countTime / 60);
-        float seconds = Mathf.FloorToInt(countTime % 60);
-        float milliseconds = (countTime % 1) * 1000;
+        TimeSpan time = TimeSpan.FromSeconds(countupTimer);
+        countupTimer += 0;
 
-        countdownTimerText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+        countupTimerText.text = time.Minutes.ToString() + ":" + time.Seconds.ToString() + ":" + time.Milliseconds.ToString();
+
+        if (time.Minutes >= 59)
+        {
+            countupTimerText.text = time.Hours.ToString() + ":" + time.Minutes.ToString() + ":" + time.Seconds.ToString() + ":" + time.Milliseconds.ToString();
+        }
     }
 
-    private void OnCountdownTimerFinished()
+    private void StopCountUpTimer()
     {
-        countdownTimerText.text = string.Format("{0:00}:{1:00}:{2:000}", 0, 0, 0);
+        countupTimerActive = false;
 
-        //if (hasPlayerCrossedFinishingLine)
-        //{
-        //    isTrainingCourseComplete = true;
-        //    NextTrainingCourse(currentTrainingCourse);
-        //}
-        //else
-        //{
-        //    isTrainingCourseComplete = false;
-        //    RestartTrainingCourse(currentTrainingCourse);
-        //}
-    }
-
-    private void ResetCountdownTimer(int courseID)
-    {
-        countdownTimer = 0f;
-
-        if (courseID == 1)
+        if (hasPlayerCrossedFinishingLine)
         {
-            countdownTimer = firstTrainingCourseTimer;
-        }
-        else if (courseID == 2)
-        {
-            countdownTimer = secondTrainingCourseTimer;
-        }
-        else if (courseID == 3)
-        {
-            countdownTimer = thirdTrainingCourseTimer;
+            CheckForParTime();
+            isTrainingCourseComplete = true;
+            NextTrainingCourse(currentTrainingCourse);
         }
     }
 
@@ -270,6 +250,9 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void OnStartTrainingCourse(int trainingCourseID)
     {
+        tutorialText.gameObject.SetActive(false);
+        timeTitleText.gameObject.SetActive(true);
+
         isTrainingCourseComplete = false;
         hasPlayerCrossedFinishingLine = false;
         updatePlayerTransformPosition = false;
@@ -280,7 +263,7 @@ public class TrainingCourseManager : MonoBehaviour
 
         //playerMovementScript.EnablePlayerMovement();
 
-        countdownTimerActive = true;
+        countupTimerActive = true;
 
         ClearTargetLists();
         SetTargetLists(trainingCourseID);
@@ -290,9 +273,9 @@ public class TrainingCourseManager : MonoBehaviour
 
         EnableGuiText();
 
-        if (countdownTimer == 0)
+        if (countupTimer > 0)
         {
-            countdownTimer = countdownTimerAmount;
+            countupTimer = 0f;
         }
 
         updateOnScreenText = true;
@@ -306,6 +289,7 @@ public class TrainingCourseManager : MonoBehaviour
 
     private void OnTrainingCourseFinished(int trainingCourseID)
     {
+        StopCountUpTimer();
         trainingCourseID = currentTrainingCourse;
 
         DisableFinishingPoints(trainingCourseID);
@@ -336,7 +320,7 @@ public class TrainingCourseManager : MonoBehaviour
 
         hasPlayerHitAllTargets = false;
         hasPlayerStartedTrainingCourse = false;
-        countdownTimerActive = false;
+        countupTimerActive = false;
         hasPlayerStartedTrainingCourse = false;
 
         inputManager.isPlayerInTrainingCourse = false;
@@ -345,26 +329,23 @@ public class TrainingCourseManager : MonoBehaviour
         currentScore = 0;
         totalTargetHitCount += targetHitCount;
 
-        CheckForParTime();
+        //CheckForParTime();
 
         currentTrainingCourse++;
         NextTrainingCourse(currentTrainingCourse);
     }
 
-    private void RestartTrainingCourse(int courseID)
+    private void RestartTrainingCourse()
     {
-        //Need a trigger for the restart training course event in order for 
-        //this to be called correctly
-
-        //Reset the training course if the player fails to complete it in time
         hasPlayerStartedTrainingCourse = false;
         isTrainingCourseAllSetup = false;
         isTrainingCourseComplete = false;
-        countdownTimerActive = false;
+        countupTimerActive = false;
         updateOnScreenText = true;
 
         currentScore = 0;
         targetHitCount = 0;
+        countupTimer = 0f;
 
         inputManager.isPlayerInTrainingCourse = false;
 
@@ -373,9 +354,8 @@ public class TrainingCourseManager : MonoBehaviour
             target.GetComponent<Target>().isPlayerTraining = false;
         }
 
-        LoadTrainingCourse(courseID);
+        LoadTrainingCourse(currentTrainingCourse);
     }
-
 
     #endregion
 
@@ -394,8 +374,6 @@ public class TrainingCourseManager : MonoBehaviour
 
             EnableStartingPoints(courseID);
             updatePlayerTransformPosition = true;
-
-            ResetCountdownTimer(courseID);
         }
     }
 
@@ -613,7 +591,7 @@ public class TrainingCourseManager : MonoBehaviour
 
     public void UpdateScore(int updateScore)
     {
-        if (hasPlayerStartedTrainingCourse && (countdownTimer != 0))
+        if (hasPlayerStartedTrainingCourse && (countupTimer != 0))
         {
             currentScore += updateScore;
             updateOnScreenText = true;
@@ -729,6 +707,19 @@ public class TrainingCourseManager : MonoBehaviour
         currentScoreText.text = "Score: " + currentScore.ToString();
         targetHitText.text = ("Targets hit: " + targetHitCount.ToString() + " / " + totalTargetCount.ToString());
 
+        if (currentTrainingCourse == 1 && firstTrainingCoursePreviousTime > 0f)
+        {
+            previousTimeText.text = "Previous time: " + firstTrainingCoursePreviousTime;
+        }
+        else if (currentTrainingCourse == 2 && secondTrainingCoursePreviousTime > 0f)
+        {
+            previousTimeText.text = "Previous time: " + secondTrainingCoursePreviousTime;
+        }
+        else if (currentTrainingCourse == 3 && thirdTrainingCoursePreviousTime > 0f)
+        {
+            previousTimeText.text = "Previous time: " + thirdTrainingCoursePreviousTime;
+        }
+
         updateOnScreenText = false;
     }
 
@@ -736,14 +727,14 @@ public class TrainingCourseManager : MonoBehaviour
     {
         currentScoreText.gameObject.SetActive(true);
         targetHitText.gameObject.SetActive(true);
-        countdownTimerText.gameObject.SetActive(true);
+        countupTimerText.gameObject.SetActive(true);
     }
 
     private void DisableGuiText()
     {
         currentScoreText.gameObject.SetActive(false);
         targetHitText.gameObject.SetActive(false);
-        countdownTimerText.gameObject.SetActive(false);
+        countupTimerText.gameObject.SetActive(false);
     }
 
     #endregion
@@ -797,7 +788,7 @@ public class TrainingCourseManager : MonoBehaviour
     {
         if (currentTrainingCourse == 1)
         {
-            if (countdownTimer >= trainingCourseOneParTime)
+            if (countupTimer <= trainingCourseOneParTime)
             {
                 trainingCourseOneParTimeAchieved = true;
                 Debug.Log("TrainingCourseManager: Par time achieved for the first training course!");
@@ -809,7 +800,7 @@ public class TrainingCourseManager : MonoBehaviour
         }
         else if (currentTrainingCourse == 2)
         {
-            if (countdownTimer >= trainingCourseTwoParTime)
+            if (countupTimer <= trainingCourseTwoParTime)
             {
                 trainingCourseTwoParTimeAchieved = true;
                 Debug.Log("TrainingCourseManager: Par time achieved for the second training course!");
@@ -821,7 +812,7 @@ public class TrainingCourseManager : MonoBehaviour
         }
         else if (currentTrainingCourse == 3)
         {
-            if (countdownTimer >= trainingCourseThreeParTime)
+            if (countupTimer <= trainingCourseThreeParTime)
             {
                 trainingCourseThreeParTimeAchieved = true;
                 Debug.Log("TrainingCourseManager: Par time achieved for the third training course!");
@@ -833,6 +824,19 @@ public class TrainingCourseManager : MonoBehaviour
         }
     }
 
+    private void FirstTimeTutorialText()
+    {
+        if (currentTrainingCourse == 1)
+        {
+            tutorialText.gameObject.SetActive(true);
+            timeTitleText.gameObject.SetActive(false);
+        }
+        else
+        {
+            tutorialText.gameObject.SetActive(false);
+        }
+    }
+
     void Update()
     {
         if (inputManager.PlayerStartedTrainingCourse())
@@ -840,9 +844,9 @@ public class TrainingCourseManager : MonoBehaviour
             hasPlayerStartedTrainingCourse = true;
         }
 
-        if (hasPlayerStartedTrainingCourse && countdownTimerActive && countdownTimer > 0f && !hasPlayerCrossedFinishingLine)
+        if (hasPlayerStartedTrainingCourse && countupTimerActive && !hasPlayerCrossedFinishingLine)
         {
-            CountdownTimer();
+            CountUpTimer();
 
             if (targetHitCount != 0)
             {

@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEditor;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -26,7 +32,7 @@ public class GameManager : MonoBehaviour
 
     //Ending training courses
     public event Action<int> TrainingCourseStarted;
-    public event Action<int> TrainingCourseRestarted;
+    public event Action TrainingCourseRestarted;
     public event Action<int> TrainingCourseEnded;
 
     //Changing to the player gameplay
@@ -37,6 +43,24 @@ public class GameManager : MonoBehaviour
 
     //Events for the asymmetrical gameplay
     public event Action onAttackPlayer;
+
+    [Space(20)]
+
+    [Header("U.I. Elements")]
+    [SerializeField] Transform pauseScreen;
+    [SerializeField] Transform quitPromptScreen;
+
+    [Space(5)]
+
+    [SerializeField] Button resumeButton;
+    [SerializeField] Button restartButton;
+    [SerializeField] Button quitButton;
+
+    [Space(5)]
+
+    [SerializeField] Button returnToPauseScreen;
+    [SerializeField] Button quitToMainMenuButton;
+    [SerializeField] Button quitGameButton;
 
     #endregion
 
@@ -50,6 +74,11 @@ public class GameManager : MonoBehaviour
         {
             _instance = this;
         }
+    }
+
+    private void Start()
+    {
+        TrainingCourseRestarted += OnRestartButtonPressed;
     }
 
     #region Event Functions
@@ -70,11 +99,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnTrainingCourseRestart(int ID)
+    public void OnTrainingCourseRestart()
     {
         if (TrainingCourseRestarted != null)
         {
-            TrainingCourseRestarted(ID);
+            TrainingCourseRestarted();
         }
     }
 
@@ -100,6 +129,122 @@ public class GameManager : MonoBehaviour
         {
             SetAiBehaviour();
         }
+    }
+
+    #endregion
+
+    #region Pause Game Functions
+
+    #region Enable and Disable Buttons
+
+    private void EnablePauseButtons()
+    {
+        resumeButton.enabled = true;
+        resumeButton.interactable = true;
+
+        restartButton.enabled = true;
+        restartButton.interactable = true;
+
+        quitButton.enabled = true;
+        quitButton.interactable = true;
+    }
+
+    private void DisablePauseButtons()
+    {
+        resumeButton.enabled = false;
+        resumeButton.interactable = false;
+
+        restartButton.enabled = false;
+        restartButton.interactable = false;
+
+        quitGameButton.enabled = false;
+        quitGameButton.interactable = false;
+    }
+
+    private void EnableQuitScreenButtons()
+    {
+        quitToMainMenuButton.enabled = true;
+        quitToMainMenuButton.interactable = true;
+
+        quitGameButton.enabled = true;
+        quitGameButton.interactable = true;
+    }
+
+    private void DisableQuitScreenButtons()
+    {
+        quitToMainMenuButton.enabled = false;
+        quitToMainMenuButton.interactable = false;
+
+        quitGameButton.enabled = false;
+        quitGameButton.interactable = false;
+    }
+
+    #endregion
+
+    public void OnPause()
+    {
+        Time.timeScale = 0f;
+        pauseScreen.gameObject.SetActive(true);
+        EnablePauseButtons();
+    }
+
+    public void OnResume()
+    {
+        if (InputManager.Instance.pauseGame)
+        {
+            Debug.Log("Resuming the game.");
+            Time.timeScale = 1.0f;
+
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            pauseScreen.gameObject.SetActive(false);
+            quitPromptScreen.gameObject.SetActive(false);
+
+            DisablePauseButtons();
+            DisableQuitScreenButtons();
+            InputManager.Instance.pauseGame = false;
+        }
+    }
+
+    public void OnQuitButtonPressed()
+    {
+        quitPromptScreen.gameObject.SetActive(true);
+        DisablePauseButtons();
+        EnableQuitScreenButtons();
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    public void OnReturnToPauseScreenPressed()
+    {
+        quitPromptScreen.gameObject.SetActive(false);
+        EnablePauseButtons();
+        DisableQuitScreenButtons();
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    public void OnRestartButtonPressed()
+    {
+
+    }
+
+    public void OnQuitToMainMenu()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+
+    public void OnApplicationQuit()
+    {
+        Debug.Log("Game quit");
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Application.Quit();
     }
 
     #endregion
