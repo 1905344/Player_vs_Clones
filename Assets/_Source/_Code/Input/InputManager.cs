@@ -115,6 +115,18 @@ public class InputManager : MonoBehaviour
         return playerActions.Training.StartTrainingCourse.triggered;
     }
 
+    public bool PlayerPressedPauseButtonThisFrame()
+    {
+        if (isPlayerInTrainingCourse)
+        {
+            return playerActions.Training.PauseGame.triggered;
+        }
+        else
+        {
+            return playerActions.Player.PauseGame.triggered;
+        }
+    }
+
     public bool isPlayerSprintingThisFrame { get; private set; }
 
     public bool IsPlayerHoldingTheFireButton { get; private set; }

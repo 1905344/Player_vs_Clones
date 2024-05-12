@@ -80,6 +80,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Tap,Hold(duration=0.55)"",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Pause Game"",
+                    ""type"": ""Button"",
+                    ""id"": ""41308c31-b8f0-4344-98ca-ef159e453012"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -322,6 +331,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7fd7d17a-5493-4bce-822c-9806e142d29c"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Pause Game"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -855,6 +875,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause Game"",
+                    ""type"": ""Button"",
+                    ""id"": ""009bba2b-0882-4e54-b112-a59ddbb4f904"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -866,6 +895,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Start Training Course"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4b478186-e28e-40e4-93a2-f544aa904210"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Pause Game"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -943,6 +983,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+        m_Player_PauseGame = m_Player.FindAction("Pause Game", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -958,6 +999,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // Training
         m_Training = asset.FindActionMap("Training", throwIfNotFound: true);
         m_Training_StartTrainingCourse = m_Training.FindAction("Start Training Course", throwIfNotFound: true);
+        m_Training_PauseGame = m_Training.FindAction("Pause Game", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1025,6 +1067,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Reload;
     private readonly InputAction m_Player_Sprint;
+    private readonly InputAction m_Player_PauseGame;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -1035,6 +1078,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
+        public InputAction @PauseGame => m_Wrapper.m_Player_PauseGame;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1062,6 +1106,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @PauseGame.started += instance.OnPauseGame;
+            @PauseGame.performed += instance.OnPauseGame;
+            @PauseGame.canceled += instance.OnPauseGame;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1084,6 +1131,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @PauseGame.started -= instance.OnPauseGame;
+            @PauseGame.performed -= instance.OnPauseGame;
+            @PauseGame.canceled -= instance.OnPauseGame;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1224,11 +1274,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Training;
     private List<ITrainingActions> m_TrainingActionsCallbackInterfaces = new List<ITrainingActions>();
     private readonly InputAction m_Training_StartTrainingCourse;
+    private readonly InputAction m_Training_PauseGame;
     public struct TrainingActions
     {
         private @PlayerControls m_Wrapper;
         public TrainingActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @StartTrainingCourse => m_Wrapper.m_Training_StartTrainingCourse;
+        public InputAction @PauseGame => m_Wrapper.m_Training_PauseGame;
         public InputActionMap Get() { return m_Wrapper.m_Training; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1241,6 +1293,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @StartTrainingCourse.started += instance.OnStartTrainingCourse;
             @StartTrainingCourse.performed += instance.OnStartTrainingCourse;
             @StartTrainingCourse.canceled += instance.OnStartTrainingCourse;
+            @PauseGame.started += instance.OnPauseGame;
+            @PauseGame.performed += instance.OnPauseGame;
+            @PauseGame.canceled += instance.OnPauseGame;
         }
 
         private void UnregisterCallbacks(ITrainingActions instance)
@@ -1248,6 +1303,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @StartTrainingCourse.started -= instance.OnStartTrainingCourse;
             @StartTrainingCourse.performed -= instance.OnStartTrainingCourse;
             @StartTrainingCourse.canceled -= instance.OnStartTrainingCourse;
+            @PauseGame.started -= instance.OnPauseGame;
+            @PauseGame.performed -= instance.OnPauseGame;
+            @PauseGame.canceled -= instance.OnPauseGame;
         }
 
         public void RemoveCallbacks(ITrainingActions instance)
@@ -1318,6 +1376,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnPauseGame(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
@@ -1335,5 +1394,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     public interface ITrainingActions
     {
         void OnStartTrainingCourse(InputAction.CallbackContext context);
+        void OnPauseGame(InputAction.CallbackContext context);
     }
 }
