@@ -154,7 +154,6 @@ public class TrainingCourseManager : MonoBehaviour
         //Associating the functions for the events in the Game Manager
         GameManager.Instance.TrainingCourseStarted += LoadTrainingCourse;
         GameManager.Instance.TrainingCourseEnded += OnTrainingCourseFinished;
-        GameManager.Instance.TrainingCourseEnded += SetPlayerPositionOnCourseFinish;
         GameManager.Instance.FinishedTraining += OnTrainingComplete;
 
         trainingCourseGunManager = trainingCourseGun.GetComponent<GunplayManager>();
@@ -325,14 +324,14 @@ public class TrainingCourseManager : MonoBehaviour
         {
             currentTrainingCourse = courseID;
             EnableStartingPoints(courseID);
-            //playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
+            playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
             EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
         }
         else if (isTrainingCourseOneComplete && (courseID == 2))
         {
             currentTrainingCourse = courseID;
-            //playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
+            playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
             EnableStartingPoints(courseID);
             EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
@@ -340,7 +339,7 @@ public class TrainingCourseManager : MonoBehaviour
         else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && (courseID == 3))
         {
             currentTrainingCourse = courseID;
-            //playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
+            playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
             EnableStartingPoints(courseID);
             EnableFinishingPoints(courseID);
             OnStartTrainingCourse(courseID);
@@ -696,22 +695,6 @@ public class TrainingCourseManager : MonoBehaviour
     }
 
     #endregion
-
-    private void SetPlayerPositionOnCourseFinish(int courseID)
-    {
-        if (!isTrainingCourseOneComplete && (courseID == 1))
-        {
-            playerCharacter.transform.position = trainingCourseOneStartingPosition.transform.position;
-        }
-        else if (isTrainingCourseOneComplete && (courseID == 2))
-        {
-            playerCharacter.transform.position = trainingCourseTwoStartingPosition.transform.position;
-        }
-        else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && (courseID == 3))
-        {
-            playerCharacter.transform.position = trainingCourseThreeStartingPosition.transform.position;
-        }
-    }
 
     void Update()
     {
