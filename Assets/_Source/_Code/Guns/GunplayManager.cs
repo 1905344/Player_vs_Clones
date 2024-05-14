@@ -1,9 +1,7 @@
 using System;
-using UnityEngine;
-using TMPro;
-using UnityEngine.EventSystems;
-using Cinemachine;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 
 public class GunplayManager : MonoBehaviour
 {
@@ -29,6 +27,9 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private GameObject bulletHoleDecal;
     [SerializeField] private TextMeshProUGUI bulletsRemainingText;
     //[SerializeField] private Material gunMaterial;
+
+    [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
+    [SerializeField, Tooltip("Parent object for the instantiated muzzle flashes")] private Transform muzzleFlashParent;
 
     private List<GameObject> muzzleFlashList = new List<GameObject>();
     private List<GameObject> bulletHoleDecalList = new List<GameObject>();
@@ -311,41 +312,21 @@ public class GunplayManager : MonoBehaviour
 
     private void CreateVisualFeedback(GameObject flash, GameObject bulletHole)
     {
-        if (muzzleFlashList.Count == 1) 
+        if (muzzleFlashParent.childCount > 0)
         {
-            foreach(GameObject item in  muzzleFlashList)
-            {
-                DestroyImmediate(item, true);
-                continue;
-            }
-
-            muzzleFlashList.Clear();
-            Instantiate(flash, muzzle.position, Quaternion.identity);
-            muzzleFlashList.Add(flash);
-        }
-        else
-        {
-            Instantiate(flash, muzzle.position, Quaternion.identity);
-            muzzleFlashList.Add(flash);
+            GameObject child = muzzleFlashParent.GetChild(0).gameObject;
+            DestroyImmediate(child);
         }
 
-        if (bulletHoleDecalList.Count == 1)
+        if (bulletDecalParent.childCount > 0)
         {
-            foreach (GameObject item in bulletHoleDecalList)
-            {
-                DestroyImmediate(item, true);
-                continue;
-            }
+            GameObject child = bulletDecalParent.GetChild(0).gameObject;
+            DestroyImmediate(child);
+        }
 
-            bulletHoleDecalList.Clear();
-            Instantiate(bulletHole, _raycastHit.point, Quaternion.Euler(0, 180, 0));
-            bulletHoleDecalList.Add(bulletHole);
-        }
-        else
-        {
-            Instantiate(bulletHole, _raycastHit.point, Quaternion.Euler(0, 180, 0));
-            bulletHoleDecalList.Add(bulletHole);
-        }
+        Instantiate(flash, muzzle.position, Quaternion.identity, muzzleFlashParent);
+
+        Instantiate(bulletHole, _raycastHit.point, Quaternion.Euler(0, 180, 0), bulletDecalParent);
     }
 
     private void Update()

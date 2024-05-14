@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
 using System;
-using UnityEngine.EventSystems;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 
 public class TrainingCourseManager : MonoBehaviour
 {
@@ -59,7 +57,13 @@ public class TrainingCourseManager : MonoBehaviour
 
     [Header("TMP Text References")]
     [SerializeField] private TextMeshProUGUI tutorialText;
+    [SerializeField] private TextMeshProUGUI startTrainingCourseText;
+    [SerializeField] private TextMeshProUGUI startGameplayText;
+
+    [Space(5)]
+
     [SerializeField] private TextMeshProUGUI timeTitleText;
+    [SerializeField] private TextMeshProUGUI parTimeText;
     [SerializeField] private TextMeshProUGUI countupTimerText;
     [SerializeField] private TextMeshProUGUI previousTimeText;
     [SerializeField] private TextMeshProUGUI targetHitText;
@@ -81,13 +85,6 @@ public class TrainingCourseManager : MonoBehaviour
     [SerializeField, Tooltip("The previous time set for the first training course.")] private float firstTrainingCoursePreviousTime;
     [SerializeField, Tooltip("The previous time set for the second training course.")] private float secondTrainingCoursePreviousTime;
     [SerializeField, Tooltip("The previous time set for the third training course.")] private float thirdTrainingCoursePreviousTime;
-
-    [Space(15)]
-
-    [Header("Training Course Par Times")]
-    [SerializeField] private float trainingCourseOneParTime;
-    [SerializeField] private float trainingCourseTwoParTime;
-    [SerializeField] private float trainingCourseThreeParTime;
 
     [Space(5)]
 
@@ -133,8 +130,11 @@ public class TrainingCourseManager : MonoBehaviour
     [Space(10)]
 
     [SerializeField] public bool didPlayerAchieveHighestScore = false;
+    [SerializeField] public bool didPlayerAchieveGreatScore = false;
     [SerializeField] public bool didPlayerAchieveAboveAverageScore = false;
+    [SerializeField] public bool didPlayerAchieveAverageScore = false;
     [SerializeField] public bool didPlayerAchieveBelowAverageScore = false;
+    [SerializeField] public bool didPlayerAvoidAllTargets = false;
 
     [Space(10)]
 
@@ -146,7 +146,7 @@ public class TrainingCourseManager : MonoBehaviour
     [Header("Training Course Booleans")]
     [SerializeField] private bool isTrainingCourseOneComplete = false;
     [SerializeField] private bool isTrainingCourseTwoComplete = false;
-    [SerializeField] private bool isTrainingCourseThreeComplete = false;
+    [SerializeField] public bool isTrainingCourseThreeComplete = false;
     [SerializeField] public bool isTrainingComplete = false;
 
     public int currentTrainingCourse = 0;
@@ -205,7 +205,7 @@ public class TrainingCourseManager : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    #region Countdown Timer Functions
+    #region Countup Timer Functions
 
     public void CountUpTimer()
     {
@@ -234,8 +234,9 @@ public class TrainingCourseManager : MonoBehaviour
     {
         countupTimerActive = false;
 
-        if (hasPlayerCrossedFinishingLine)
+        if (isTrainingCourseComplete)
         {
+            Debug.Log("TrainingCourseManager: current training course is: " + currentTrainingCourse + " and countUpTimer is " + countupTimer);
             CheckForParTime();
             isTrainingCourseComplete = true;
             NextTrainingCourse(currentTrainingCourse);
@@ -251,6 +252,7 @@ public class TrainingCourseManager : MonoBehaviour
     private void OnStartTrainingCourse(int trainingCourseID)
     {
         tutorialText.gameObject.SetActive(false);
+        startTrainingCourseText.gameObject.SetActive(false);
         timeTitleText.gameObject.SetActive(true);
 
         isTrainingCourseComplete = false;
@@ -290,6 +292,8 @@ public class TrainingCourseManager : MonoBehaviour
     private void OnTrainingCourseFinished(int trainingCourseID)
     {
         StopCountUpTimer();
+        CheckForParTime();
+
         trainingCourseID = currentTrainingCourse;
 
         DisableFinishingPoints(trainingCourseID);
@@ -302,14 +306,20 @@ public class TrainingCourseManager : MonoBehaviour
         if (trainingCourseID == 1)
         {
             isTrainingCourseOneComplete = true;
+            firstTrainingCoursePreviousTime = countupTimer;
+
         }
         else if (trainingCourseID == 2)
         {
             isTrainingCourseTwoComplete = true;
+            secondTrainingCoursePreviousTime = countupTimer;
+
         }
         else if (trainingCourseID == 3)
         {
             isTrainingCourseThreeComplete = true;
+            thirdTrainingCoursePreviousTime = countupTimer;
+
         }
 
         foreach (GameObject target in currentTargetList)
@@ -328,8 +338,6 @@ public class TrainingCourseManager : MonoBehaviour
         totalScore += currentScore;
         currentScore = 0;
         totalTargetHitCount += targetHitCount;
-
-        //CheckForParTime();
 
         currentTrainingCourse++;
         NextTrainingCourse(currentTrainingCourse);
@@ -413,21 +421,78 @@ public class TrainingCourseManager : MonoBehaviour
                 Debug.Log("TrainingCourseManager: Player has hit all the targets!");
             }
 
+            foreach (GameObject target in currentTargetList)
+            {
+                Destroy(target);
+            }
+
             float checkScore = (finalScore / totalScore) * 100f;
+            float threeQuarterTotalScore = totalScore * 0.75f;
+            float halfTotalScore = totalScore * 0.5f;
+            float quarterTotalScore = totalScore * 0.25f;
+
+            timeTitleText.gameObject.SetActive(false);
+            previousTimeText.gameObject.SetActive(false);
+            parTimeText.gameObject.SetActive(false);
+            countupTimerText.gameObject.SetActive(false);
+            startTrainingCourseText.gameObject.SetActive(false);
+
+            startGameplayText.gameObject.SetActive(true);
+
+            OnMovePlayerTransform(currentTrainingCourse);
 
             if (finalScore == totalScore)
             {
                 didPlayerAchieveHighestScore = true;
             }
-            else if (checkScore > 48.5f)
+            else if (checkScore < totalScore && checkScore >= threeQuarterTotalScore)
+            {
+                didPlayerAchieveGreatScore = true;
+
+                didPlayerAchieveHighestScore = false;
+                didPlayerAchieveAverageScore = false;
+                didPlayerAchieveBelowAverageScore = false;
+                didPlayerAvoidAllTargets = false;
+            }
+            else if (checkScore >= halfTotalScore && checkScore < threeQuarterTotalScore)
             {
                 didPlayerAchieveAboveAverageScore = true;
+
+                didPlayerAchieveHighestScore = false;
+                didPlayerAchieveGreatScore = false;
+                didPlayerAchieveAverageScore = false;
                 didPlayerAchieveBelowAverageScore = false;
+                didPlayerAvoidAllTargets = false;
             }
-            else if (checkScore <= 48.5f)
+            else if (checkScore == halfTotalScore)
             {
+                didPlayerAchieveAverageScore = true;
+
+                didPlayerAchieveHighestScore = false;
+                didPlayerAchieveGreatScore = false;
                 didPlayerAchieveAboveAverageScore = false;
+                didPlayerAchieveBelowAverageScore = false;
+                didPlayerAvoidAllTargets = false;
+            }
+            else if (checkScore < halfTotalScore && checkScore > quarterTotalScore)
+            {
                 didPlayerAchieveBelowAverageScore = true;
+
+                didPlayerAchieveHighestScore = false;
+                didPlayerAchieveGreatScore = false;
+                didPlayerAchieveAboveAverageScore = false;
+                didPlayerAchieveAverageScore = false;
+                didPlayerAvoidAllTargets = false;
+            }
+            else if (checkScore <= quarterTotalScore && finalScore > 0)
+            {
+                didPlayerAvoidAllTargets = true;
+
+                didPlayerAchieveHighestScore = false;
+                didPlayerAchieveGreatScore = false;
+                didPlayerAchieveAboveAverageScore = true;
+                didPlayerAchieveAverageScore = false;
+                didPlayerAchieveBelowAverageScore = false;
             }
 
             if (trainingCourseOneParTimeAchieved && trainingCourseTwoParTimeAchieved && trainingCourseThreeParTimeAchieved)
@@ -709,14 +774,17 @@ public class TrainingCourseManager : MonoBehaviour
 
         if (currentTrainingCourse == 1 && firstTrainingCoursePreviousTime > 0f)
         {
+            parTimeText.text = "Par time: " + firstTrainingCourseParTime.ToString() + " seconds";
             previousTimeText.text = "Previous time: " + firstTrainingCoursePreviousTime;
         }
         else if (currentTrainingCourse == 2 && secondTrainingCoursePreviousTime > 0f)
         {
+            parTimeText.text = "Par time: " + secondTrainingCourseParTime.ToString() + " seconds";
             previousTimeText.text = "Previous time: " + secondTrainingCoursePreviousTime;
         }
         else if (currentTrainingCourse == 3 && thirdTrainingCoursePreviousTime > 0f)
         {
+            parTimeText.text = "Par time: " + thirdTrainingCourseParTime.ToString() + " seconds";
             previousTimeText.text = "Previous time: " + thirdTrainingCoursePreviousTime;
         }
 
@@ -728,6 +796,8 @@ public class TrainingCourseManager : MonoBehaviour
         currentScoreText.gameObject.SetActive(true);
         targetHitText.gameObject.SetActive(true);
         countupTimerText.gameObject.SetActive(true);
+        timeTitleText.gameObject.SetActive(true);
+        parTimeText.gameObject.SetActive(true);
     }
 
     private void DisableGuiText()
@@ -735,6 +805,8 @@ public class TrainingCourseManager : MonoBehaviour
         currentScoreText.gameObject.SetActive(false);
         targetHitText.gameObject.SetActive(false);
         countupTimerText.gameObject.SetActive(false);
+        timeTitleText.gameObject.SetActive(false);
+        parTimeText.gameObject.SetActive(false);
     }
 
     #endregion
@@ -744,21 +816,27 @@ public class TrainingCourseManager : MonoBehaviour
         if (!isTrainingCourseOneComplete && (courseID == 1))
         {
             playerCharacterTransform.position = trainingCourseOneStartPositionTransform.position;
-            playerCharacterTransform.rotation = Quaternion.identity;
+            startTrainingCourseText.gameObject.SetActive(true);
+            playerCharacterTransform.rotation = trainingCourseOneStartPositionTransform.rotation;
         }
         else if (isTrainingCourseOneComplete && (courseID == 2))
         {
             playerCharacterTransform.position = trainingCourseTwoStartPositionTransform.position;
-            playerCharacterTransform.rotation = Quaternion.identity;
+            startTrainingCourseText.gameObject.SetActive(true);
+            playerCharacterTransform.rotation = trainingCourseTwoStartPositionTransform.rotation;
         }
         else if (isTrainingCourseOneComplete && isTrainingCourseTwoComplete && (courseID == 3))
         {
             playerCharacterTransform.position = trainingCourseThreeStartPositionTransform.position;
-            playerCharacterTransform.rotation = Quaternion.identity;
+            startTrainingCourseText.gameObject.SetActive(true);
+            playerCharacterTransform.rotation = trainingCourseThreeStartPositionTransform.rotation;
         }
         else if (isTrainingComplete)
         {
             playerCharacter.transform.position = playerStartingPositionAfterTraining.position;
+            playerCharacter.transform.rotation = playerStartingPositionAfterTraining.rotation;
+
+            startGameplayText.gameObject.SetActive(true);
         }
     }
 
@@ -788,7 +866,7 @@ public class TrainingCourseManager : MonoBehaviour
     {
         if (currentTrainingCourse == 1)
         {
-            if (countupTimer <= trainingCourseOneParTime)
+            if (countupTimer <= firstTrainingCourseParTime)
             {
                 trainingCourseOneParTimeAchieved = true;
                 Debug.Log("TrainingCourseManager: Par time achieved for the first training course!");
@@ -800,7 +878,7 @@ public class TrainingCourseManager : MonoBehaviour
         }
         else if (currentTrainingCourse == 2)
         {
-            if (countupTimer <= trainingCourseTwoParTime)
+            if (countupTimer <= secondTrainingCourseParTime)
             {
                 trainingCourseTwoParTimeAchieved = true;
                 Debug.Log("TrainingCourseManager: Par time achieved for the second training course!");
@@ -812,7 +890,7 @@ public class TrainingCourseManager : MonoBehaviour
         }
         else if (currentTrainingCourse == 3)
         {
-            if (countupTimer <= trainingCourseThreeParTime)
+            if (countupTimer <= thirdTrainingCourseParTime)
             {
                 trainingCourseThreeParTimeAchieved = true;
                 Debug.Log("TrainingCourseManager: Par time achieved for the third training course!");

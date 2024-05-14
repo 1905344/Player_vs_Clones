@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,6 +37,12 @@ public class enemyAiController : MonoBehaviour
     {
         playerCharacter = GameObject.Find("Player").transform;
         meshAgent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        //GameManager.Instance.LevelCompleted += DestroyThisEnemy;
+        //GameManager.Instance.LevelFailed += DestroyThisEnemy;
     }
 
     #region States

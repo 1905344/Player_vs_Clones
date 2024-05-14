@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class FinishTrainingCourseTrigger : MonoBehaviour
 {
@@ -14,6 +13,10 @@ public class FinishTrainingCourseTrigger : MonoBehaviour
 
     [Header("Training Course Ending Position Collider")]
     private BoxCollider trainingCourseFinishedCollider;
+
+    [Space(15)]
+
+    [SerializeField] private GameObject asymmGameManager;
 
     #endregion
 
@@ -30,11 +33,15 @@ public class FinishTrainingCourseTrigger : MonoBehaviour
             {
                 GameManager.Instance.OnTrainingCourseEnd(courseID);
             }
-            
-            if (courseID == 3 && courseID != 0)
+
+            if (courseID == 3 && courseID != 0 && TrainingCourseManager.Instance.isTrainingCourseThreeComplete)
             {
                 TrainingCourseManager.Instance.isTrainingComplete = true;
                 GameManager.Instance.OnPlayerFinishedTraining();
+                asymmGameManager.SetActive(true);
+                asymmGameplayManager.Instance.SetupAsymmetricalGameplay();
+
+
                 Debug.Log("Player has crossed the final finishing line.");
             }
 

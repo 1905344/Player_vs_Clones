@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Start Game",
+                    "type": "Button",
+                    "id": "c43750bf-6b94-4bc6-a925-dd072f411410",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -320,6 +329,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Pause Game",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ed4cb6fa-b200-4fc5-9d84-6d91b146a654",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Start Game",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

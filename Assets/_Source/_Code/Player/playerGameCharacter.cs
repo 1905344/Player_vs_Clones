@@ -20,11 +20,16 @@ public class playerGameCharacter : MonoBehaviour
     {
         isAlive = true;
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        OnPlayerDeath();
-        //OnPlayerHit();
-    }
+
+    //private void OnCollisionEnter(Collision other)
+    //{
+    //    if (other.tag)
+    //    {
+            
+    //    }
+    //    OnPlayerDeath();
+    //    //OnPlayerHit();
+    //}
 
     private void OnPlayerHit(int damage)
     {

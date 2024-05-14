@@ -22,14 +22,21 @@ public class asymmGameplayManager : MonoBehaviour
     private FirstPersonMovement playerMovementScript;
     [SerializeField] private Transform startingPosition;
 
+    [SerializeField] private Transform enemyParentTransform;
+    [SerializeField] private GameObject mainGameTutorialText;
+
     [Space(15)]
 
     [Header("Enemies")]
     [SerializeField] private GameObject aggressiveEnemyType;
-    [SerializeField] private GameObject aggressiveExplorativeEnemyType;
+    [SerializeField] private GameObject fastAggressiveEnemyType;
+    [SerializeField] private GameObject slowAggressiveEnemyType;
+    //[SerializeField] private GameObject aggressiveExplorativeEnemyType;
     [SerializeField] private GameObject defensiveEnemyType;
-    [SerializeField] private GameObject defensiveExplorativeEnemyType;
-    [SerializeField] private GameObject explorativeEnemyType;
+    [SerializeField] private GameObject fastDefensiveEnemyType;
+    [SerializeField] private GameObject slowDefensiveEnemyType;
+    //[SerializeField] private GameObject defensiveExplorativeEnemyType;
+    //[SerializeField] private GameObject explorativeEnemyType;
 
     [Space(10)]
 
@@ -42,7 +49,19 @@ public class asymmGameplayManager : MonoBehaviour
 
     [SerializeField] private bool setEnemyAggressive = false;
     [SerializeField] private bool setEnemyDefensive = false;
-    [SerializeField] private bool setEnemyExplorative = false;
+    [SerializeField] private bool setEnemyFast = false;
+    [SerializeField] private bool setEnemySlow = false;
+    //[SerializeField] private bool setEnemyExplorative = false;
+
+    [Space(15)]
+
+    [Header("U.I. Elements")]
+    [SerializeField] private GameObject gameOverScreen;
+
+    [Space(15)]
+
+    [Header("Level Complete Trigger")]
+    [SerializeField] private GameObject redDoor;
 
     private bool createEnemies = false;
 
@@ -62,23 +81,53 @@ public class asymmGameplayManager : MonoBehaviour
         {
             _instance = this;
         }
+
+        //GameManager.Instance.FinishedTraining += SetupAsymmetricalGameplay;
+        ////GameManager.Instance.LevelFailed += OnGameOver;
+        GameManager.Instance.SetAiBehaviour += SetupEnemyTypes;
+        GameManager.Instance.OnStartGame += StartMainGameplay;
     }
 
     private void Start()
     {
-        GameManager.Instance.FinishedTraining += SetupAsymmetricalGameplay;
-        GameManager.Instance.SetAiBehaviour += SetupEnemyTypes;
         playerMovementScript = playerCharacter.GetComponent<FirstPersonMovement>();
     }
 
-    private void SetupAsymmetricalGameplay()
+    public void SetupAsymmetricalGameplay()
     {
         InputManager.Instance.OnEnable();
         TrainingCourseManager.Instance.DisableTrainingCourseManager();
+
+        playerCharacter.transform.position = startingPosition.position;
+
+        enemyOneStartingPosition.gameObject.SetActive(true);
+        enemyTwoStartingPosition.gameObject.SetActive(true);
+        enemyThreeStartingPosition.gameObject.SetActive(true);
+
+        GameManager.Instance.OnSetAiBehaviour();
     }
 
-    private void SetupEnemyTypes()
+    public void StartMainGameplay()
     {
+        if (TrainingCourseManager.Instance.isTrainingComplete)
+        {
+            mainGameTutorialText.SetActive(false);
+            redDoor.SetActive(true);
+        }
+    }
+
+    private void OnGameOver()
+    {
+        gameOverScreen.gameObject.SetActive(true);
+        redDoor.SetActive(false);
+    }
+
+    #region Setting up and creating enemies
+
+    public void SetupEnemyTypes()
+    {
+        Debug.Log("Creating enemies now!");
+
         if (enemyNumberID < 3)
         {
             createEnemies = true;
@@ -92,40 +141,181 @@ public class asymmGameplayManager : MonoBehaviour
 
     private void SetEnemyTypes()
     {
-        if (TrainingCourseManager.Instance.hasPlayerHitAllTargets && TrainingCourseManager.Instance.didPlayerAchieveAboveAverageScore && !TrainingCourseManager.Instance.didPlayerAchieveBelowAverageScore && !TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        #region Training Course 1
+
+        if (enemyNumberID == 0)
         {
-            setEnemyAggressive = true;
-            setEnemyExplorative = true;
-            CreateEnemy(aggressiveEnemyType);
+            if (TrainingCourseManager.Instance.trainingCourseOneParTimeAchieved && TrainingCourseManager.Instance.hasPlayerHitAllCourseOneTargets)
+            {
+                //Fast and aggressive enemy type
+                setEnemyAggressive = true;
+                setEnemyDefensive = false;
+                setEnemyFast = true;
+                setEnemySlow = false;
+                CreateEnemy(fastAggressiveEnemyType);
+            }
+            else if (TrainingCourseManager.Instance.trainingCourseOneParTimeAchieved && !TrainingCourseManager.Instance.hasPlayerHitAllCourseOneTargets)
+            {
+                //Fast and defensive enemy type
+                setEnemyAggressive = false;
+                setEnemyDefensive = true;
+                setEnemyFast = true;
+                setEnemySlow = false;
+                CreateEnemy(fastDefensiveEnemyType);
+            }
+            else if (!TrainingCourseManager.Instance.trainingCourseOneParTimeAchieved && TrainingCourseManager.Instance.hasPlayerHitAllCourseOneTargets)
+            {
+                //Slow and aggressive enemy type
+                setEnemyAggressive = true;
+                setEnemyDefensive = false;
+                setEnemyFast = false;
+                setEnemySlow = true;
+                CreateEnemy(slowAggressiveEnemyType);
+            }
+            else if (!TrainingCourseManager.Instance.trainingCourseOneParTimeAchieved && !TrainingCourseManager.Instance.hasPlayerHitAllCourseOneTargets)
+            {
+                //Slow and defensive enemy type
+                setEnemyAggressive = false;
+                setEnemyDefensive = true;
+                setEnemyFast = false;
+                setEnemySlow = true;
+                CreateEnemy(slowDefensiveEnemyType);
+            }
         }
-        else if (!TrainingCourseManager.Instance.hasPlayerHitAllTargets && !TrainingCourseManager.Instance.didPlayerAchieveAboveAverageScore && TrainingCourseManager.Instance.didPlayerAchieveBelowAverageScore && TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+
+        #endregion
+
+        #region Training Course 2
+
+        else if (enemyNumberID == 1)
         {
-            setEnemyAggressive = false;
-            setEnemyExplorative = true;
-            setEnemyDefensive = true;
-            CreateEnemy(defensiveExplorativeEnemyType);
+            if (TrainingCourseManager.Instance.trainingCourseTwoParTimeAchieved && TrainingCourseManager.Instance.hasPlayerHitAllCourseTwoTargets)
+            {
+                //Fast and aggressive enemy type
+                setEnemyAggressive = true;
+                setEnemyDefensive = false;
+                setEnemyFast = true;
+                setEnemySlow = false;
+                CreateEnemy(fastAggressiveEnemyType);
+            }
+            else if (TrainingCourseManager.Instance.trainingCourseTwoParTimeAchieved && !TrainingCourseManager.Instance.hasPlayerHitAllCourseTwoTargets)
+            {
+                //Fast and defensive enemy type
+                setEnemyAggressive = false;
+                setEnemyDefensive = true;
+                setEnemyFast = true;
+                setEnemySlow = false;
+                CreateEnemy(fastDefensiveEnemyType);
+            }
+            else if (!TrainingCourseManager.Instance.trainingCourseTwoParTimeAchieved && TrainingCourseManager.Instance.hasPlayerHitAllCourseTwoTargets)
+            {
+                //Slow and aggressive enemy type
+                setEnemyAggressive = true;
+                setEnemyDefensive = false;
+                setEnemyFast = false;
+                setEnemySlow = true;
+                CreateEnemy(slowAggressiveEnemyType);
+            }
+            else if (!TrainingCourseManager.Instance.trainingCourseTwoParTimeAchieved && !TrainingCourseManager.Instance.hasPlayerHitAllCourseTwoTargets)
+            {
+                //Slow and defensive enemy type
+                setEnemyAggressive = false;
+                setEnemyDefensive = true;
+                setEnemyFast = false;
+                setEnemySlow = true;
+                CreateEnemy(slowDefensiveEnemyType);
+            }
         }
-        else if (TrainingCourseManager.Instance.hasPlayerHitAllTargets && TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        
+        #endregion
+
+        #region Training Course 3
+
+        else if (enemyNumberID == 2)
         {
-            setEnemyAggressive = false;
-            setEnemyDefensive = true;
-            setEnemyExplorative = true;
-            CreateEnemy(aggressiveExplorativeEnemyType);
+            if (TrainingCourseManager.Instance.trainingCourseThreeParTimeAchieved && TrainingCourseManager.Instance.hasPlayerHitAllCourseThreeTargets)
+            {
+                //Fast and aggressive enemy type
+                setEnemyAggressive = true;
+                setEnemyDefensive = false;
+                setEnemyFast = true;
+                setEnemySlow = false;
+                CreateEnemy(fastAggressiveEnemyType);
+            }
+            else if (TrainingCourseManager.Instance.trainingCourseThreeParTimeAchieved && !TrainingCourseManager.Instance.hasPlayerHitAllCourseThreeTargets)
+            {
+                //Fast and defensive enemy type
+                setEnemyAggressive = false;
+                setEnemyDefensive = true;
+                setEnemyFast = true;
+                setEnemySlow = false;
+                CreateEnemy(fastDefensiveEnemyType);
+            }
+            else if (!TrainingCourseManager.Instance.trainingCourseThreeParTimeAchieved && TrainingCourseManager.Instance.hasPlayerHitAllCourseThreeTargets)
+            {
+                //Slow and aggressive enemy type
+                setEnemyAggressive = true;
+                setEnemyDefensive = false;
+                setEnemyFast = false;
+                setEnemySlow = true;
+                CreateEnemy(slowAggressiveEnemyType);
+            }
+            else if (!TrainingCourseManager.Instance.trainingCourseThreeParTimeAchieved && !TrainingCourseManager.Instance.hasPlayerHitAllCourseThreeTargets)
+            {
+                //Slow and defensive enemy type
+                setEnemyAggressive = false;
+                setEnemyDefensive = true;
+                setEnemyFast = false;
+                setEnemySlow = true;
+                CreateEnemy(slowDefensiveEnemyType);
+            }
         }
-        else if (!TrainingCourseManager.Instance.hasPlayerHitAllTargets && TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
-        {
-            setEnemyAggressive = false;
-            setEnemyDefensive = false;
-            setEnemyExplorative = true;
-            CreateEnemy(aggressiveExplorativeEnemyType);
-        }
-        else if (!TrainingCourseManager.Instance.hasPlayerHitAllTargets && !TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
-        {
-            setEnemyAggressive = false;
-            setEnemyDefensive = false;
-            setEnemyExplorative = true;
-            CreateEnemy(explorativeEnemyType);
-        }
+
+        #endregion
+
+        #region Previous System 
+
+        //if (TrainingCourseManager.Instance.hasPlayerHitAllTargets && TrainingCourseManager.Instance.didPlayerAchieveAboveAverageScore && !TrainingCourseManager.Instance.didPlayerAchieveBelowAverageScore && !TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        //{
+        //    //Set enemy to aggressive and explorative
+        //    setEnemyAggressive = true;
+        //    setEnemyExplorative = true;
+        //    CreateEnemy(aggressiveEnemyType);
+        //}
+        //else if (!TrainingCourseManager.Instance.hasPlayerHitAllTargets && !TrainingCourseManager.Instance.didPlayerAchieveAboveAverageScore && TrainingCourseManager.Instance.didPlayerAchieveBelowAverageScore && TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        //{
+        //    //Set enemy to defensive and explorative
+        //    setEnemyAggressive = false;
+        //    setEnemyExplorative = true;
+        //    setEnemyDefensive = true;
+        //    CreateEnemy(defensiveExplorativeEnemyType);
+        //}
+        //else if (TrainingCourseManager.Instance.hasPlayerHitAllTargets && TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        //{
+        //    //Set enemy to defensive and explorative
+        //    setEnemyAggressive = false;
+        //    setEnemyDefensive = true;
+        //    setEnemyExplorative = true;
+        //    CreateEnemy(aggressiveExplorativeEnemyType);
+        //}
+        //else if (!TrainingCourseManager.Instance.hasPlayerHitAllTargets && TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        //{
+        //    //Set enemy to explorative
+        //    setEnemyAggressive = false;
+        //    setEnemyDefensive = false;
+        //    setEnemyExplorative = true;
+        //    CreateEnemy(explorativeEnemyType);
+        //}
+        //else if (!TrainingCourseManager.Instance.hasPlayerHitAllTargets && !TrainingCourseManager.Instance.hasPlayerAchievedParTimeForAllCourses)
+        //{
+        //    //Set enemy to explorative
+        //    setEnemyAggressive = false;
+        //    setEnemyDefensive = false;
+        //    setEnemyExplorative = true;
+        //    CreateEnemy(explorativeEnemyType);
+        //}
+
+        #endregion
     }
 
     private void CreateEnemy(GameObject enemy)
@@ -134,31 +324,48 @@ public class asymmGameplayManager : MonoBehaviour
 
         if (enemyNumberID == 1)
         {
-            Instantiate(enemy, enemyOneStartingPosition.position, Quaternion.identity); 
+            Instantiate(enemy, enemyOneStartingPosition.position, Quaternion.identity, enemyParentTransform); 
             enemyList.Add(enemy);
 
             setEnemyAggressive = false;
             setEnemyDefensive = false;
-            setEnemyExplorative = false;
+            setEnemyFast= false;
+            setEnemySlow= false;
+            //setEnemyExplorative = false;
+
+            Debug.Log("First enemy created.");
+
+            enemyOneStartingPosition.gameObject.SetActive(false);
         }
         else if (enemyNumberID == 2)
         {
-            Instantiate(enemy, enemyTwoStartingPosition.position, Quaternion.identity); 
+            Instantiate(enemy, enemyTwoStartingPosition.position, Quaternion.identity, enemyParentTransform); 
             enemyList.Add(enemy);
             setEnemyAggressive = false;
             setEnemyDefensive = false;
-            setEnemyExplorative = false;
+            setEnemyFast = false;
+            //setEnemyExplorative = false;
 
+            Debug.Log("Second enemy created.");
+
+            enemyTwoStartingPosition.gameObject.SetActive(false);
         }
         else if (enemyNumberID == 3)
         {
-            Instantiate(enemy, enemyThreeStartingPosition.position, Quaternion.identity);
+            Instantiate(enemy, enemyThreeStartingPosition.position, Quaternion.identity, enemyParentTransform);
             enemyList.Add(enemy);
             setEnemyAggressive = false;
             setEnemyDefensive = false;
-            setEnemyExplorative = false;
+            setEnemySlow= false;
+            //setEnemyExplorative = false;
+
+            Debug.Log("Third enemy created.");
+
+            enemyThreeStartingPosition.gameObject.SetActive(false);
         }
     }
+
+    #endregion
 
     private void Update()
     {
@@ -166,5 +373,10 @@ public class asymmGameplayManager : MonoBehaviour
         {
             SetEnemyTypes();
         }
+
+        //if (InputManager.Instance.PlayerStartedMainGame())
+        //{
+        //    StartMainGameplay();
+        //}
     }
 }

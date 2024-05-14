@@ -1,126 +1,157 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : Menu
 {
-    [Header("Menu Navigation")]
-    [SerializeField] private SaveSlotsMenu saveSlotsMenu;
+    //[Header("Menu Navigation")]
+    //[SerializeField] private SaveSlotsMenu saveSlotsMenu;
 
-    [Space(5)]
+    //[Space(5)]
 
     [Header("Menu Buttons")]
     [SerializeField] private Button newGameButton;
-    [SerializeField] private Button continueGameButton;
-    [SerializeField] private Button loadGameButton;
+    //[SerializeField] private Button continueGameButton;
+    //[SerializeField] private Button loadGameButton;
     [SerializeField] private Button settingsButton;
+    [SerializeField] private Button controlsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
     [Space(15)]
 
-    [Header("Sound Effects")]
-    [SerializeField] private AudioClip buttonPressed;
-    [SerializeField] private AudioClip buttonSelected;
-    [SerializeField] private AudioClip backButtonPressed;
-    [SerializeField] private AudioClip quitGame;
+    [Header("U.I. Panels")]
+    [SerializeField] private GameObject controlsPage;
+    [SerializeField] private GameObject creditsPage;
+
+
+    //[Space(15)]
+
+    //[Header("Sound Effects")]
+    //[SerializeField] private AudioClip buttonPressed;
+    //[SerializeField] private AudioClip buttonSelected;
+    //[SerializeField] private AudioClip backButtonPressed;
+    //[SerializeField] private AudioClip quitGame;
 
     void Start()
     {
-        DisableButtonsDependingOnData();
+        //DisableButtonsDependingOnData();
     }
 
     //Disable this if you're not using the Save & Load System
     //Disables the menu buttons if no save data is found
-    private void DisableButtonsDependingOnData()
-    {
-        if (!DataPersistenceManager.instance.HasGameData())
-        {
-            continueGameButton.interactable = false;
-            loadGameButton.interactable = false;
-        }
-    }
+    //private void DisableButtonsDependingOnData()
+    //{
+    //    if (!DataPersistenceManager.instance.HasGameData())
+    //    {
+    //        continueGameButton.interactable = false;
+    //        loadGameButton.interactable = false;
+    //    }
+    //}
+
+    #region OnButtons Clicked
 
     public void OnNewGameClicked()
     {
-        //Requires the Sound Manager scripts
-        SoundManager.instance.PlaySFX(buttonPressed);
-
-        //Enable this if using multiple save slots in the Save & Load System
-        saveSlotsMenu.ActivateMenu(false);
-        this.DeactivateMenu();
+        //saveSlotsMenu.ActivateMenu(false);
+        //this.DeactivateMenu();
+        SceneManager.LoadSceneAsync("DemoLevel");
     }
 
-    public void OnContinueClicked()
-    {
-        DisableMenuButtons();
-
-        //Requires the Sound Manager scripts
-        //Play the button pressed sound effect
-        SoundManager.instance.PlaySFX(buttonPressed);
-
-        //Disable this if you're not using the Save & Load System
-        //Save the game anytime before loading a new scene
-        DataPersistenceManager.instance.SaveGame();
-
-        //Disable this if you're not using the Save & Load System
-        //Load the next scene which will in turn load the game because of
-        //OnSceneLoaded() in the DataPersistenceManager
-        SceneManager.LoadSceneAsync(DataPersistenceManager.instance.GetSavedSceneName());
-    }
+    //public void OnContinueClicked()
+    //{
+    //    DisableMenuButtons();
+    //    DataPersistenceManager.instance.SaveGame();
+    //    SceneManager.LoadSceneAsync(DataPersistenceManager.instance.GetSavedSceneName());
+    //}
 
     public void OnLoadGameClicked()
     {
-        //Requires the Sound Manager scripts
-        SoundManager.instance.PlaySFX(buttonPressed);
-
-        //Enable this if using multiple save slots in the Save & Load System
-        saveSlotsMenu.ActivateMenu(true);
+        //saveSlotsMenu.ActivateMenu(true);
         this.DeactivateMenu();
     }
 
-    public void OnSettingsClicked()
+    public void OnControlsClicked()
     {
-        //Requires the Sound Manager scripts
-        SoundManager.instance.PlaySFX(buttonPressed);
-
+        DisableMenuButtons();
         this.DeactivateMenu();
+        controlsPage.SetActive(true);
     }
 
-    public void OnExtrasClicked()
+    public void OnReturnFromControlsPage()
     {
-        //Requires the Sound Manager scripts
-        SoundManager.instance.PlaySFX(buttonPressed);
+        this.ActivateMenu();
+        EnableMenuButtons();
+        controlsPage.SetActive(false);
 
-        this.DeactivateMenu();
+        EventSystem.current.SetSelectedGameObject(newGameButton.gameObject);
     }
+
+    //public void OnTutorialClicked()
+    //{
+    //    DisableMenuButtons();
+    //    SceneManager.LoadSceneAsync("Tutorial");
+    //}
+
+    public void OnCreditsClicked()
+    {
+        DisableMenuButtons();
+        this.DeactivateMenu();
+        creditsPage.SetActive(true);
+    }
+
+    public void OnReturnFromCreditsClicked()
+    {
+        this.ActivateMenu();
+        EnableMenuButtons();
+        creditsPage.SetActive(false);
+
+        EventSystem.current.SetSelectedGameObject(newGameButton.gameObject);
+    }
+
+    #endregion
 
     public void OnApplicationQuit()
     {
         //Requires the Sound Manager scripts
-        SoundManager.instance.PlaySFX(buttonPressed);
+        //SoundManager.instance.PlaySFX(buttonPressed);
 
+        Debug.Log("Quit game from main menu.");
         Application.Quit();
     }
 
+    #region Enable and Disable Main Menu Buttons
     private void DisableMenuButtons()
     {
         //Preventing the player from interacting with the buttons
         newGameButton.interactable = false;
-        continueGameButton.interactable = false;
-        settingsButton.interactable = false;
+        //continueGameButton.interactable = false;
+        controlsButton.interactable = false;
         creditsButton.interactable = false;
         quitButton.interactable = false;
     }
+
+    private void EnableMenuButtons()
+    {
+        //Allowing the player to interact with the buttons
+        newGameButton.interactable = true;
+        //continueGameButton.interactable = true;
+        controlsButton.interactable = true;
+        creditsButton.interactable = true;
+        quitButton.interactable = true;
+    }
+
+    #endregion
+
+    #region Active and Deactivate Main Menu
 
     public void ActivateMenu()
     {
         this.gameObject.SetActive(true);
 
         //Disable this if you're not using the Save & Load System
-        DisableButtonsDependingOnData();
+        //DisableButtonsDependingOnData();
     }
 
     public void DeactivateMenu()
@@ -128,4 +159,5 @@ public class MainMenu : Menu
         this.gameObject.SetActive(false);
     }
 
+    #endregion
 }

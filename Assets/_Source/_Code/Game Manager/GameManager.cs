@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.SceneManagement;
-using UnityEditor;
-using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,13 +36,21 @@ public class GameManager : MonoBehaviour
     public event Action SetAiBehaviour;
 
     //Events for the asymmetrical gameplay
-    public event Action onAttackPlayer;
+    public event Action OnAttackPlayer;
+
+    //Event to start the main game
+    public event Action OnStartGame;
+
+    //Events for game over states
+    //public event Action LevelFailed;
+    public event Action LevelCompleted;
 
     [Space(20)]
 
     [Header("U.I. Elements")]
     [SerializeField] Transform pauseScreen;
     [SerializeField] Transform quitPromptScreen;
+    [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
 
@@ -131,6 +133,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //public void OnLevelFailed()
+    //{
+    //    if (LevelFailed != null)
+    //    {
+    //        LevelFailed();
+    //    }
+    //}
+
+    public void OnLevelCompleted()
+    {
+        if (LevelCompleted != null)
+        {
+            LevelCompleted();
+        }
+    }
+
+    public void OnPlayerAttacked()
+    {
+        if (OnAttackPlayer != null)
+        {
+            OnAttackPlayer();
+        }
+    }
+
+    public void OnStartMainGame()
+    {
+        if (OnStartGame != null)
+        {
+            OnStartGame();
+        }
+    }
+
     #endregion
 
     #region Pause Game Functions
@@ -139,6 +173,8 @@ public class GameManager : MonoBehaviour
 
     private void EnablePauseButtons()
     {
+        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+
         resumeButton.enabled = true;
         resumeButton.interactable = true;
 
@@ -245,6 +281,20 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         Application.Quit();
+    }
+
+    #endregion
+
+    #region Game Over Functions
+
+    public void OnGameOverReturnToMainMenu()
+    {
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+
+    public void RestartLevelFromGameOverScreen()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     #endregion

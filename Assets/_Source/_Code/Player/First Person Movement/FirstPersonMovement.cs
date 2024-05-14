@@ -1,8 +1,4 @@
-using JetBrains.Annotations;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 [RequireComponent(typeof(CharacterController))]
 public class FirstPersonMovement : MonoBehaviour
@@ -60,7 +56,7 @@ public class FirstPersonMovement : MonoBehaviour
     private void Start()
     {
         cameraTransform = Camera.main.transform;
-        GameManager.Instance.SetAiBehaviour += EnablePlayerMovement;
+        GameManager.Instance.OnStartGame += EnablePlayerMovement;
     }
 
     #region Enable and Disable Player Movement
@@ -152,11 +148,5 @@ public class FirstPersonMovement : MonoBehaviour
         playerVelocity.y += playerGravity * Time.deltaTime;
 
         #endregion
-
-        if (InputManager.Instance.PlayerStartedTrainingCourse() )
-        {
-            EnablePlayerMovement();
-        }
-
     }
 }

@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using Cinemachine;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
-using Cinemachine;
-using UnityEngine.InputSystem.Interactions;
 
 public class InputManager : MonoBehaviour
 {
@@ -67,6 +64,8 @@ public class InputManager : MonoBehaviour
     public bool isPlayerFinishedTraining = false;
     private int getTrainingCourseID = 1;
 
+    public bool levelComplete;
+
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
         for (int i = 0; i < input.devices.Count; i++)
@@ -125,6 +124,11 @@ public class InputManager : MonoBehaviour
         return playerActions.Player.PauseGame.triggered;
     }
 
+    public bool PlayerStartedMainGame()
+    {
+        return playerActions.Player.StartGame.triggered;
+    }
+
     public bool isPlayerSprintingThisFrame { get; private set; }
 
     public bool IsPlayerHoldingTheFireButton { get; private set; }
@@ -158,6 +162,9 @@ public class InputManager : MonoBehaviour
         //Starting the training course
         playerActions.Training.StartTrainingCourse.performed += StartTraining;
 
+        //Starting the main game
+        playerActions.Player.StartGame.performed += StartMainGame;
+
         //Game manager event for when the player has completed all the training courses
         GameManager.Instance.FinishedTraining += OnFinishedTraining;
 
@@ -165,8 +172,14 @@ public class InputManager : MonoBehaviour
         playerActions.Training.PauseGame.performed += OnPause;
         playerActions.Player.PauseGame.performed += OnPause;
 
-        playerActions.Player.PauseGame.performed -= OnPause;
+        playerActions.Player.PauseGame.performed += OnPause;
         playerActions.Training.PauseGame.performed -= OnResume;
+
+        //Level completed
+        //GameManager.Instance.LevelCompleted += DisableGameInput;
+        //GameManager.Instance.LevelFailed += DisableGameInput;
+
+        //GameManager.Instance.OnStartGame += OnEnable;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -198,6 +211,18 @@ public class InputManager : MonoBehaviour
     {
         ToggleActionMap(playerActions.Training);
         playerActions.Training.Enable();
+        playerActions.Player.Disable();
+    }
+
+    public void DisableGameInput()
+    {
+        if (!levelComplete)
+        {
+            return;
+        }
+
+        ToggleActionMap(playerActions.UI);
+        playerActions.Training.Disable();
         playerActions.Player.Disable();
     }
 
@@ -297,6 +322,26 @@ public class InputManager : MonoBehaviour
 
     #endregion
 
+    #region Starting the Main Game
+
+    private void StartMainGame(InputAction.CallbackContext context)
+    {
+        if (!isPlayerFinishedTraining)
+        {
+            return;
+        }
+
+        OnEnable();
+        getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+        
+        Debug.Log("InputManager: Starting the main game");
+
+        //Trigger the start training course event
+        GameManager.Instance.OnStartMainGame();
+    }
+
+    #endregion
+
     #endregion
 
     #region Input Device Changed
@@ -329,12 +374,20 @@ public class InputManager : MonoBehaviour
 
     private void OnPause(InputAction.CallbackContext context)
     {
-        ToggleActionMap(playerActions.UI);
-        GameManager.Instance.OnPause();
-        pauseGame = true;
+        if (pauseGame)
+        {
+            pauseGame = false;
+            return;
+        }
+        else
+        {
+            DisableGameInput();
+            GameManager.Instance.OnPause();
+            pauseGame = true;
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+        }
     }
 
     private void OnResume(InputAction.CallbackContext context)
@@ -359,6 +412,10 @@ public class InputManager : MonoBehaviour
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
+        }
+        else
+        {
+            return;
         }
     }
 
