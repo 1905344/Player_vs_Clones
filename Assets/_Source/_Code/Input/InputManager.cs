@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using Cinemachine;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
-using Cinemachine;
-using UnityEngine.InputSystem.Interactions;
-using Autodesk.Fbx;
 
 public class InputManager : MonoBehaviour
 {
@@ -26,10 +22,6 @@ public class InputManager : MonoBehaviour
 
     public bool isGamepad = false;
     public bool isKeyboard = true;
-
-    //Input Action References
-    public InputAction fireGunButton;
-    public InputAction sprintButton;
 
     [SerializeField] public string _currentControlScheme;
 
@@ -67,6 +59,12 @@ public class InputManager : MonoBehaviour
     public bool isTappingFireButton = false;
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
+
+    public bool isPlayerInTrainingCourse = false;
+    public bool isPlayerFinishedTraining = false;
+    private int getTrainingCourseID = 1;
+
+    public bool levelComplete;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -113,7 +111,22 @@ public class InputManager : MonoBehaviour
 
     public bool PlayerStartedTrainingCourse()
     {
-        return playerActions.Player.StartTrainingCourse.triggered;
+        return playerActions.Training.StartTrainingCourse.triggered;
+    }
+
+    public bool PlayerPressedPauseDuringTraining()
+    {
+        return playerActions.Training.PauseGame.triggered;
+    }
+
+    public bool PlayerPressedPauseOutsideTraining()
+    {
+        return playerActions.Player.PauseGame.triggered;
+    }
+
+    public bool PlayerStartedMainGame()
+    {
+        return playerActions.Player.StartGame.triggered;
     }
 
     public bool isPlayerSprintingThisFrame { get; private set; }
@@ -121,13 +134,9 @@ public class InputManager : MonoBehaviour
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
 
-    #endregion
+    public bool pauseGame = false;
 
-    public void OnControlsChanged(PlayerInput input)
-    {
-        isGamepad = input.currentControlScheme.Equals("Gamepad");
-        isKeyboard = input.currentControlScheme.Equals("Keyboard");
-    }
+    #endregion
 
     private void Awake()
     {
@@ -142,15 +151,86 @@ public class InputManager : MonoBehaviour
 
         playerActions = new PlayerControls();
 
+        //Sprinting
         playerActions.Player.Sprint.performed += SprintThisFrame;
         playerActions.Player.Sprint.canceled += StopSprintingThisFrame;
-        playerActions.Player.Fire.performed += FiringGunThisFrame;
-        
+
+        //Shooting/Pressing the fire button
+        playerActions.Player.Fire.started += FiringGunThisFrame;
+        playerActions.Player.Fire.performed += StopFiringGunThisFrame;
+
+        //Starting the training course
+        playerActions.Training.StartTrainingCourse.performed += StartTraining;
+
+        //Starting the main game
+        playerActions.Player.StartGame.performed += StartMainGame;
+
+        //Game manager event for when the player has completed all the training courses
+        GameManager.Instance.FinishedTraining += OnFinishedTraining;
+
+        //Pause and Resume Game
+        playerActions.Training.PauseGame.performed += OnPause;
+        playerActions.Player.PauseGame.performed += OnPause;
+
+        playerActions.Player.PauseGame.performed += OnPause;
+        playerActions.Training.PauseGame.performed -= OnResume;
+
+        //Level completed
+        //GameManager.Instance.LevelCompleted += DisableGameInput;
+        //GameManager.Instance.LevelFailed += DisableGameInput;
+
+        //GameManager.Instance.OnStartGame += OnEnable;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        playerActions.Training.StartTrainingCourse.Enable();
+        ToggleActionMap(playerActions.Training);
     }
 
+    private void Start()
+    {
+        ToggleActionMap(playerActions.UI);
+
+        vCam.SetFocalLength(_FOV);
+        Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+    }
+
+    #region OnEnable and OnDisable
+
+    public void OnEnable()
+    {
+        ToggleActionMap(playerActions.Player);
+        playerActions.Training.Disable();
+        playerActions.Player.Enable();
+    }
+
+    public void OnDisable()
+    {
+        ToggleActionMap(playerActions.Training);
+        playerActions.Training.Enable();
+        playerActions.Player.Disable();
+    }
+
+    public void DisableGameInput()
+    {
+        if (!levelComplete)
+        {
+            return;
+        }
+
+        ToggleActionMap(playerActions.UI);
+        playerActions.Training.Disable();
+        playerActions.Player.Disable();
+    }
+
+    #endregion
+
     #region Input
+
+    #region Sprint
 
     private void SprintThisFrame(InputAction.CallbackContext context)
     {
@@ -182,15 +262,19 @@ public class InputManager : MonoBehaviour
         isPlayerSprintingThisFrame = false;
     }
 
+    #endregion
+
+    #region Firing the Gun
+
     private void FiringGunThisFrame(InputAction.CallbackContext context)
     {
-        if (context.duration < 0.5f)
+        if (context.duration < 0.5f && !IsPlayerTappingTheFireButton)
         {
             IsPlayerTappingTheFireButton = true;
             IsPlayerHoldingTheFireButton = false;
             Debug.Log("Player is tapping the fire gun input key.");
         }
-        else if (context.duration > 0.51f)
+        else if (context.duration > 0.51f && !IsPlayerHoldingTheFireButton)
         {
             IsPlayerHoldingTheFireButton = true;
             IsPlayerTappingTheFireButton = false;
@@ -199,58 +283,78 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    private void StopFiringGunThisFrame(InputAction.CallbackContext context)
+    {
+        IsPlayerHoldingTheFireButton = false;
+        IsPlayerTappingTheFireButton = false;
+    }
+
     #endregion
 
-    private void Start()
+    #region Starting the Training Course and Disabling the Start Training Course Button
+
+    private void StartTraining(InputAction.CallbackContext context)
     {
-        //if (!(fireGunButton.action.interactions.Contains("Tap") && fireGunButton.action.interactions.Contains("Press") && fireGunButton.action.interactions.Contains("Hold")))
-        //{
-        //    return;
-        //}
+        OnEnable();
+        getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
 
-        //if (!(sprintButton.action.interactions.Contains("Tap") && sprintButton.action.interactions.Contains("Hold")))
-        //{
-        //    return;
-        //}
-
-        #region Gun action interaction context
-
-        //fireGunButton.action.started += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        IsPlayerHoldingTheFireButton = false;
-        //        IsPlayerTappingTheFireButton = true;
-
-        //        Debug.Log("Player is tapping the fire button.");
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        IsPlayerHoldingTheFireButton = true;
-        //        IsPlayerTappingTheFireButton = false;
-        //        Debug.Log("Player is holding the fire button.");
-        //    }
-        //};
-
-        #endregion
-
-        ToggleActionMap(playerActions.UI);
-
-        vCam.SetFocalLength(_FOV);
-        Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
-
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        if (isPlayerInTrainingCourse)
+        {
+            return;
+        }
+        else
+        {
+            isPlayerInTrainingCourse = true;
+            getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+            Debug.Log("InputManager: The current training course is: " + getTrainingCourseID);
+            //Trigger the start training course event
+            GameManager.Instance.OnTrainingCourseStart(getTrainingCourseID);
+        }
     }
 
-    public void OnEnable()
+    public void OnFinishedTraining()
     {
-        playerActions.Enable();
+        OnEnable();
+        isPlayerFinishedTraining = true;
+        playerActions.Training.Disable();
+        playerActions.Player.Fire.Disable();
     }
 
-    public void OnDisable()
+    #endregion
+
+    #region Starting the Main Game
+
+    private void StartMainGame(InputAction.CallbackContext context)
     {
-        playerActions.Disable();
+        if (!isPlayerFinishedTraining)
+        {
+            return;
+        }
+
+        OnEnable();
+        getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+        
+        Debug.Log("InputManager: Starting the main game");
+
+        //Trigger the start training course event
+        GameManager.Instance.OnStartMainGame();
     }
+
+    #endregion
+
+    #endregion
+
+    #region Input Device Changed
+
+    public void OnControlsChanged(PlayerInput input)
+    {
+        isGamepad = input.currentControlScheme.Equals("Gamepad");
+        isKeyboard = input.currentControlScheme.Equals("Keyboard");
+    }
+
+    #endregion
+
+    #region Toggle Action Maps
 
     public static void ToggleActionMap(InputActionMap actionMap)
     {
@@ -264,19 +368,56 @@ public class InputManager : MonoBehaviour
         actionMap.Enable();
     }
 
-    #region Firing Gun
+    #endregion
 
-    //public void IsPlayerHoldingFireButton()
-    //{
-    //    isHoldingFireButton = true;
-    //    isTappingFireButton = false;
-    //}
+    #region OnPause and OnResume
 
-    //public void IsPlayerTappingFireButton()
-    //{
-    //    isTappingFireButton = true;
-    //    isHoldingFireButton = false;
-    //}
+    private void OnPause(InputAction.CallbackContext context)
+    {
+        if (pauseGame)
+        {
+            pauseGame = false;
+            return;
+        }
+        else
+        {
+            DisableGameInput();
+            GameManager.Instance.OnPause();
+            pauseGame = true;
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+    }
+
+    private void OnResume(InputAction.CallbackContext context)
+    {
+        if (pauseGame)
+        {
+            if (isPlayerInTrainingCourse)
+            {
+                ToggleActionMap(playerActions.Training);
+                GameManager.Instance.OnResume();
+                pauseGame = false;
+
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            else
+            {
+                ToggleActionMap(playerActions.Player);
+                GameManager.Instance.OnResume();
+                pauseGame = false;
+
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
 
     #endregion
 
@@ -309,66 +450,29 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        #region Getting Interaction Type for the Shoot/Fire Button
+        #region Checking if the player has pressed the start training course button
 
-        //Action started
-        //fireGunButton.action.started += context =>
-        //{
-        //    isTappingFireButton = false;
-        //    isPressingFireButton = false;
-        //    isHoldingFireButton = false;
-
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        isTappingFireButton = true;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isPressingFireButton = true;
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        isHoldingFireButton = true;
-        //    }
-        //};
-
-        //Action performed
-        //fireGunButton.action.performed += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        isTappingFireButton = false;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isPressingFireButton = false;
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        isHoldingFireButton = false;
-        //    }
-        //};
-
-        //Action cancelled
-        //fireGunButton.action.canceled += context =>
-        //{
-        //    if (context.interaction is TapInteraction)
-        //    {
-        //        isTappingFireButton = false;
-        //    }
-        //    else if (context.interaction is PressInteraction)
-        //    {
-        //        isPressingFireButton = false;
-        //    }
-        //    else if (context.interaction is HoldInteraction)
-        //    {
-        //        isHoldingFireButton = false;
-        //    }
-        //};
+        if (isPlayerInTrainingCourse)
+        {
+            playerActions.Training.StartTrainingCourse.Disable();
+        }
 
         #endregion
 
-        Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
+        //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
+
+        if (isPlayerInTrainingCourse)
+        {
+            ToggleActionMap(playerActions.Player);
+        }
+        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining)
+        {
+            ToggleActionMap(playerActions.Training);
+        }
+        else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+        }
 
     }
 }

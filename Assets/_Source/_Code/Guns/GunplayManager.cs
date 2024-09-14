@@ -1,17 +1,23 @@
-using UnityEngine;
-using Cinemachine;
+using System;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
 public class GunplayManager : MonoBehaviour
 {
     #region Variables
 
     [Header("References")]
-    [SerializeField] private CinemachineVirtualCamera vCam;
+    [SerializeField] private Camera _camera;
     [SerializeField] private Transform muzzle;
-    [SerializeField] private RaycastHit _raycastHit;
+    private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
     [SerializeField] private LayerMask isTarget;
+
+    [Space(5)]
+
+    [SerializeField] private GameObject leftHand;
+    [SerializeField] private GameObject rightHand;
     private InputManager inputManager;
 
     [Space(10)]
@@ -20,11 +26,20 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHoleDecal;
     [SerializeField] private TextMeshProUGUI bulletsRemainingText;
+    //[SerializeField] private Material gunMaterial;
+
+    [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
+    [SerializeField, Tooltip("Parent object for the instantiated muzzle flashes")] private Transform muzzleFlashParent;
+
+    private List<GameObject> muzzleFlashList = new List<GameObject>();
+    private List<GameObject> bulletHoleDecalList = new List<GameObject>();
 
     [Space(10)]
+
     [Header("Camera Shake")]
-    [SerializeField, Tooltip("How much the camera will shake")] private float cameraShakeMagnitude;
     [SerializeField, Tooltip("How long the camera will shake for")] private float cameraShakeAmplitude;
+    [SerializeField, Tooltip("How much the camera will shake")] private float cameraShakeMagnitude;
+    
 
     [Space(20)]
 
@@ -48,8 +63,8 @@ public class GunplayManager : MonoBehaviour
 
     [Space(10)]
 
-    [SerializeField] private bool allowFireButtonHold;
-    [SerializeField] private bool isShooting;
+    [SerializeField] private bool allowFireButtonHold = false;
+    [SerializeField] private bool isShooting = false;
     [SerializeField] private bool canShoot;
     [SerializeField] private bool isReloading;
 
@@ -57,18 +72,99 @@ public class GunplayManager : MonoBehaviour
 
     [SerializeField] public bool isPlayerInTrainingCourse = false;
 
+    [Space(10)]
+
+    [SerializeField] private bool updateGunPosition = false;
+    [SerializeField, Tooltip("Enable this to place the gun in the 'left hand' of the character")] public bool gunInLeftHand = true;
+    [SerializeField, Tooltip("Enable this to place the gun in the 'right hand' of the character")] public bool gunInRightHand = false;
+
+    [Space(15)]
+
+    [SerializeField] private int getCurrentCourseID = 0;
+
     #endregion
 
     private void Awake()
     {
         bulletsRemaining = magazineClipSize;
         canShoot = true;
+
+        #region Check which hand the gun should be
+
+        if (isPlayerInTrainingCourse)
+        {
+            if (gunInLeftHand)
+            {
+                gunInRightHand = false;
+                updateGunPosition = true;
+            }
+            else if (gunInRightHand)
+            {
+                gunInLeftHand = false;
+                updateGunPosition = true;
+            }
+
+            this.gameObject.SetActive(true);
+        }
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
+
+        #endregion
+
     }
 
     private void Start()
     {
         inputManager = InputManager.Instance;
+        GameManager.Instance.TrainingCourseStarted += EnableGun;
+        GameManager.Instance.TrainingCourseEnded += DisableGun;
+        GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
     }
+
+    #region Enable and Disable The Gun
+
+    public void EnableGun(int courseID)
+    {
+        isPlayerInTrainingCourse = true;
+        updateGunPosition = true;
+        canShoot = true;
+
+        if (gunInLeftHand)
+        {
+            leftHand.gameObject.SetActive(true);
+        }
+        else if (gunInRightHand)
+        {
+            rightHand.gameObject.SetActive(true);
+        }
+        
+        bulletsRemainingText.gameObject.SetActive(true);
+        gameObject.SetActive(true);
+    }
+
+    public void DisableGun(int courseID)
+    {
+        isPlayerInTrainingCourse = false;
+        canShoot = false;
+        bulletsRemaining = magazineClipSize;
+
+        Debug.Log("GunplayManager: Disabling the gun!");
+        bulletsRemainingText.gameObject.SetActive(false);
+        gameObject.SetActive(false);
+    }
+
+    public void DisableGunAfterTraining()
+    {
+        isPlayerInTrainingCourse = false;
+        canShoot = false;
+
+        Debug.Log("GunplayManager: Disabling the gun!");
+        gameObject.SetActive(false);
+    }
+
+    #endregion
 
     private void GunInput()
     {
@@ -107,18 +203,24 @@ public class GunplayManager : MonoBehaviour
 
     #region Gun Functions
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        //Gizmos.DrawLine(_camera.transform.position, _camera.transform.position + _camera.transform.forward * bulletRange);
+    }
+
     private void FireGun()
     {
         canShoot = false;
 
         #region Bullet Spread
 
-        float x = Random.Range(-bulletSpread, bulletSpread);
-        float y = Random.Range(-bulletSpread, bulletSpread);
+        float x = UnityEngine.Random.Range(-bulletSpread, bulletSpread);
+        float y = UnityEngine.Random.Range(-bulletSpread, bulletSpread);
 
         #region Calculate bullet spread direction
 
-        Vector3 spreadDirection = vCam.transform.forward + new Vector3(x, y, 0);
+        Vector3 spreadDirection = _camera.transform.forward;
 
         #endregion
 
@@ -126,9 +228,29 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
+        //Debug.DrawLine(_camera.transform.position, spreadDirection * bulletRange, Color.red,5f);
+
         if (isPlayerInTrainingCourse)
         {
-            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
+            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
+            {
+                //To view the raycast in engine
+                Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+
+                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+
+                if (_raycastHit.collider.CompareTag("Target"))
+                {
+                    Debug.Log("Hit a target!");
+                    Guid guid = _raycastHit.collider.GetComponent<Target>().targetGuid;
+                    GameManager.Instance.TargetHit(guid, bulletDamage);
+                    //_raycastHit.collider.GetComponent<Target>().OnHitTriggerEvent(bulletDamage);
+                }
+            }
+        }
+        else
+        {
+            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
                 Debug.Log("Bullet hit: " + _raycastHit.collider.name);
 
@@ -136,19 +258,7 @@ public class GunplayManager : MonoBehaviour
                 {
                     //Need to create an enemy script with a public function to take damage and reference it here
                     //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
-                }
-            }
-        }
-        else
-        {
-            if (Physics.Raycast(vCam.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
-            {
-                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
-
-                if (_raycastHit.collider.CompareTag("Target"))
-                {
-                    //Need to create an enemy script with a public function to take damage and reference it here
-                    //_raycastHit.collider.GetComponent<Target>().TargetHit(bulletDamage);
+                    Debug.Log("Hit an enemy!");
                 }
             }
         }
@@ -157,24 +267,27 @@ public class GunplayManager : MonoBehaviour
 
         #region Camera Shake
 
-        CinemachineShake.Instance.ShakeCamera(3f, .1f);
+        CinemachineShake.Instance.ShakeCamera(cameraShakeMagnitude, cameraShakeAmplitude);
 
         #endregion
 
-        #region Visual Feedback - Bullet Hole & Muzzle Flash
+        #region Visual Feedback: Bullet Hole & Muzzle Flash
 
-        Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
-        Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
+        //Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
+        //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
+
+        CreateVisualFeedback(muzzleFlash, bulletHoleDecal);
 
         #endregion
 
         bulletsRemaining--;
         bulletsFired--;
+
         Invoke("ResetShot", timeBetweenShooting);
 
         if (bulletsFired > 0 && bulletsRemaining > 0)
         {
-            Invoke("Shoot", timeBetweenBullets);
+            Invoke("FireGun", timeBetweenBullets);
         }
     }
 
@@ -197,10 +310,57 @@ public class GunplayManager : MonoBehaviour
 
     #endregion
 
+    private void CreateVisualFeedback(GameObject flash, GameObject bulletHole)
+    {
+        if (muzzleFlashParent.childCount > 0)
+        {
+            GameObject child = muzzleFlashParent.GetChild(0).gameObject;
+            DestroyImmediate(child);
+        }
+
+        if (bulletDecalParent.childCount > 0)
+        {
+            GameObject child = bulletDecalParent.GetChild(0).gameObject;
+            DestroyImmediate(child);
+        }
+
+        Instantiate(flash, muzzle.position, Quaternion.identity, muzzleFlashParent);
+
+        Instantiate(bulletHole, _raycastHit.point, Quaternion.Euler(0, 180, 0), bulletDecalParent);
+    }
+
     private void Update()
     {
         GunInput();
 
-        bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
+        if (isReloading)
+        {
+            bulletsRemainingText.text = "Reloading...";
+        }
+        else
+        {
+            bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
+        }
+
+        if (isPlayerInTrainingCourse)
+        {
+            getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+
+            if (updateGunPosition)
+            {
+                if (gunInLeftHand)
+                {
+                    transform.SetParent(leftHand.transform);
+                }
+                else if (gunInRightHand)
+                {
+                    transform.SetParent(rightHand.transform);
+                }
+
+                updateGunPosition = false;
+            }
+        }
+
+            
     }
 }

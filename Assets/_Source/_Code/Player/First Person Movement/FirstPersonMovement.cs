@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 [RequireComponent(typeof(CharacterController))]
 public class FirstPersonMovement : MonoBehaviour
@@ -9,22 +7,24 @@ public class FirstPersonMovement : MonoBehaviour
 
     [Header("Player Components")]
     [SerializeField] private CharacterController charController;
+    [SerializeField] private GameObject characterBodyObject;
+    private Transform characterBodyTransform;
 
     [Space(15)]
 
     [Header("Movement Variables")]
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
-    [SerializeField] private float moveSpeed = 12f;
-    [SerializeField] private float sprintSpeed = 20f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float sprintSpeed;
     [SerializeField] private float movementSpeed;
     private float directionX;
     private float directionZ;
-    [SerializeField] private float playerGravity = -9.81f;
+    [SerializeField] private float playerGravity;
     
     [Space(10)]    
 
-    [SerializeField] private float jumpHeight = 1f;
+    [SerializeField] private float jumpHeight;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float timeToJumpApex;
 
@@ -38,56 +38,52 @@ public class FirstPersonMovement : MonoBehaviour
     [Space(15)]
 
     [Header("Debugging")]
-    [SerializeField] private bool disablePlayerMovement = false;
-    [SerializeField] private bool disablePlayerJumping = false;
+    [SerializeField] private bool disablePlayerMovement = true;
+    [SerializeField] private bool disablePlayerJumping = true;
     [SerializeField] private bool onGround;
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
     [SerializeField] private bool isSprinting;
-
-    //Input manager
-    private InputManager inputManager;
 
     #endregion
 
     private void Awake()
     {
         charController = GetComponent<CharacterController>();
+        characterBodyTransform = characterBodyObject.transform;
     }
 
     private void Start()
     {
-        inputManager = InputManager.Instance;
-
         cameraTransform = Camera.main.transform;
+        GameManager.Instance.OnStartGame += EnablePlayerMovement;
     }
+
+    #region Enable and Disable Player Movement
+
+    public void EnablePlayerMovement()
+    {
+        disablePlayerMovement = false;
+        disablePlayerJumping = false;
+    }
+
+    public void DisablePlayerMovement()
+    {
+        disablePlayerMovement = true;
+        disablePlayerJumping = true;
+    }
+
+    #endregion
 
     private void Update()
     {
-        #region Disable Movement
-
-        if (disablePlayerMovement)
-        {
-            inputManager.OnDisable();
-        }
-        else
-        {
-            inputManager.OnEnable();
-        }
-
-        #endregion
-
         #region Disable Jumping
 
         if (disablePlayerJumping)
         {
             jumpHeight = 0;
         }
-        else
-        {
-            jumpHeight = 1f;
-        }
-
+        
         #endregion
 
         #region Ground Check
@@ -105,7 +101,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         #region Player Movement and Sprinting
 
-        playerMovement = inputManager.GetPlayerMovement();
+        playerMovement = InputManager.Instance.GetPlayerMovement();
         characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
         characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
@@ -113,27 +109,30 @@ public class FirstPersonMovement : MonoBehaviour
 
         //Sprinting
 
-        isSprinting = inputManager.isPlayerSprintingThisFrame;
+        isSprinting = InputManager.Instance.isPlayerSprintingThisFrame;
 
         if (isSprinting)
         {
             movementSpeed = sprintSpeed;
-            Debug.Log("Character is sprinting!");
+            //Debug.Log("Character is sprinting!");
         }
         else
         {
             movementSpeed = moveSpeed;
-            Debug.Log("Character is not sprinting!");
+            //Debug.Log("Character is not sprinting!");
         }
 
         charController.Move(characterMove * movementSpeed * Time.deltaTime);
         charController.Move(playerVelocity * Time.deltaTime);
 
+        //Rotating the body game object when the player rotates the camera with the mouse
+        characterBodyTransform.rotation = cameraTransform.rotation;
+
         #endregion
 
         #region Player Jumping
 
-        if (inputManager.PlayerJumped() && onGround && canJump)
+        if (InputManager.Instance.PlayerJumped() && onGround && canJump)
         {
             //Debug.Log("Jumping!");
             canJump = false;
@@ -149,7 +148,5 @@ public class FirstPersonMovement : MonoBehaviour
         playerVelocity.y += playerGravity * Time.deltaTime;
 
         #endregion
-
-        
     }
 }

@@ -1,54 +1,111 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
 
 public class Target : MonoBehaviour
 {
     #region Variables
 
-    public bool OnTargetHit = false;
+    public bool hasTargetBeenHit = false;
+    public bool isPlayerTraining = false;
 
-    private TrainingCourseManager courseManager;
-
-    [SerializeField] public float outerRingScore;    
-    [SerializeField] public float innerRingScore;    
-    [SerializeField] public float centreRingScore;
-    [SerializeField] public float bullsEyeScore;
-
-    private float finalScore;
+    [Header("Score Value for This Target")]
+    [SerializeField] public int targetScoreValue;
 
     [Space(15)]
 
-    [Header("Colliders")]
-    [SerializeField] private Collider outerRingCollider;
-    [SerializeField] private Collider innerRingCollider;
-    [SerializeField] private Collider centreRingCollider;
-    [SerializeField] private Collider bullsEyeCollider;
+    [SerializeField, Tooltip("If you want the target to survive more than one bullet")] public float setTargetHealth;
+    private float defaultTargetHealth;
+
+    public Guid targetGuid;
+    public int targetListID;
+
+    [Space(15)]
+
+    private bool destroyThisTarget = false;
+
+    public Guid GenerateGuid()
+    {
+        return Guid.NewGuid();
+    }
+
+    public void SetTargetID(int indexPosition)
+    {
+        targetListID = indexPosition;
+    }
+
+    public int GetThisTargetsID()
+    {
+        return targetListID;
+    }
+
+    public Guid GetThisTargetsGuid()
+    {
+        return targetGuid;
+    }
 
     #endregion
 
     private void Awake()
     {
-        outerRingCollider = GetComponent<Collider>();
-        innerRingCollider = GetComponent<Collider>();
-        centreRingCollider = GetComponent<Collider>();
-        bullsEyeCollider = GetComponent<Collider>();
+        defaultTargetHealth = setTargetHealth;
     }
 
-    public void TargetHit()
+    private void Start()
     {
-        //Find where the bullet hit the target and set the final score
-        //finalScore == 
-        courseManager.OnTargetHit(finalScore);
-        OnTargetHit = true;
+        GameManager.Instance.OnTargetHit += ThisTargetHasBeenHit;
     }
 
-    void Update()
+    public void ReportTarget()
     {
-        if (OnTargetHit)
+        //This is a function for debugging
+        //Each target is being called by the TrainingCourseManager to report back in the console
+        Debug.Log("Target number ID: " + targetListID + " , GUID: " + targetGuid + " reporting!");
+    }
+
+    private void ThisTargetHasBeenHit (Guid guid, int damage)
+    {
+        if (guid != targetGuid)
         {
-            this.gameObject.SetActive(false);
+            return;
+        }
+
+        //Find where the bullet hit the target and set the final score
+        defaultTargetHealth -= damage;
+
+        if (defaultTargetHealth <= 0)
+        {
+            destroyThisTarget = true;
+        }
+
+        guid = targetGuid;
+        Debug.Log("Target " + targetGuid + " hit: Score is " + targetScoreValue);
+
+        hasTargetBeenHit = true;
+
+        DisableThisTarget();
+    }
+
+    public void OnHitTriggerEvent(int damage)
+    {
+        GameManager.Instance.TargetHit(targetGuid, damage);
+    }
+
+    public void DisableThisTarget()
+    {
+        TrainingCourseManager.Instance.UpdateScore(targetScoreValue);
+        
+        Debug.Log("Target " + targetListID + " hit.");
+
+        if (hasTargetBeenHit && destroyThisTarget)
+        {
+            Destroy(this.gameObject);
+        }
+        else if (hasTargetBeenHit && !destroyThisTarget)
+        {
+            Debug.Log("Target has been hit but not destroyed.");
         }
     }
 }

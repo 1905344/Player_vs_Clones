@@ -6,6 +6,11 @@ TagManager:
   tags:
   - Enemy
   - Target
+  - Wall
+  - Ground
+  - Stairs
+  - Gun
+  - CinemachineTarget
   layers:
   - Default
   - TransparentFX
@@ -16,9 +21,9 @@ TagManager:
   - Ground
   - Wall
   - Enemy
+  - Gun
   - Target
-  - 
-  - 
+  - Player
   - 
   - 
   - 
