@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -114,6 +115,10 @@ public class TrainingCourseManager : MonoBehaviour
 
     [SerializeField] private List<Target> targetScriptList;
     [SerializeField] private List<Guid> targetGuidList;
+
+    [Space(5)]
+
+    [SerializeField] private GameObject targetHighlightColumn;
 
     [Space(15)]
 
@@ -950,6 +955,21 @@ public class TrainingCourseManager : MonoBehaviour
         if (updatePlayerTransformPosition)
         {
             OnMovePlayerTransform(currentTrainingCourse);
+        }
+
+        foreach (GameObject target in currentTargetList)
+        {
+            if (target == currentTargetList.FirstOrDefault())
+            {
+                //Set target light column's transform
+                targetHighlightColumn.transform.position = target.transform.position;
+                targetHighlightColumn.SetActive(true);
+            }
+            else if (isTrainingCourseComplete && target == currentTargetList.LastOrDefault())
+            {
+                //Disable the target light column
+                targetHighlightColumn.SetActive(false);
+            }
         }
     }
 }
