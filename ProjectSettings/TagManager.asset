@@ -11,6 +11,7 @@ TagManager:
   - Stairs
   - Gun
   - CinemachineTarget
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - Gun
   - Target
   - Player
-  - 
+  - Bullet
   - 
   - 
   - 

@@ -27,6 +27,12 @@ public class enemyAiController : MonoBehaviour
     [SerializeField] public bool isPlayerInSightRange;
     [SerializeField] public bool isPlayerInAttackRange;
 
+    [SerializeField] private AudioClip attackSFX;
+    [SerializeField] private AudioClip playerDiscoveredSFX;
+    [SerializeField] private AudioClip lostSightOfPlayerSFX;
+    [SerializeField] private AudioClip enemyInjuredSFX;
+    [SerializeField] private AudioClip enemyDeathSFX;
+
 
     //Placeholder shooting
     [SerializeField] public GameObject projectile;
@@ -68,6 +74,8 @@ public class enemyAiController : MonoBehaviour
 
     private void Chasing()
     {
+        SoundManager.instance.PlaySFX(playerDiscoveredSFX);
+
         meshAgent.SetDestination(playerCharacter.position);
     }
 
@@ -85,7 +93,7 @@ public class enemyAiController : MonoBehaviour
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
             
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            rb.AddForce(transform.up * 2f, ForceMode.Impulse);
 
             //Debug.DrawLine(transform.forward, projectile.transform.position, Color.red, 5f);
 
@@ -100,6 +108,8 @@ public class enemyAiController : MonoBehaviour
 
     private void SearchForWalkPoint()
     {
+        SoundManager.instance.PlaySFX(lostSightOfPlayerSFX);
+
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
 
@@ -122,6 +132,8 @@ public class enemyAiController : MonoBehaviour
 
     private void TakeDamage(int damage)
     {
+        SoundManager.instance.PlaySFX(enemyInjuredSFX);
+
         enemyHealth -= damage;
 
         if (enemyHealth <= 0)
@@ -132,6 +144,8 @@ public class enemyAiController : MonoBehaviour
 
     private void DestroyThisEnemy()
     {
+        SoundManager.instance.PlaySFX(enemyDeathSFX);
+
         Destroy(gameObject);
     }
 

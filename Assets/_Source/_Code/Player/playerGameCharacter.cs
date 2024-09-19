@@ -14,6 +14,10 @@ public class playerGameCharacter : MonoBehaviour
 
     [SerializeField] private Collider playerCollider;
 
+    [Space(10)]
+
+    [SerializeField] private int enemyBulletDamageAmount;
+
     #endregion
 
     private void Awake()
@@ -21,15 +25,13 @@ public class playerGameCharacter : MonoBehaviour
         isAlive = true;
     }
 
-    //private void OnCollisionEnter(Collision other)
-    //{
-    //    if (other.tag)
-    //    {
-            
-    //    }
-    //    OnPlayerDeath();
-    //    //OnPlayerHit();
-    //}
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.collider.tag == "bullet")
+        {
+            OnPlayerHit(enemyBulletDamageAmount);
+        }
+    }
 
     private void OnPlayerHit(int damage)
     {
@@ -51,8 +53,9 @@ public class playerGameCharacter : MonoBehaviour
         if (isAlive)
         {
             isAlive = false;
+            asymmGameplayManager.Instance.OnGameOver();
             Debug.Log("Player has been killed!");
-            Application.Quit();
+            //Application.Quit();
         }
     }
 }

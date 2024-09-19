@@ -76,6 +76,7 @@ public class GunplayManager : MonoBehaviour
     [Space(10)]
 
     [SerializeField] public bool isPlayerInTrainingCourse = false;
+    [SerializeField] public bool isFPSTesting = false;
 
     [Space(10)]
 
@@ -123,9 +124,31 @@ public class GunplayManager : MonoBehaviour
     private void Start()
     {
         inputManager = InputManager.Instance;
-        GameManager.Instance.TrainingCourseStarted += EnableGun;
-        GameManager.Instance.TrainingCourseEnded += DisableGun;
-        GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
+        
+        if (!isFPSTesting)
+        {
+            GameManager.Instance.TrainingCourseStarted += EnableGun;
+            GameManager.Instance.TrainingCourseEnded += DisableGun;
+            GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
+        }
+        else
+        {
+            isPlayerInTrainingCourse = true;
+            updateGunPosition = true;
+            canShoot = true;
+
+            if (gunInLeftHand)
+            {
+                leftHand.gameObject.SetActive(true);
+            }
+            else if (gunInRightHand)
+            {
+                rightHand.gameObject.SetActive(true);
+            }
+
+            bulletsRemainingText.gameObject.SetActive(true);
+            gameObject.SetActive(true);
+        }
     }
 
     #region Enable and Disable The Gun
@@ -361,7 +384,7 @@ public class GunplayManager : MonoBehaviour
             bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
         }
 
-        if (isPlayerInTrainingCourse)
+        if (isPlayerInTrainingCourse && !isFPSTesting)
         {
             getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
 
@@ -379,7 +402,22 @@ public class GunplayManager : MonoBehaviour
                 updateGunPosition = false;
             }
         }
+        else if (isFPSTesting && !isPlayerInTrainingCourse)
+        {
+            if (updateGunPosition)
+            {
+                if (gunInLeftHand)
+                {
+                    transform.SetParent(leftHand.transform);
+                }
+                else if (gunInRightHand)
+                {
+                    transform.SetParent(rightHand.transform);
+                }
 
+                updateGunPosition = false;
+            }
+        }
             
     }
 }

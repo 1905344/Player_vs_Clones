@@ -63,6 +63,10 @@ public class asymmGameplayManager : MonoBehaviour
     [Header("Level Complete Trigger")]
     [SerializeField] private GameObject redDoor;
 
+    [Space(10)]
+
+    [SerializeField] private bool fpsTestingToggle = false;
+
     private bool createEnemies = false;
 
     private List<GameObject> enemyList = new List<GameObject>();
@@ -84,8 +88,11 @@ public class asymmGameplayManager : MonoBehaviour
 
         //GameManager.Instance.FinishedTraining += SetupAsymmetricalGameplay;
         ////GameManager.Instance.LevelFailed += OnGameOver;
-        GameManager.Instance.SetAiBehaviour += SetupEnemyTypes;
-        GameManager.Instance.OnStartGame += StartMainGameplay;
+        if (!fpsTestingToggle)
+        {
+            GameManager.Instance.SetAiBehaviour += SetupEnemyTypes;
+            GameManager.Instance.OnStartGame += StartMainGameplay;
+        }
     }
 
     private void Start()
@@ -116,7 +123,7 @@ public class asymmGameplayManager : MonoBehaviour
         }
     }
 
-    private void OnGameOver()
+    public void OnGameOver()
     {
         gameOverScreen.gameObject.SetActive(true);
         redDoor.SetActive(false);
