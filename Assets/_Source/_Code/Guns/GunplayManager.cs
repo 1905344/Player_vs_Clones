@@ -39,7 +39,12 @@ public class GunplayManager : MonoBehaviour
     [Header("Camera Shake")]
     [SerializeField, Tooltip("How long the camera will shake for")] private float cameraShakeAmplitude;
     [SerializeField, Tooltip("How much the camera will shake")] private float cameraShakeMagnitude;
-    
+
+    [Space(10)]
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip gunTapFireSFX;
+    [SerializeField] private AudioClip gunHoldFireSFX;
 
     [Space(20)]
 
@@ -277,6 +282,20 @@ public class GunplayManager : MonoBehaviour
         //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
 
         CreateVisualFeedback(muzzleFlash, bulletHoleDecal);
+
+        #endregion
+
+        #region Audio Feedback: Gun Fired SFX
+
+        if (allowFireButtonHold)
+        {
+            SoundManager.instance.PlaySFX(gunHoldFireSFX);
+        }
+        else
+        {
+            SoundManager.instance.PlaySFX(gunTapFireSFX);
+        }
+        
 
         #endregion
 
