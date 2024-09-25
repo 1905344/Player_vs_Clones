@@ -16,7 +16,6 @@ public class enemyAiController : MonoBehaviour
     [SerializeField] private bool isWalkPointSet;
     [SerializeField] public float walkPointRange;
 
-
     //For Attacking State
     [SerializeField] public float timeBetweenAttacks;
     [SerializeField] private bool hasAttackedAlready;
@@ -36,6 +35,9 @@ public class enemyAiController : MonoBehaviour
 
     //Placeholder shooting
     [SerializeField] public GameObject projectile;
+    [SerializeField] private Transform projectileParent;
+    [SerializeField] private int projectileLimit = 10;
+    [SerializeField] private bool removeProjectiles;
 
     #endregion
 
@@ -90,7 +92,7 @@ public class enemyAiController : MonoBehaviour
         if (!hasAttackedAlready)
         {
             //Attacking code - currently this is a placeholder
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity,projectileParent).GetComponent<Rigidbody>();
             
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 2f, ForceMode.Impulse);
@@ -180,6 +182,29 @@ public class enemyAiController : MonoBehaviour
         if (isPlayerInAttackRange && isPlayerInSightRange)
         {
             Attacking();
+        }
+
+        if (projectileParent.childCount == projectileLimit)
+        {
+            removeProjectiles = true;
+        }
+
+        if (removeProjectiles)
+        {
+            for (int i = 0; i < projectileParent.childCount; i++)
+            {
+                GameObject childProjectile = projectileParent.GetChild(i).gameObject;
+
+                if (i > projectileLimit && childProjectile.name == "Projectile(Clone)")
+                {
+                    Destroy(childProjectile);
+                }
+                else if (i <= projectileLimit)
+                {
+                    removeProjectiles = false;
+                    return;
+                }
+            }
         }
     }
 }

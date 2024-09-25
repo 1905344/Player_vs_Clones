@@ -124,31 +124,31 @@ public class GunplayManager : MonoBehaviour
     private void Start()
     {
         inputManager = InputManager.Instance;
-        
+
+        GameManager.Instance.TrainingCourseStarted += EnableGun;
+        GameManager.Instance.TrainingCourseEnded += DisableGun;
+        GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
+
         if (!isFPSTesting)
         {
-            GameManager.Instance.TrainingCourseStarted += EnableGun;
-            GameManager.Instance.TrainingCourseEnded += DisableGun;
-            GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
+            isPlayerInTrainingCourse = false;
+
+            canShoot = true;
+            bulletsRemainingText.gameObject.SetActive(true);
+            gameObject.SetActive(true);
         }
         else
         {
             isPlayerInTrainingCourse = true;
-            updateGunPosition = true;
-            canShoot = true;
+            isFPSTesting = false;
 
-            if (gunInLeftHand)
-            {
-                leftHand.gameObject.SetActive(true);
-            }
-            else if (gunInRightHand)
-            {
-                rightHand.gameObject.SetActive(true);
-            }
+            canShoot = true;
 
             bulletsRemainingText.gameObject.SetActive(true);
             gameObject.SetActive(true);
         }
+
+        updateGunPosition = true;
     }
 
     #region Enable and Disable The Gun
@@ -185,11 +185,14 @@ public class GunplayManager : MonoBehaviour
 
     public void DisableGunAfterTraining()
     {
-        isPlayerInTrainingCourse = false;
-        canShoot = false;
+        if (!isFPSTesting)
+        {
+            isPlayerInTrainingCourse = false;
+            canShoot = false;
 
-        Debug.Log("GunplayManager: Disabling the gun!");
-        gameObject.SetActive(false);
+            Debug.Log("GunplayManager: Disabling the gun!");
+            gameObject.SetActive(false);
+        }
     }
 
     #endregion

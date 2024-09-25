@@ -4487,6 +4487,11 @@ PrefabInstance:
       propertyPath: enemyHealth
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 1657450007658573406, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
+        type: 3}
+      propertyPath: projectileParent
+      value: 
+      objectReference: {fileID: 1858308373}
     - target: {fileID: 2815397401517748121, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_Name
@@ -6614,6 +6619,11 @@ PrefabInstance:
       propertyPath: enemyHealth
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 1618224318096128784, guid: 295b10a2875b3ec4abf5ec0be933d280,
+        type: 3}
+      propertyPath: projectileParent
+      value: 
+      objectReference: {fileID: 1858308373}
     - target: {fileID: 2528496354677318827, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Mesh
@@ -7193,11 +7203,12 @@ Transform:
   m_GameObject: {fileID: 770599145}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.11, y: 1.2900002, z: 1.67}
+  m_LocalPosition: {x: 0, y: 0.69000006, z: 0.20000005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1893703167}
+  m_Children:
+  - {fileID: 7303942567272337505}
+  m_Father: {fileID: 8648389229028033184}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &770599147
 MonoBehaviour:
@@ -7336,186 +7347,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!1 &787297588
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 787297589}
-  - component: {fileID: 787297590}
-  m_Layer: 0
-  m_Name: TrainingCourseManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &787297589
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 787297588}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.7987833, y: -1.1948807, z: 1.8076477}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2026370998}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &787297590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 787297588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 264bd8d02bdfa344192770e09ddebf5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trainingCourseGun: {fileID: 1199559003354092338}
-  playerCharacter: {fileID: 3838899393832766914}
-  trainingCourseOneStartingPosition: {fileID: 0}
-  trainingCourseTwoStartingPosition: {fileID: 0}
-  trainingCourseThreeStartingPosition: {fileID: 0}
-  trainingCourseOneFinishingPosition: {fileID: 0}
-  trainingCourseTwoFinishingPosition: {fileID: 0}
-  trainingCourseThreeFinishingPosition: {fileID: 0}
-  playerStartingPositionAfterTraining: {fileID: 1595843847}
-  tutorialText: {fileID: 0}
-  startTrainingCourseText: {fileID: 0}
-  startGameplayText: {fileID: 0}
-  timeTitleText: {fileID: 0}
-  parTimeText: {fileID: 0}
-  countupTimerText: {fileID: 0}
-  previousTimeText: {fileID: 0}
-  targetHitText: {fileID: 0}
-  currentScoreText: {fileID: 0}
-  firstTrainingCourseParTime: 15
-  secondTrainingCourseParTime: 22
-  thirdTrainingCourseParTime: 35
-  countupTimerActive: 0
-  firstTrainingCoursePreviousTime: 0
-  secondTrainingCoursePreviousTime: 0
-  thirdTrainingCoursePreviousTime: 0
-  trainingCourseOneParTimeAchieved: 0
-  trainingCourseTwoParTimeAchieved: 0
-  trainingCourseThreeParTimeAchieved: 0
-  hasPlayerAchievedParTimeForAllCourses: 0
-  totalTargetCount: 0
-  targetHitCount: 0
-  totalTargetHitCount: 0
-  currentScore: 0
-  totalScore: 0
-  finalScore: 0
-  currentTargetList: []
-  courseOnetargetList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  courseTwotargetList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  courseThreetargetList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  targetScriptList: []
-  targetHighlightColumn: {fileID: 0}
-  hasPlayerStartedTrainingCourse: 0
-  hasPlayerCrossedFinishingLine: 0
-  hasPlayerHitAllTargets: 0
-  hasPlayerHitAllCourseOneTargets: 0
-  hasPlayerHitAllCourseTwoTargets: 0
-  hasPlayerHitAllCourseThreeTargets: 0
-  didPlayerAchieveHighestScore: 0
-  didPlayerAchieveGreatScore: 0
-  didPlayerAchieveAboveAverageScore: 0
-  didPlayerAchieveAverageScore: 0
-  didPlayerAchieveBelowAverageScore: 0
-  didPlayerAvoidAllTargets: 0
-  isTrainingCourseAllSetup: 0
-  isTrainingCourseComplete: 0
-  isTrainingCourseOneComplete: 0
-  isTrainingCourseTwoComplete: 0
-  isTrainingCourseThreeComplete: 0
-  isTrainingComplete: 0
-  currentTrainingCourse: 0
 --- !u!1 &894662084
 GameObject:
   m_ObjectHideFlags: 0
@@ -8403,6 +8234,11 @@ PrefabInstance:
       propertyPath: enemyHealth
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 776835224934632388, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
+        type: 3}
+      propertyPath: projectileParent
+      value: 
+      objectReference: {fileID: 1858308373}
     - target: {fileID: 1316528713366455346, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_Mesh
@@ -12316,12 +12152,12 @@ Transform:
   m_GameObject: {fileID: 1448387304}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.11, y: 1.2900002, z: 1.67}
+  m_LocalPosition: {x: 0, y: 0.69000006, z: 0.20000005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2139399374}
-  m_Father: {fileID: 1893703167}
+  m_Father: {fileID: 8648389229028033184}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1448387306
 MonoBehaviour:
@@ -12385,7 +12221,7 @@ MonoBehaviour:
   m_Priority: 10
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 3252680060816833840}
+  m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 90
     OrthographicSize: 5
@@ -14709,6 +14545,11 @@ PrefabInstance:
       propertyPath: enemyHealth
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 4104229181721708054, guid: 041121a48049bf443b68877e7db9276b,
+        type: 3}
+      propertyPath: projectileParent
+      value: 
+      objectReference: {fileID: 1858308373}
     - target: {fileID: 4343795918615205202, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Mesh
@@ -16803,6 +16644,37 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &1858308372
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1858308373}
+  m_Layer: 0
+  m_Name: Projectile Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1858308373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1858308372}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 77.64263, y: -24.045517, z: -1.7713841}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1893703166
 GameObject:
   m_ObjectHideFlags: 0
@@ -16831,9 +16703,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.6999998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 770599146}
-  - {fileID: 1448387305}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1911467707
@@ -18143,7 +18013,6 @@ Transform:
   - {fileID: 937183909}
   - {fileID: 1586156333}
   - {fileID: 526809920}
-  - {fileID: 787297589}
   - {fileID: 1766854133}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -19101,7 +18970,6 @@ GameObject:
   - component: {fileID: 2139399378}
   - component: {fileID: 2139399377}
   - component: {fileID: 2139399376}
-  - component: {fileID: 2139399375}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -19124,30 +18992,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1448387305}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2139399375
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2139399373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd6043bde05a7fc4cba197d06915c1e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Damping: {x: 0, y: 0, z: 0}
-  ShoulderOffset: {x: 0, y: 0, z: 0}
-  VerticalArmLength: 0
-  CameraSide: 0.5
-  CameraDistance: 0
-  CameraCollisionFilter:
-    serializedVersion: 2
-    m_Bits: 1
-  IgnoreTag: Player
-  CameraRadius: 0.15
-  DampingIntoCollision: 0
-  DampingFromCollision: 0
 --- !u!114 &2139399376
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -27450,8 +27294,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.69000006, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7303942567272337505}
+  m_Children: []
   m_Father: {fileID: 8648389229028033184}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &3643145968640197173
@@ -27760,14 +27603,14 @@ Transform:
   m_GameObject: {fileID: 2269296823001682832}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.69000006, z: -0.2}
+  m_LocalPosition: {x: 0, y: -0.69000006, z: -0.20000005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 985154543250546572}
   - {fileID: 569720188399055654}
   - {fileID: 4307803752806252538}
-  m_Father: {fileID: 3252680060816833840}
+  m_Father: {fileID: 770599146}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &7610657534746136790
 Transform:
@@ -27878,6 +27721,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 770599146}
+  - {fileID: 1448387305}
   - {fileID: 3252680060816833840}
   - {fileID: 5933673673554494381}
   - {fileID: 4217837180721462897}
@@ -27914,3 +27759,4 @@ SceneRoots:
   - {fileID: 1595843847}
   - {fileID: 1798779369}
   - {fileID: 1107842413}
+  - {fileID: 1858308373}

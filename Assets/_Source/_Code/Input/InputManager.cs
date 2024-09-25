@@ -473,6 +473,5 @@ public class InputManager : MonoBehaviour
         {
             ToggleActionMap(playerActions.Player);
         }
-
     }
 }
