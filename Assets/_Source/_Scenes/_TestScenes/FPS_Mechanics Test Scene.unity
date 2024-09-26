@@ -4489,9 +4489,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1657450007658573406, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
+      propertyPath: projectileLimit
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1657450007658573406, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
+        type: 3}
       propertyPath: projectileParent
       value: 
-      objectReference: {fileID: 1858308373}
+      objectReference: {fileID: 0}
     - target: {fileID: 2815397401517748121, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_Name
@@ -6621,9 +6626,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1618224318096128784, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
+      propertyPath: projectileLimit
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1618224318096128784, guid: 295b10a2875b3ec4abf5ec0be933d280,
+        type: 3}
       propertyPath: projectileParent
       value: 
-      objectReference: {fileID: 1858308373}
+      objectReference: {fileID: 0}
     - target: {fileID: 2528496354677318827, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Mesh
@@ -8236,9 +8246,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 776835224934632388, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
+      propertyPath: projectileLimit
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 776835224934632388, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
+        type: 3}
       propertyPath: projectileParent
       value: 
-      objectReference: {fileID: 1858308373}
+      objectReference: {fileID: 0}
     - target: {fileID: 1316528713366455346, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_Mesh
@@ -8262,7 +8277,7 @@ PrefabInstance:
     - target: {fileID: 7368086097771896636, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.8699989
+      value: 9.92
       objectReference: {fileID: 0}
     - target: {fileID: 7368086097771896636, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
@@ -9252,7 +9267,7 @@ Transform:
   m_GameObject: {fileID: 975534385}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 1.2599999, y: 0.00000003576278, z: 50}
+  m_LocalPosition: {x: 2.2599912, y: -0.00000295043, z: 50.000008}
   m_LocalScale: {x: 5, y: 0.3, z: 75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14547,9 +14562,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4104229181721708054, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
+      propertyPath: projectileLimit
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4104229181721708054, guid: 041121a48049bf443b68877e7db9276b,
+        type: 3}
       propertyPath: projectileParent
       value: 
-      objectReference: {fileID: 1858308373}
+      objectReference: {fileID: 0}
     - target: {fileID: 4343795918615205202, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Mesh
@@ -16644,37 +16664,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!1 &1858308372
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1858308373}
-  m_Layer: 0
-  m_Name: Projectile Parent
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1858308373
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1858308372}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 77.64263, y: -24.045517, z: -1.7713841}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1893703166
 GameObject:
   m_ObjectHideFlags: 0
@@ -27759,4 +27748,3 @@ SceneRoots:
   - {fileID: 1595843847}
   - {fileID: 1798779369}
   - {fileID: 1107842413}
-  - {fileID: 1858308373}

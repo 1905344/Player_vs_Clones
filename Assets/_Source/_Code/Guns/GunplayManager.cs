@@ -88,6 +88,10 @@ public class GunplayManager : MonoBehaviour
 
     [SerializeField] private int getCurrentCourseID = 0;
 
+    [Space(10)]
+
+    [SerializeField] private bool toggleDebug = false;
+
     #endregion
 
     private void Awake()
@@ -97,25 +101,18 @@ public class GunplayManager : MonoBehaviour
 
         #region Check which hand the gun should be
 
-        if (isPlayerInTrainingCourse)
+        if (gunInLeftHand)
         {
-            if (gunInLeftHand)
-            {
-                gunInRightHand = false;
-                updateGunPosition = true;
-            }
-            else if (gunInRightHand)
-            {
-                gunInLeftHand = false;
-                updateGunPosition = true;
-            }
+            gunInRightHand = false;
+            updateGunPosition = true;
+        }
+        else if (gunInRightHand)
+        {
+            gunInLeftHand = false;
+            updateGunPosition = true;
+        }
 
-            this.gameObject.SetActive(true);
-        }
-        else
-        {
-            this.gameObject.SetActive(false);
-        }
+        this.gameObject.SetActive(true);
 
         #endregion
 
@@ -259,37 +256,53 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        //Debug.DrawLine(_camera.transform.position, spreadDirection * bulletRange, Color.red,5f);
-
         if (isPlayerInTrainingCourse)
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
-                //To view the raycast in engine
-                Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                if (toggleDebug)
+                {
+                    //To view the raycast in engine
+                    Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
 
-                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                    Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                }
 
                 if (_raycastHit.collider.CompareTag("Target"))
                 {
-                    Debug.Log("Hit a target!");
+                    if (toggleDebug)
+                    {
+                        Debug.Log("Hit a target!");
+                    }
+                    
                     Guid guid = _raycastHit.collider.GetComponent<Target>().targetGuid;
                     GameManager.Instance.TargetHit(guid, bulletDamage);
                     //_raycastHit.collider.GetComponent<Target>().OnHitTriggerEvent(bulletDamage);
                 }
             }
         }
-        else
+        else if (!isPlayerInTrainingCourse)
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
-                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                if (toggleDebug) 
+                {
+                    //To view the raycast in engine
+                    Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+
+                    Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                }
 
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
+                    if (toggleDebug)
+                    {
+                        Debug.Log("Hit an enemy!");
+                    }
+
                     //Need to create an enemy script with a public function to take damage and reference it here
                     //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
-                    Debug.Log("Hit an enemy!");
+                    GameManager.Instance.OnEnemyHit(bulletDamage);
                 }
             }
         }

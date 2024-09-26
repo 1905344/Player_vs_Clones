@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -32,12 +34,12 @@ public class enemyAiController : MonoBehaviour
     [SerializeField] private AudioClip enemyInjuredSFX;
     [SerializeField] private AudioClip enemyDeathSFX;
 
-
     //Placeholder shooting
     [SerializeField] public GameObject projectile;
-    [SerializeField] private Transform projectileParent;
-    [SerializeField] private int projectileLimit = 10;
-    [SerializeField] private bool removeProjectiles;
+    [SerializeField] private List<GameObject> projectilesList;
+    [SerializeField] private int projectileLimit = 2;
+    [SerializeField] private int bulletsFired;
+    [SerializeField] private int bulletDamage = 10;
 
     #endregion
 
@@ -51,6 +53,8 @@ public class enemyAiController : MonoBehaviour
     {
         //GameManager.Instance.LevelCompleted += DestroyThisEnemy;
         //GameManager.Instance.LevelFailed += DestroyThisEnemy;
+
+        GameManager.Instance.EnemyHit += TakeDamage;
     }
 
     #region States
@@ -92,8 +96,19 @@ public class enemyAiController : MonoBehaviour
         if (!hasAttackedAlready)
         {
             //Attacking code - currently this is a placeholder
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity,projectileParent).GetComponent<Rigidbody>();
-            
+            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+
+            //Attempting to remove the first projectiles
+            if (projectilesList.Count < projectileLimit)
+            {
+                projectilesList.Add(rb.gameObject);
+            }
+            else
+            {
+                Destroy(projectilesList.First());
+                projectilesList.Add(rb.gameObject);
+            }
+
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 2f, ForceMode.Impulse);
 
@@ -182,29 +197,6 @@ public class enemyAiController : MonoBehaviour
         if (isPlayerInAttackRange && isPlayerInSightRange)
         {
             Attacking();
-        }
-
-        if (projectileParent.childCount == projectileLimit)
-        {
-            removeProjectiles = true;
-        }
-
-        if (removeProjectiles)
-        {
-            for (int i = 0; i < projectileParent.childCount; i++)
-            {
-                GameObject childProjectile = projectileParent.GetChild(i).gameObject;
-
-                if (i > projectileLimit && childProjectile.name == "Projectile(Clone)")
-                {
-                    Destroy(childProjectile);
-                }
-                else if (i <= projectileLimit)
-                {
-                    removeProjectiles = false;
-                    return;
-                }
-            }
         }
     }
 }

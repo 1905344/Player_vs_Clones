@@ -36,7 +36,9 @@ public class GameManager : MonoBehaviour
     public event Action SetAiBehaviour;
 
     //Events for the asymmetrical gameplay
-    public event Action OnAttackPlayer;
+    public event Action<int> PlayerHit;
+    public event Action PlayerKilled;
+    public event Action<int> EnemyHit;
 
     //Event to start the main game
     public event Action OnStartGame;
@@ -149,11 +151,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerAttacked()
+    public void OnPlayerHit(int damage)
     {
-        if (OnAttackPlayer != null)
+        if (PlayerHit != null)
         {
-            OnAttackPlayer();
+            PlayerHit(damage);
+        }
+    }
+
+    public void OnPlayerKilled()
+    {
+        if (PlayerKilled != null)
+        {
+            OnGameOverReturnToMainMenu();
+        }
+    }
+
+    public void OnEnemyHit(int damage)
+    {
+        if (EnemyHit != null)
+        {
+            EnemyHit(damage);
         }
     }
 
