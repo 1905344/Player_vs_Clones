@@ -7,16 +7,18 @@ public class projectileScript : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] private bool enableDebug = false;
-
-    public int projectileID { get; set; }
+    public int projectileID;
     public int damage { get; set; }
+    
+    [SerializeField] private float projectileLifespan = 5f;
+    private float timer;
+    private bool timerFinished = false;
 
     #endregion
 
     private void Awake()
     {
-        if (enableDebug)
+        if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Projectile " + projectileID + " instantiated.");
         }
@@ -24,18 +26,44 @@ public class projectileScript : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (enableDebug)
+        if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Projectile hit: " + collision.collider.tag);
         }
 
-        if (collision.collider.CompareTag("player"))
+        if (collision.collider.tag == "player")
         {
-            GameManager.Instance.OnPlayerHit(damage);
+            //Using events
+            //GameManager.Instance.OnPlayerHit(damage);
+
+            //Using colliders
+            collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
         }
-        else if (!collision.collider.CompareTag("player"))
+        else if (collision.collider.tag != "player")
         {
-            Destroy(this);
+            DestroyProjectile();
+        }
+    }
+
+    private void DestroyProjectile()
+    {
+        if (GameManager.Instance.toggleDebug && timerFinished)
+        {
+            Debug.Log("Destroy projectile " + projectileID + " because it has reached the end of its lifespan.");
+        }
+
+        Destroy(this.gameObject);
+    }
+
+    private void Update()
+    {
+        timer += Time.deltaTime;
+
+        if (timer >= projectileLifespan && !timerFinished)
+        {
+            timer = 0f;
+            timerFinished = true;
+            DestroyProjectile();
         }
     }
 }

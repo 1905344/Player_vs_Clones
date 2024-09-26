@@ -19,10 +19,6 @@ public class playerGameCharacter : MonoBehaviour
 
     [SerializeField] private int enemyBulletDamageAmount;
 
-    [Space(10)]
-
-    [SerializeField] private bool toggleDebug = false;
- 
     #endregion
 
     private void Awake()
@@ -35,19 +31,7 @@ public class playerGameCharacter : MonoBehaviour
         GameManager.Instance.PlayerHit += OnPlayerHit;
     }
 
-    ///Do I need the game manager to tell this script that its been hit or 
-    ///should this script inform the game manager when its been hit or just 
-    ///when the player killed?
-
-    //private void OnCollisionEnter(Collision other)
-    //{
-    //    if (other.collider.tag == "bullet")
-    //    {
-    //        OnPlayerHit(enemyBulletDamageAmount);
-    //    }
-    //}
-
-    private void OnPlayerHit(int damage)
+    public void OnPlayerHit(int damage)
     {
         if (!isAlive)
         {
@@ -71,10 +55,11 @@ public class playerGameCharacter : MonoBehaviour
 
             GameManager.Instance.OnPlayerKilled();
 
-            if (toggleDebug)
+            if (GameManager.Instance.toggleDebug)
             {
-                Debug.Log("Player has been killed!");
+                Debug.Log("Player has been killed.");
             }
+
             //Application.Quit();
         }
     }

@@ -11,13 +11,6 @@ public class testGun : MonoBehaviour
 
     private Camera fpsCam;
 
-
-    #region Debugging
-
-    [SerializeField] private bool enableDebug = false;
-
-    #endregion
-
     #endregion
 
     void Update()
@@ -34,7 +27,7 @@ public class testGun : MonoBehaviour
 
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out bulletHit, range)) 
         { 
-            if (enableDebug == true)
+            if (GameManager.Instance.toggleDebug == true)
             {
                 //To view the raycast in engine
                 Debug.DrawLine(fpsCam.transform.position, bulletHit.point, Color.red, 5f);

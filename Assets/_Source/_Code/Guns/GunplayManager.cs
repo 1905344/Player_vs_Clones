@@ -88,10 +88,6 @@ public class GunplayManager : MonoBehaviour
 
     [SerializeField] private int getCurrentCourseID = 0;
 
-    [Space(10)]
-
-    [SerializeField] private bool toggleDebug = false;
-
     #endregion
 
     private void Awake()
@@ -260,7 +256,7 @@ public class GunplayManager : MonoBehaviour
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
-                if (toggleDebug)
+                if (GameManager.Instance.toggleDebug)
                 {
                     //To view the raycast in engine
                     Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
@@ -270,7 +266,7 @@ public class GunplayManager : MonoBehaviour
 
                 if (_raycastHit.collider.CompareTag("Target"))
                 {
-                    if (toggleDebug)
+                    if (GameManager.Instance.toggleDebug)
                     {
                         Debug.Log("Hit a target!");
                     }
@@ -285,7 +281,7 @@ public class GunplayManager : MonoBehaviour
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
-                if (toggleDebug) 
+                if (GameManager.Instance.toggleDebug) 
                 {
                     //To view the raycast in engine
                     Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
@@ -295,14 +291,19 @@ public class GunplayManager : MonoBehaviour
 
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
-                    if (toggleDebug)
+                    if (GameManager.Instance.toggleDebug)
                     {
                         Debug.Log("Hit an enemy!");
                     }
 
                     //Need to create an enemy script with a public function to take damage and reference it here
                     //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
-                    GameManager.Instance.OnEnemyHit(bulletDamage);
+
+                    //Using events
+                    //GameManager.Instance.OnEnemyHit(bulletDamage);
+
+                    //Using colliders
+                    _raycastHit.collider.GetComponent<enemyAiController>().TakeDamage(bulletDamage);
                 }
             }
         }

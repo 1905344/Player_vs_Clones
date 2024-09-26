@@ -11,7 +11,7 @@ public class enemyAiController : MonoBehaviour
     private Transform playerCharacter;
     [SerializeField] public LayerMask groundLayerMask;
     [SerializeField] public LayerMask playerLayerMask;
-    [SerializeField] private float enemyHealth;
+    [SerializeField] private float enemyHealth = 50f;
 
     //For Patrolling State
     [SerializeField] public Vector3 walkPoint;
@@ -36,9 +36,7 @@ public class enemyAiController : MonoBehaviour
 
     //Placeholder shooting
     [SerializeField] public GameObject projectile;
-    [SerializeField] private List<GameObject> projectilesList;
-    [SerializeField] private int projectileLimit = 2;
-    [SerializeField] private int bulletsFired;
+    [SerializeField] private int bulletsFired = 0;
     [SerializeField] private int bulletDamage = 10;
 
     #endregion
@@ -80,7 +78,7 @@ public class enemyAiController : MonoBehaviour
 
     private void Chasing()
     {
-        SoundManager.instance.PlaySFX(playerDiscoveredSFX);
+        //SoundManager.instance.PlaySFX(playerDiscoveredSFX);
 
         meshAgent.SetDestination(playerCharacter.position);
     }
@@ -95,19 +93,13 @@ public class enemyAiController : MonoBehaviour
 
         if (!hasAttackedAlready)
         {
+            bulletsFired++;
+
             //Attacking code - currently this is a placeholder
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 
-            //Attempting to remove the first projectiles
-            if (projectilesList.Count < projectileLimit)
-            {
-                projectilesList.Add(rb.gameObject);
-            }
-            else
-            {
-                Destroy(projectilesList.First());
-                projectilesList.Add(rb.gameObject);
-            }
+            rb.gameObject.GetComponent<projectileScript>().projectileID = bulletsFired;
+            rb.gameObject.GetComponent<projectileScript>().damage = bulletDamage;
 
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 2f, ForceMode.Impulse);
@@ -125,7 +117,7 @@ public class enemyAiController : MonoBehaviour
 
     private void SearchForWalkPoint()
     {
-        SoundManager.instance.PlaySFX(lostSightOfPlayerSFX);
+        //SoundManager.instance.PlaySFX(lostSightOfPlayerSFX);
 
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
@@ -147,9 +139,9 @@ public class enemyAiController : MonoBehaviour
 
     #region Take Damage and Destroy Enemy
 
-    private void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
-        SoundManager.instance.PlaySFX(enemyInjuredSFX);
+        //SoundManager.instance.PlaySFX(enemyInjuredSFX);
 
         enemyHealth -= damage;
 
@@ -161,7 +153,7 @@ public class enemyAiController : MonoBehaviour
 
     private void DestroyThisEnemy()
     {
-        SoundManager.instance.PlaySFX(enemyDeathSFX);
+        //SoundManager.instance.PlaySFX(enemyDeathSFX);
 
         Destroy(gameObject);
     }

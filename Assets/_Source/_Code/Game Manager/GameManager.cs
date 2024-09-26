@@ -11,13 +11,13 @@ public class GameManager : MonoBehaviour
 
     #region Variables
 
-    private static GameManager _instance;
+    private static GameManager instance;
 
     public static GameManager Instance
     {
         get
         {
-            return _instance;
+            return instance;
         }
     }
 
@@ -66,17 +66,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] Button quitToMainMenuButton;
     [SerializeField] Button quitGameButton;
 
+    [Space(10)]
+
+    [SerializeField] public bool toggleDebug = false;
+
     #endregion
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
         }
         else
         {
-            _instance = this;
+            instance = this;
         }
     }
 
