@@ -35,6 +35,11 @@ public class playerGameCharacter : MonoBehaviour
     {
         if (!isAlive)
         {
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Player has been hit for " + damage + " !");
+            }
+
             return;
         }
 

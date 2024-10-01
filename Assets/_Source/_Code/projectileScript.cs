@@ -31,7 +31,7 @@ public class projectileScript : MonoBehaviour
             Debug.Log("Projectile hit: " + collision.collider.tag);
         }
 
-        if (collision.collider.tag == "player")
+        if (collision.collider.CompareTag("Player"))
         {
             //Using events
             //GameManager.Instance.OnPlayerHit(damage);
@@ -39,7 +39,7 @@ public class projectileScript : MonoBehaviour
             //Using colliders
             collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
         }
-        else if (collision.collider.tag != "player")
+        else if (!collision.collider.CompareTag("Player"))
         {
             DestroyProjectile();
         }

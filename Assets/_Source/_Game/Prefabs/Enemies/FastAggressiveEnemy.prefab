@@ -175,8 +175,8 @@ MonoBehaviour:
   enemyDeathSFX: {fileID: 0}
   projectile: {fileID: 1867186218399889277, guid: 03b2eb805f7c20b4683d018868bb0d9e,
     type: 3}
-  projectilesList: []
-  projectileLimit: 2
+  bulletsFired: 0
+  bulletDamage: 10
 --- !u!195 &865834571842267319
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -197,7 +197,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 1
-  m_WalkableMask: 4294967295
+  m_WalkableMask: 5
   m_ObstacleAvoidanceType: 4
 --- !u!54 &2046588993277065979
 Rigidbody:
@@ -215,7 +215,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

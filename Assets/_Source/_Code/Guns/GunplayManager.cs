@@ -122,7 +122,7 @@ public class GunplayManager : MonoBehaviour
         GameManager.Instance.TrainingCourseEnded += DisableGun;
         GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
 
-        if (!isFPSTesting)
+        if (isFPSTesting)
         {
             isPlayerInTrainingCourse = false;
 
@@ -132,6 +132,8 @@ public class GunplayManager : MonoBehaviour
         }
         else
         {
+            getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+
             isPlayerInTrainingCourse = true;
             isFPSTesting = false;
 
@@ -403,8 +405,6 @@ public class GunplayManager : MonoBehaviour
 
         if (isPlayerInTrainingCourse && !isFPSTesting)
         {
-            getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
-
             if (updateGunPosition)
             {
                 if (gunInLeftHand)

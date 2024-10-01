@@ -8374,7 +8374,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937183908}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95cf1b0214befcb4aa9f70cbca10c7ba, type: 3}
   m_Name: 
@@ -8404,7 +8404,6 @@ MonoBehaviour:
   setEnemySlow: 0
   gameOverScreen: {fileID: 4758849}
   redDoor: {fileID: 0}
-  fpsTestingToggle: 1
 --- !u!1 &937352809
 GameObject:
   m_ObjectHideFlags: 0
@@ -13297,6 +13296,7 @@ MonoBehaviour:
   returnToPauseScreen: {fileID: 386245636}
   quitToMainMenuButton: {fileID: 396229197}
   quitGameButton: {fileID: 63109488}
+  toggleDebug: 1
 --- !u!1 &1595843844
 GameObject:
   m_ObjectHideFlags: 0
@@ -19162,7 +19162,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   isAlive: 0
-  playerCollider: {fileID: 6513890564957535363}
+  bodyCollider: {fileID: 0}
+  headCollider: {fileID: 0}
   enemyBulletDamageAmount: 10
 --- !u!1 &1199559003354092338
 GameObject:
