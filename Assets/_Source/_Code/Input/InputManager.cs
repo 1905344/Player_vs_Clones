@@ -60,11 +60,14 @@ public class InputManager : MonoBehaviour
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
 
+    //Training course booleans
     public bool isPlayerInTrainingCourse = false;
     public bool isPlayerFinishedTraining = false;
     private int getTrainingCourseID = 1;
 
     public bool levelComplete;
+
+    [SerializeField] private bool isPlayerDead = false;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -186,11 +189,26 @@ public class InputManager : MonoBehaviour
 
         playerActions.Training.StartTrainingCourse.Enable();
         ToggleActionMap(playerActions.Training);
+
+        //Event for when the player has been killed
+        GameManager.Instance.PlayerKilled += OnPlayerDeath; 
     }
 
     private void Start()
     {
-        ToggleActionMap(playerActions.UI);
+        if (GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        {
+            ToggleActionMap(playerActions.UI);
+        }
+        else if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+        }
+
+        //if (GameManager.Instance.toggleDebug)
+        //{
+        //    Debug.Log("InputManager: The starting action map is: ");
+        //}
 
         vCam.SetFocalLength(_FOV);
         Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
@@ -202,25 +220,55 @@ public class InputManager : MonoBehaviour
 
     public void OnEnable()
     {
-        ToggleActionMap(playerActions.Player);
-        playerActions.Training.Disable();
-        playerActions.Player.Enable();
+        if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+            playerActions.Training.Disable();
+            playerActions.Player.Enable();
+        }
+        else
+        {
+            ToggleActionMap(playerActions.Training);
+            playerActions.Training.Enable();
+            playerActions.Player.Disable();
+        }
     }
 
     public void OnDisable()
     {
-        ToggleActionMap(playerActions.Training);
-        playerActions.Training.Enable();
-        playerActions.Player.Disable();
+        if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+            playerActions.Training.Disable();
+            playerActions.Player.Enable();
+        }
+        else
+        {
+            ToggleActionMap(playerActions.Training);
+            playerActions.Training.Enable();
+            playerActions.Player.Disable();
+        }
     }
 
     public void DisableGameInput()
     {
-        if (!levelComplete)
+        //if (!levelComplete)
+        //{
+        //    return;
+        //}
+
+        if (isPlayerDead)
         {
             return;
         }
+        
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: game input disabled.");
+        }
 
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
         ToggleActionMap(playerActions.UI);
         playerActions.Training.Disable();
         playerActions.Player.Disable();
@@ -298,7 +346,7 @@ public class InputManager : MonoBehaviour
         OnEnable();
         getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
 
-        if (isPlayerInTrainingCourse)
+        if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining)
         {
             return;
         }
@@ -315,6 +363,7 @@ public class InputManager : MonoBehaviour
     public void OnFinishedTraining()
     {
         OnEnable();
+        GameManager.Instance.isInTraining = false;
         isPlayerFinishedTraining = true;
         playerActions.Training.Disable();
         playerActions.Player.Fire.Disable();
@@ -363,6 +412,11 @@ public class InputManager : MonoBehaviour
             return;
         }
 
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
+        }
+
         playerActions.Disable();
         changeActionMap?.Invoke(actionMap);
         actionMap.Enable();
@@ -374,6 +428,11 @@ public class InputManager : MonoBehaviour
 
     private void OnPause(InputAction.CallbackContext context)
     {
+        if (isPlayerDead)
+        {
+            return;
+        }
+
         if (pauseGame)
         {
             pauseGame = false;
@@ -394,7 +453,13 @@ public class InputManager : MonoBehaviour
     {
         if (pauseGame)
         {
-            if (isPlayerInTrainingCourse)
+            if (isPlayerDead)
+            {
+                pauseGame = false;
+                return;
+            }
+
+            if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
             {
                 ToggleActionMap(playerActions.Training);
                 GameManager.Instance.OnResume();
@@ -403,7 +468,7 @@ public class InputManager : MonoBehaviour
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
-            else
+            else if (!isPlayerInTrainingCourse && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
             {
                 ToggleActionMap(playerActions.Player);
                 GameManager.Instance.OnResume();
@@ -420,6 +485,13 @@ public class InputManager : MonoBehaviour
     }
 
     #endregion
+
+    private void OnPlayerDeath()
+    {
+        isPlayerDead = true;
+        ToggleActionMap(playerActions.UI);
+        DisableGameInput();
+    }
 
     private void Update()
     {
@@ -465,11 +537,15 @@ public class InputManager : MonoBehaviour
         {
             ToggleActionMap(playerActions.Player);
         }
-        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining)
+        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
         {
             ToggleActionMap(playerActions.Training);
         }
-        else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining)
+        else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
+        {
+            ToggleActionMap(playerActions.Player);
+        }
+        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
         {
             ToggleActionMap(playerActions.Player);
         }

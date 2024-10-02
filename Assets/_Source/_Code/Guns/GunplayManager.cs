@@ -49,7 +49,7 @@ public class GunplayManager : MonoBehaviour
     [Space(20)]
 
     [Header("Gun Statistics")]
-    [SerializeField] private int bulletDamage;
+    [SerializeField] private int bulletDamage = 10;
     [SerializeField] private float timeBetweenBullets;
     [SerializeField] private float timeBetweenShooting;
 
@@ -87,6 +87,10 @@ public class GunplayManager : MonoBehaviour
     [Space(15)]
 
     [SerializeField] private int getCurrentCourseID = 0;
+
+    [Space(10)]
+
+    [SerializeField, Tooltip("[DEBUGGING] Show a line of where the player is looking and can shoot")] private bool showFiringLine = false;
 
     #endregion
 
@@ -232,7 +236,7 @@ public class GunplayManager : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        //Gizmos.DrawLine(_camera.transform.position, _camera.transform.position + _camera.transform.forward * bulletRange);
+        Gizmos.DrawLine(_camera.transform.position, _camera.transform.position + _camera.transform.forward * bulletRange);
     }
 
     private void FireGun()
@@ -258,13 +262,22 @@ public class GunplayManager : MonoBehaviour
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
+                #region Debugging
+
                 if (GameManager.Instance.toggleDebug)
                 {
-                    //To view the raycast in engine
-                    Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                    if (showFiringLine)
+                    {
+                        //To view the raycast in engine
+                        Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                        OnDrawGizmos();
+                    }
 
-                    Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                    Debug.Log("GunplayManager: Gun fired!");
+                    Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
                 }
+
+                #endregion
 
                 if (_raycastHit.collider.CompareTag("Target"))
                 {
@@ -272,40 +285,53 @@ public class GunplayManager : MonoBehaviour
                     {
                         Debug.Log("Hit a target!");
                     }
-                    
+
                     Guid guid = _raycastHit.collider.GetComponent<Target>().targetGuid;
+
+                    //Using events
                     GameManager.Instance.TargetHit(guid, bulletDamage);
+
+                    //Using colliders
                     //_raycastHit.collider.GetComponent<Target>().OnHitTriggerEvent(bulletDamage);
                 }
             }
         }
-        else if (!isPlayerInTrainingCourse)
+        else if (!isPlayerInTrainingCourse && isFPSTesting)
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
-                if (GameManager.Instance.toggleDebug) 
-                {
-                    //To view the raycast in engine
-                    Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                #region Debugging
 
-                    Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                if (GameManager.Instance.toggleDebug)
+                {
+                    if (showFiringLine)
+                    {
+                        //To view the raycast in engine
+                        Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                        OnDrawGizmos();
+                    }
+
+                    Debug.Log("GunplayManager: Gun fired!");
+                    Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
                 }
+
+                #endregion
 
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
                     if (GameManager.Instance.toggleDebug)
                     {
-                        Debug.Log("Hit an enemy!");
+                        Debug.Log("GunplayManager: Hit an enemy!");
                     }
 
                     //Need to create an enemy script with a public function to take damage and reference it here
                     //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
 
                     //Using events
-                    //GameManager.Instance.OnEnemyHit(bulletDamage);
+                    GameManager.Instance.OnEnemyHit(bulletDamage);
 
                     //Using colliders
-                    _raycastHit.collider.GetComponent<enemyAiController>().TakeDamage(bulletDamage);
+                    //_raycastHit.collider.GetComponent<enemyAiController>().TakeDamage(bulletDamage);
                 }
             }
         }

@@ -17,7 +17,7 @@ public class CinemachinePOVExtension : CinemachineExtension
     [SerializeField, Tooltip("How far the mouse can vertically move the camera up or down on the 'y' axis before reaching the defined limit.")] 
     private float clampYAngle = 85f;
 
-    private InputManager inputManager;
+    //private InputManager inputManager;
     private Vector3 startingRotation;
 
     #endregion
@@ -25,7 +25,7 @@ public class CinemachinePOVExtension : CinemachineExtension
     protected override void Awake()
     {
         //Referencing the InputManager by calling the instance
-        inputManager = InputManager.Instance;
+        //inputManager = InputManager.Instance;
 
         //Call the Awake function of the InputManager
         base.Awake();
@@ -43,7 +43,7 @@ public class CinemachinePOVExtension : CinemachineExtension
                     startingRotation = transform.localRotation.eulerAngles;
 
                     //Get the mouse delta value from the Input Manager as a vector2 value
-                    Vector2 deltaInput = inputManager.GetMouseDelta();
+                    Vector2 deltaInput = InputManager.Instance.GetMouseDelta();
 
                     //Update the camera rotation using the mouse delta values from the InputManager
                     //startingRotation.x += deltaInput.x * mouseVerticalSensitivity * Time.deltaTime;

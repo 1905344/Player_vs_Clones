@@ -68,6 +68,12 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Game States")]
+    public bool isInTraining = false;
+    public bool isInFPS = false;
+
+    [Space(10)]
+
     [SerializeField] public bool toggleDebug = false;
 
     #endregion
@@ -103,6 +109,7 @@ public class GameManager : MonoBehaviour
     {
         if (TrainingCourseStarted != null)
         {
+            isInTraining = true;
             TrainingCourseStarted(ID);
         }
     }
@@ -127,6 +134,7 @@ public class GameManager : MonoBehaviour
     {
         if (FinishedTraining != null)
         {
+            isInTraining = false;
             FinishedTraining();
         }
     }
@@ -167,6 +175,7 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerKilled != null)
         {
+            isInFPS = false;
             OnGameOverReturnToMainMenu();
         }
     }
@@ -183,6 +192,9 @@ public class GameManager : MonoBehaviour
     {
         if (OnStartGame != null)
         {
+            isInFPS = false;
+            isInTraining = true;
+
             OnStartGame();
         }
     }
@@ -311,6 +323,9 @@ public class GameManager : MonoBehaviour
 
     public void OnGameOverReturnToMainMenu()
     {
+        isInTraining = false;
+        isInFPS = false;
+
         SceneManager.LoadSceneAsync("MainMenu");
     }
 

@@ -12,9 +12,6 @@ public class playerGameCharacter : MonoBehaviour
     [SerializeField] private bool isAlive;
     //[SerializeField] private 
 
-    [SerializeField] private CapsuleCollider bodyCollider;
-    [SerializeField] private BoxCollider headCollider;
-
     [Space(10)]
 
     [SerializeField] private int enemyBulletDamageAmount;
@@ -35,15 +32,16 @@ public class playerGameCharacter : MonoBehaviour
     {
         if (!isAlive)
         {
-            if (GameManager.Instance.toggleDebug)
-            {
-                Debug.Log("Player has been hit for " + damage + " !");
-            }
-
             return;
         }
 
         health -= damage;
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Player has been hit for " + damage + " damage!");
+            Debug.Log("Player has " + health + " health remaining.");
+        }
 
         if (health <= 0)
         {

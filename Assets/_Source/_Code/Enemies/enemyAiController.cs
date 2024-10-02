@@ -39,6 +39,14 @@ public class enemyAiController : MonoBehaviour
     [SerializeField] private int bulletsFired = 0;
     [SerializeField] private int bulletDamage = 10;
 
+    [Space(10)]
+
+    [Header("Debug")]
+    [SerializeField] private bool showSightRange;
+    [SerializeField] private bool showAttackRange;
+
+    [SerializeField] private bool stopShooting = false;
+
     #endregion
 
     private void Awake()
@@ -53,6 +61,7 @@ public class enemyAiController : MonoBehaviour
         //GameManager.Instance.LevelFailed += DestroyThisEnemy;
 
         GameManager.Instance.EnemyHit += TakeDamage;
+        GameManager.Instance.PlayerKilled += StopAttacking;
     }
 
     #region States
@@ -111,6 +120,13 @@ public class enemyAiController : MonoBehaviour
         }
     }
 
+    private void StopAttacking()
+    {
+        stopShooting = true;
+        hasAttackedAlready = true;
+        timeBetweenAttacks = 9999f;
+    }
+
     #endregion
 
     #region Functions for states
@@ -145,6 +161,11 @@ public class enemyAiController : MonoBehaviour
 
         enemyHealth -= damage;
 
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Enemy has been hit. This enemy has " + enemyHealth + " health remaining.");
+        }
+
         if (enemyHealth <= 0)
         {
             Invoke(nameof(DestroyThisEnemy), 0.5f);
@@ -155,6 +176,12 @@ public class enemyAiController : MonoBehaviour
     {
         //SoundManager.instance.PlaySFX(enemyDeathSFX);
 
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Enemy destroyed.");
+        }
+
+        this.gameObject.SetActive(false);
         Destroy(gameObject);
     }
 
@@ -164,11 +191,31 @@ public class enemyAiController : MonoBehaviour
     {
         //Visualing the attack and sight range of the enemy A.I.
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, aiAttackRange);
+        if (showAttackRange)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, aiAttackRange);
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, aiSightRange);
+            showAttackRange = false;
+        }
+        else if (showSightRange)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, aiSightRange);
+
+            showSightRange = false;
+        }
+        else if (showAttackRange && showSightRange) 
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, aiAttackRange);
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, aiSightRange);
+
+            showAttackRange = false;
+            showSightRange = false;
+        }
     }
 
     private void Update()
@@ -176,19 +223,35 @@ public class enemyAiController : MonoBehaviour
         isPlayerInSightRange = Physics.CheckSphere(transform.position, aiSightRange, playerLayerMask);
         isPlayerInAttackRange = Physics.CheckSphere(transform.position, aiAttackRange, playerLayerMask);
 
-        if (!isPlayerInSightRange && !isPlayerInAttackRange)
+        if (!stopShooting)
         {
-            Patrolling();
+            if (!isPlayerInSightRange && !isPlayerInAttackRange)
+            {
+                Patrolling();
+            }
+
+            if (isPlayerInSightRange && !isPlayerInAttackRange)
+            {
+                Chasing();
+            }
+
+            if (isPlayerInAttackRange && isPlayerInSightRange)
+            {
+                Attacking();
+            }
+        }
+        else
+        {
+            return;
         }
 
-        if (isPlayerInSightRange && !isPlayerInAttackRange)
+        #region Debugging
+
+        if (GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
         {
-            Chasing();
+            OnDrawGizmosSelected();
         }
 
-        if (isPlayerInAttackRange && isPlayerInSightRange)
-        {
-            Attacking();
-        }
+        #endregion
     }
 }

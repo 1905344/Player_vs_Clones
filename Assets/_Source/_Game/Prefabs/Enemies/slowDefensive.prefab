@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6713272347854422178}
   - component: {fileID: 5272682640803539114}
   - component: {fileID: 431909162363647701}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ BoxCollider:
     m_Bits: 4545
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 288
+    m_Bits: 800
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 1
@@ -177,6 +177,8 @@ MonoBehaviour:
     type: 3}
   bulletsFired: 0
   bulletDamage: 10
+  showSightRange: 0
+  showAttackRange: 0
 --- !u!195 &8961382579404622942
 NavMeshAgent:
   m_ObjectHideFlags: 0

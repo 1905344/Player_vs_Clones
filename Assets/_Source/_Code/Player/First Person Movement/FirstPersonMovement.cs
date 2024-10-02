@@ -57,6 +57,7 @@ public class FirstPersonMovement : MonoBehaviour
     {
         cameraTransform = Camera.main.transform;
         GameManager.Instance.OnStartGame += EnablePlayerMovement;
+        GameManager.Instance.PlayerKilled += DisablePlayerMovement;
     }
 
     #region Enable and Disable Player Movement

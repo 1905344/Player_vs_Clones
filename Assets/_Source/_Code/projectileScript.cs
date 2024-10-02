@@ -10,7 +10,7 @@ public class projectileScript : MonoBehaviour
     public int projectileID;
     public int damage { get; set; }
     
-    [SerializeField] private float projectileLifespan = 5f;
+    [SerializeField] private float projectileLifespan = 10f;
     private float timer;
     private bool timerFinished = false;
 
@@ -34,10 +34,11 @@ public class projectileScript : MonoBehaviour
         if (collision.collider.CompareTag("Player"))
         {
             //Using events
-            //GameManager.Instance.OnPlayerHit(damage);
+            GameManager.Instance.OnPlayerHit(damage);
 
+            DestroyProjectile();
             //Using colliders
-            collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
+            //collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
         }
         else if (!collision.collider.CompareTag("Player"))
         {
@@ -49,7 +50,7 @@ public class projectileScript : MonoBehaviour
     {
         if (GameManager.Instance.toggleDebug && timerFinished)
         {
-            Debug.Log("Destroy projectile " + projectileID + " because it has reached the end of its lifespan.");
+            Debug.Log("Destroyed projectile " + projectileID + " because it has reached the end of its lifespan.");
         }
 
         Destroy(this.gameObject);
