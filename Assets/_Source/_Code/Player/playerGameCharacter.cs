@@ -12,7 +12,9 @@ public class playerGameCharacter : MonoBehaviour
     [SerializeField] private bool isAlive;
     //[SerializeField] private 
 
-    [SerializeField] private Collider playerCollider;
+    [Space(10)]
+
+    [SerializeField] private int enemyBulletDamageAmount;
 
     #endregion
 
@@ -21,17 +23,12 @@ public class playerGameCharacter : MonoBehaviour
         isAlive = true;
     }
 
-    //private void OnCollisionEnter(Collision other)
-    //{
-    //    if (other.tag)
-    //    {
-            
-    //    }
-    //    OnPlayerDeath();
-    //    //OnPlayerHit();
-    //}
+    private void Start()
+    {
+        GameManager.Instance.PlayerHit += OnPlayerHit;
+    }
 
-    private void OnPlayerHit(int damage)
+    public void OnPlayerHit(int damage)
     {
         if (!isAlive)
         {
@@ -39,6 +36,12 @@ public class playerGameCharacter : MonoBehaviour
         }
 
         health -= damage;
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Player has been hit for " + damage + " damage!");
+            Debug.Log("Player has " + health + " health remaining.");
+        }
 
         if (health <= 0)
         {
@@ -51,8 +54,16 @@ public class playerGameCharacter : MonoBehaviour
         if (isAlive)
         {
             isAlive = false;
-            Debug.Log("Player has been killed!");
-            Application.Quit();
+            asymmGameplayManager.Instance.OnGameOver();
+
+            GameManager.Instance.OnPlayerKilled();
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Player has been killed.");
+            }
+
+            //Application.Quit();
         }
     }
 }

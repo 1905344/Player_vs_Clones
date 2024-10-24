@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -115,6 +116,11 @@ public class TrainingCourseManager : MonoBehaviour
     [SerializeField] private List<Target> targetScriptList;
     [SerializeField] private List<Guid> targetGuidList;
 
+    [Space(5)]
+
+    [SerializeField] private GameObject targetHighlightColumn;
+    private Transform highlightColumnTransform;
+
     [Space(15)]
 
     [SerializeField] private bool hasPlayerStartedTrainingCourse = false;
@@ -198,6 +204,8 @@ public class TrainingCourseManager : MonoBehaviour
         trainingCourseThreeStartPositionTransform = trainingCourseThreeStartingPosition.GetComponent<Transform>();
 
         FirstTimeTutorialText();
+
+        highlightColumnTransform = targetHighlightColumn.transform;
     }
 
     public void DisableTrainingCourseManager()
@@ -263,6 +271,8 @@ public class TrainingCourseManager : MonoBehaviour
         trainingCourseGunManager.EnableGun(trainingCourseID);
         trainingCourseGunManager.isPlayerInTrainingCourse = true;
 
+        targetHighlightColumn.SetActive(true);
+
         //playerMovementScript.EnablePlayerMovement();
 
         countupTimerActive = true;
@@ -319,7 +329,6 @@ public class TrainingCourseManager : MonoBehaviour
         {
             isTrainingCourseThreeComplete = true;
             thirdTrainingCoursePreviousTime = countupTimer;
-
         }
 
         foreach (GameObject target in currentTargetList)
@@ -341,6 +350,8 @@ public class TrainingCourseManager : MonoBehaviour
 
         currentTrainingCourse++;
         NextTrainingCourse(currentTrainingCourse);
+
+        targetHighlightColumn.SetActive(false);
     }
 
     private void RestartTrainingCourse()
@@ -633,6 +644,7 @@ public class TrainingCourseManager : MonoBehaviour
                 break;
             }
         }
+
         if(currentTarget != null)
         {
             currentTargetList.Remove(currentTarget);
@@ -651,6 +663,19 @@ public class TrainingCourseManager : MonoBehaviour
         if(targetToRemove != null)
         {
             targetScriptList.Remove(targetToRemove);
+        }
+
+        if (currentTargetList.FirstOrDefault())
+        {
+            GameObject target = currentTargetList.FirstOrDefault();
+
+            //Set target light column's transform
+            targetHighlightColumn.transform.position = target.transform.position;
+        }
+        else if (isTrainingCourseComplete && currentTargetList.LastOrDefault())
+        {
+            //Disable the target light column
+            targetHighlightColumn.SetActive(false);
         }
     }
 
@@ -700,6 +725,8 @@ public class TrainingCourseManager : MonoBehaviour
                 targetScriptList.Add(target.GetComponent<Target>());
             }
 
+            targetHighlightColumn.transform.position = courseOnetargetList.First().transform.position;
+
             //if (currentTargetList.Count != courseOnetargetList.Count)
             //{
             //    Debug.LogError("TrainingCourseManager: Incorrect number of targets for the first training course!");
@@ -713,6 +740,8 @@ public class TrainingCourseManager : MonoBehaviour
             {
                 targetScriptList.Add(target.GetComponent<Target>());
             }
+
+            targetHighlightColumn.transform.position = courseTwotargetList.First().transform.localPosition;
         }
         else if (courseID == 3)
         {
@@ -722,6 +751,8 @@ public class TrainingCourseManager : MonoBehaviour
             {
                 targetScriptList.Add(target.GetComponent<Target>());
             }
+
+            targetHighlightColumn.transform.position = courseThreetargetList.First().transform.localPosition;
         }
 
         //Populating the list for each of the scripts from the targets

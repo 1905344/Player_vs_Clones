@@ -39,12 +39,18 @@ public class GunplayManager : MonoBehaviour
     [Header("Camera Shake")]
     [SerializeField, Tooltip("How long the camera will shake for")] private float cameraShakeAmplitude;
     [SerializeField, Tooltip("How much the camera will shake")] private float cameraShakeMagnitude;
-    
+
+    [Space(10)]
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip gunTapFireSFX;
+    [SerializeField] private AudioClip gunHoldFireSFX;
 
     [Space(20)]
 
     [Header("Gun Statistics")]
-    [SerializeField] private int bulletDamage;
+    [SerializeField] private int bulletDamage = 10;
+    [SerializeField] private int headShotDamage = 30;
     [SerializeField] private float timeBetweenBullets;
     [SerializeField] private float timeBetweenShooting;
 
@@ -71,6 +77,7 @@ public class GunplayManager : MonoBehaviour
     [Space(10)]
 
     [SerializeField] public bool isPlayerInTrainingCourse = false;
+    [SerializeField] public bool isFPSTesting = false;
 
     [Space(10)]
 
@@ -82,6 +89,10 @@ public class GunplayManager : MonoBehaviour
 
     [SerializeField] private int getCurrentCourseID = 0;
 
+    [Space(10)]
+
+    [SerializeField, Tooltip("[DEBUGGING] Show a line of where the player is looking and can shoot")] private bool showFiringLine = false;
+
     #endregion
 
     private void Awake()
@@ -91,25 +102,18 @@ public class GunplayManager : MonoBehaviour
 
         #region Check which hand the gun should be
 
-        if (isPlayerInTrainingCourse)
+        if (gunInLeftHand)
         {
-            if (gunInLeftHand)
-            {
-                gunInRightHand = false;
-                updateGunPosition = true;
-            }
-            else if (gunInRightHand)
-            {
-                gunInLeftHand = false;
-                updateGunPosition = true;
-            }
+            gunInRightHand = false;
+            updateGunPosition = true;
+        }
+        else if (gunInRightHand)
+        {
+            gunInLeftHand = false;
+            updateGunPosition = true;
+        }
 
-            this.gameObject.SetActive(true);
-        }
-        else
-        {
-            this.gameObject.SetActive(false);
-        }
+        this.gameObject.SetActive(true);
 
         #endregion
 
@@ -118,9 +122,33 @@ public class GunplayManager : MonoBehaviour
     private void Start()
     {
         inputManager = InputManager.Instance;
+
         GameManager.Instance.TrainingCourseStarted += EnableGun;
         GameManager.Instance.TrainingCourseEnded += DisableGun;
         GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
+
+        if (isFPSTesting)
+        {
+            isPlayerInTrainingCourse = false;
+
+            canShoot = true;
+            bulletsRemainingText.gameObject.SetActive(true);
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+
+            isPlayerInTrainingCourse = true;
+            isFPSTesting = false;
+
+            canShoot = true;
+
+            bulletsRemainingText.gameObject.SetActive(true);
+            gameObject.SetActive(true);
+        }
+
+        updateGunPosition = true;
     }
 
     #region Enable and Disable The Gun
@@ -157,11 +185,14 @@ public class GunplayManager : MonoBehaviour
 
     public void DisableGunAfterTraining()
     {
-        isPlayerInTrainingCourse = false;
-        canShoot = false;
+        if (!isFPSTesting)
+        {
+            isPlayerInTrainingCourse = false;
+            canShoot = false;
 
-        Debug.Log("GunplayManager: Disabling the gun!");
-        gameObject.SetActive(false);
+            Debug.Log("GunplayManager: Disabling the gun!");
+            gameObject.SetActive(false);
+        }
     }
 
     #endregion
@@ -206,7 +237,7 @@ public class GunplayManager : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        //Gizmos.DrawLine(_camera.transform.position, _camera.transform.position + _camera.transform.forward * bulletRange);
+        Gizmos.DrawLine(_camera.transform.position, _camera.transform.position + _camera.transform.forward * bulletRange);
     }
 
     private void FireGun()
@@ -228,37 +259,84 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        //Debug.DrawLine(_camera.transform.position, spreadDirection * bulletRange, Color.red,5f);
-
         if (isPlayerInTrainingCourse)
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
             {
-                //To view the raycast in engine
-                Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                #region Debugging
 
-                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
-
-                if (_raycastHit.collider.CompareTag("Target"))
+                if (GameManager.Instance.toggleDebug)
                 {
-                    Debug.Log("Hit a target!");
+                    if (showFiringLine)
+                    {
+                        //To view the raycast in engine
+                        Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                    }
+
+                    Debug.Log("GunplayManager: Gun fired!");
+                    Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
+                }
+
+                #endregion
+
+                //Target target = _raycastHit.transform.GetComponent<Target>();
+
+                if (/*target !=null*/ _raycastHit.collider.CompareTag("Target"))
+                {
+                    if (GameManager.Instance.toggleDebug)
+                    {
+                        Debug.Log("Hit a target!");
+                    }
+
                     Guid guid = _raycastHit.collider.GetComponent<Target>().targetGuid;
+
+                    //Using events
                     GameManager.Instance.TargetHit(guid, bulletDamage);
-                    //_raycastHit.collider.GetComponent<Target>().OnHitTriggerEvent(bulletDamage);
                 }
             }
         }
-        else
+        else if (!isPlayerInTrainingCourse && isFPSTesting)
         {
             if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
             {
-                Debug.Log("Bullet hit: " + _raycastHit.collider.name);
+                #region Debugging
+
+                if (GameManager.Instance.toggleDebug)
+                {
+                    if (showFiringLine)
+                    {
+                        //To view the raycast in engine
+                        Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
+                    }
+
+                    Debug.Log("GunplayManager: Gun fired!");
+                    Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
+                }
+
+                #endregion
+
+                Guid enemyGuid = new Guid();
 
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
-                    //Need to create an enemy script with a public function to take damage and reference it here
-                    //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
-                    Debug.Log("Hit an enemy!");
+                    enemyGuid = Guid.Empty;
+                    enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
+
+                    if (GameManager.Instance.toggleDebug)
+                    {
+                        Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
+                    }
+
+                    //Using events
+                    if (_raycastHit.collider.name == "Enemy Head")
+                    {
+                        //Additional damage if raycast hits enemy head
+                        GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
+                    }
+                    else
+                    {
+                        GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
+                    }
                 }
             }
         }
@@ -280,14 +358,28 @@ public class GunplayManager : MonoBehaviour
 
         #endregion
 
+        #region Audio Feedback: Gun Fired SFX
+
+        if (allowFireButtonHold)
+        {
+            SoundManager.instance.PlaySFX(gunHoldFireSFX);
+        }
+        else
+        {
+            SoundManager.instance.PlaySFX(gunTapFireSFX);
+        }
+        
+
+        #endregion
+
         bulletsRemaining--;
         bulletsFired--;
 
-        Invoke("ResetShot", timeBetweenShooting);
+        Invoke(nameof(ResetShot), timeBetweenShooting);
 
         if (bulletsFired > 0 && bulletsRemaining > 0)
         {
-            Invoke("FireGun", timeBetweenBullets);
+            Invoke(nameof(FireGun), timeBetweenBullets);
         }
     }
 
@@ -299,7 +391,7 @@ public class GunplayManager : MonoBehaviour
     private void ReloadGun()
     {
         isReloading = true;
-        Invoke("ReloadingComplete", gunReloadTime);
+        Invoke(nameof(ReloadingComplete), gunReloadTime);
     }
 
     private void ReloadingComplete()
@@ -342,10 +434,8 @@ public class GunplayManager : MonoBehaviour
             bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
         }
 
-        if (isPlayerInTrainingCourse)
+        if (isPlayerInTrainingCourse && !isFPSTesting)
         {
-            getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
-
             if (updateGunPosition)
             {
                 if (gunInLeftHand)
@@ -360,7 +450,22 @@ public class GunplayManager : MonoBehaviour
                 updateGunPosition = false;
             }
         }
+        else if (isFPSTesting && !isPlayerInTrainingCourse)
+        {
+            if (updateGunPosition)
+            {
+                if (gunInLeftHand)
+                {
+                    transform.SetParent(leftHand.transform);
+                }
+                else if (gunInRightHand)
+                {
+                    transform.SetParent(rightHand.transform);
+                }
 
+                updateGunPosition = false;
+            }
+        }
             
     }
 }

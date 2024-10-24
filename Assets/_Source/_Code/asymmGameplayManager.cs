@@ -63,6 +63,8 @@ public class asymmGameplayManager : MonoBehaviour
     [Header("Level Complete Trigger")]
     [SerializeField] private GameObject redDoor;
 
+    [Space(10)]
+
     private bool createEnemies = false;
 
     private List<GameObject> enemyList = new List<GameObject>();
@@ -116,7 +118,7 @@ public class asymmGameplayManager : MonoBehaviour
         }
     }
 
-    private void OnGameOver()
+    public void OnGameOver()
     {
         gameOverScreen.gameObject.SetActive(true);
         redDoor.SetActive(false);

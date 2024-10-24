@@ -1,3 +1,5 @@
+using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,13 +11,13 @@ public class enemyAiController : MonoBehaviour
     private Transform playerCharacter;
     [SerializeField] public LayerMask groundLayerMask;
     [SerializeField] public LayerMask playerLayerMask;
-    [SerializeField] private float enemyHealth;
+    [SerializeField] private float enemyHealth = 30f;
 
     //For Patrolling State
-    [SerializeField] public Vector3 walkPoint;
+    [SerializeField] public Transform walkPointTransform;
+    [SerializeField] private Vector3 walkPoint;
     [SerializeField] private bool isWalkPointSet;
     [SerializeField] public float walkPointRange;
-
 
     //For Attacking State
     [SerializeField] public float timeBetweenAttacks;
@@ -27,9 +29,31 @@ public class enemyAiController : MonoBehaviour
     [SerializeField] public bool isPlayerInSightRange;
     [SerializeField] public bool isPlayerInAttackRange;
 
+    [SerializeField] private AudioClip attackSFX;
+    [SerializeField] private AudioClip playerDiscoveredSFX;
+    [SerializeField] private AudioClip lostSightOfPlayerSFX;
+    [SerializeField] private AudioClip enemyInjuredSFX;
+    [SerializeField] private AudioClip enemyDeathSFX;
 
     //Placeholder shooting
     [SerializeField] public GameObject projectile;
+    [SerializeField] private int bulletsFired = 0;
+    [SerializeField] private int bulletDamage = 10;
+
+    [Space(10)]
+
+    [Header("Debug")]
+    [SerializeField] private bool showSightRange;
+    [SerializeField] private bool showAttackRange;
+    [SerializeField] private bool stopShooting = false;
+
+    [SerializeField] public Guid enemyID;
+
+
+    private static Guid GenerateGuid()
+    {
+        return Guid.NewGuid();
+    }
 
     #endregion
 
@@ -37,12 +61,24 @@ public class enemyAiController : MonoBehaviour
     {
         playerCharacter = GameObject.Find("Player").transform;
         meshAgent = GetComponent<NavMeshAgent>();
+
+        walkPoint = new Vector3(walkPointTransform.position.x, walkPointTransform.position.y, walkPointTransform.position.z);
+
+        enemyID = GenerateGuid();
     }
 
     private void Start()
     {
         //GameManager.Instance.LevelCompleted += DestroyThisEnemy;
         //GameManager.Instance.LevelFailed += DestroyThisEnemy;
+
+        GameManager.Instance.EnemyHit += TakeDamage;
+        GameManager.Instance.PlayerKilled += StopAttacking;
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Enemy " + enemyID + " active.");
+        }
     }
 
     #region States
@@ -68,6 +104,8 @@ public class enemyAiController : MonoBehaviour
 
     private void Chasing()
     {
+        //SoundManager.instance.PlaySFX(playerDiscoveredSFX);
+
         meshAgent.SetDestination(playerCharacter.position);
     }
 
@@ -81,11 +119,16 @@ public class enemyAiController : MonoBehaviour
 
         if (!hasAttackedAlready)
         {
+            bulletsFired++;
+
             //Attacking code - currently this is a placeholder
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            
+
+            rb.gameObject.GetComponent<projectileScript>().projectileID = bulletsFired;
+            rb.gameObject.GetComponent<projectileScript>().damage = bulletDamage;
+
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            rb.AddForce(transform.up * 2f, ForceMode.Impulse);
 
             //Debug.DrawLine(transform.forward, projectile.transform.position, Color.red, 5f);
 
@@ -94,14 +137,23 @@ public class enemyAiController : MonoBehaviour
         }
     }
 
+    private void StopAttacking()
+    {
+        stopShooting = true;
+        hasAttackedAlready = true;
+        timeBetweenAttacks = 9999f;
+    }
+
     #endregion
 
     #region Functions for states
 
     private void SearchForWalkPoint()
     {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
+        //SoundManager.instance.PlaySFX(lostSightOfPlayerSFX);
+
+        float randomZ = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
+        float randomX = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
 
         walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
@@ -120,9 +172,21 @@ public class enemyAiController : MonoBehaviour
 
     #region Take Damage and Destroy Enemy
 
-    private void TakeDamage(int damage)
+    public void TakeDamage(Guid id, int damage)
     {
+        if (id != enemyID)
+        {
+            return;
+        }
+
+        //SoundManager.instance.PlaySFX(enemyInjuredSFX);
+
         enemyHealth -= damage;
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Enemy " + enemyID + " has been hit." + enemyHealth + " health remaining.");
+        }
 
         if (enemyHealth <= 0)
         {
@@ -132,40 +196,88 @@ public class enemyAiController : MonoBehaviour
 
     private void DestroyThisEnemy()
     {
-        Destroy(gameObject);
+        //SoundManager.instance.PlaySFX(enemyDeathSFX);
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Enemy " + enemyID + " destroyed.");
+        }
+
+        this.gameObject.SetActive(false);
+        Destroy(this.gameObject);
     }
 
     #endregion
+
+    #region Debugging: Showing Gizmos
 
     private void OnDrawGizmosSelected()
     {
         //Visualing the attack and sight range of the enemy A.I.
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, aiAttackRange);
+        if (showAttackRange)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, aiAttackRange);
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, aiSightRange);
+            showAttackRange = false;
+        }
+        else if (showSightRange)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, aiSightRange);
+
+            showSightRange = false;
+        }
+        else if (showAttackRange && showSightRange) 
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, aiAttackRange);
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, aiSightRange);
+
+            showAttackRange = false;
+            showSightRange = false;
+        }
     }
+
+    #endregion
 
     private void Update()
     {
         isPlayerInSightRange = Physics.CheckSphere(transform.position, aiSightRange, playerLayerMask);
         isPlayerInAttackRange = Physics.CheckSphere(transform.position, aiAttackRange, playerLayerMask);
 
-        if (!isPlayerInSightRange && !isPlayerInAttackRange)
+        if (!stopShooting)
         {
-            Patrolling();
+            if (!isPlayerInSightRange && !isPlayerInAttackRange)
+            {
+                Patrolling();
+            }
+
+            if (isPlayerInSightRange && !isPlayerInAttackRange)
+            {
+                Chasing();
+            }
+
+            if (isPlayerInAttackRange && isPlayerInSightRange)
+            {
+                Attacking();
+            }
+        }
+        else
+        {
+            return;
         }
 
-        if (isPlayerInSightRange && !isPlayerInAttackRange)
+        #region Debugging
+
+        if (GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
         {
-            Chasing();
+            OnDrawGizmosSelected();
         }
 
-        if (isPlayerInAttackRange && isPlayerInSightRange)
-        {
-            Attacking();
-        }
+        #endregion
     }
 }

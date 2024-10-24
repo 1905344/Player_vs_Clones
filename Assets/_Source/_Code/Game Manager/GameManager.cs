@@ -11,13 +11,13 @@ public class GameManager : MonoBehaviour
 
     #region Variables
 
-    private static GameManager _instance;
+    private static GameManager instance;
 
     public static GameManager Instance
     {
         get
         {
-            return _instance;
+            return instance;
         }
     }
 
@@ -36,7 +36,9 @@ public class GameManager : MonoBehaviour
     public event Action SetAiBehaviour;
 
     //Events for the asymmetrical gameplay
-    public event Action OnAttackPlayer;
+    public event Action<int> PlayerHit;
+    public event Action PlayerKilled;
+    public event Action<Guid, int> EnemyHit;
 
     //Event to start the main game
     public event Action OnStartGame;
@@ -64,17 +66,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] Button quitToMainMenuButton;
     [SerializeField] Button quitGameButton;
 
+    [Space(10)]
+
+    [Header("Game States")]
+    public bool isInTraining = false;
+    public bool isInFPS = false;
+
+    [Space(10)]
+
+    [SerializeField] public bool toggleDebug = false;
+
     #endregion
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
         }
         else
         {
-            _instance = this;
+            instance = this;
         }
     }
 
@@ -97,6 +109,7 @@ public class GameManager : MonoBehaviour
     {
         if (TrainingCourseStarted != null)
         {
+            isInTraining = true;
             TrainingCourseStarted(ID);
         }
     }
@@ -121,6 +134,7 @@ public class GameManager : MonoBehaviour
     {
         if (FinishedTraining != null)
         {
+            isInTraining = false;
             FinishedTraining();
         }
     }
@@ -149,11 +163,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerAttacked()
+    public void OnPlayerHit(int damage)
     {
-        if (OnAttackPlayer != null)
+        if (PlayerHit != null)
         {
-            OnAttackPlayer();
+            PlayerHit(damage);
+        }
+    }
+
+    public void OnPlayerKilled()
+    {
+        if (PlayerKilled != null)
+        {
+            isInFPS = false;
+            OnGameOverReturnToMainMenu();
+        }
+    }
+
+    public void OnEnemyHit(Guid enemyID, int damage)
+    {
+        if (EnemyHit != null)
+        {
+            EnemyHit(enemyID, damage);
         }
     }
 
@@ -161,6 +192,9 @@ public class GameManager : MonoBehaviour
     {
         if (OnStartGame != null)
         {
+            isInFPS = false;
+            isInTraining = true;
+
             OnStartGame();
         }
     }
@@ -221,26 +255,44 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         pauseScreen.gameObject.SetActive(true);
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
         EnablePauseButtons();
     }
 
     public void OnResume()
     {
-        if (InputManager.Instance.pauseGame)
+        if (!InputManager.Instance.pauseGame)
         {
-            Debug.Log("Resuming the game.");
+            return;
+        }
+        else
+        {
+            if (toggleDebug)
+            {
+                Debug.Log("Resuming the game.");
+            }
+
             Time.timeScale = 1.0f;
+            DisablePauseUI();
 
             Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            pauseScreen.gameObject.SetActive(false);
-            quitPromptScreen.gameObject.SetActive(false);
-
-            DisablePauseButtons();
-            DisableQuitScreenButtons();
-            InputManager.Instance.pauseGame = false;
+            Cursor.lockState = CursorLockMode.Locked; 
+            InputManager.Instance.OnResumeUIButtonPressed();
         }
+    }
+
+    public void DisablePauseUI()
+    {
+        //In case the player presses the escape to resume instead
+        //of the U.I. button to resume the game
+        pauseScreen.gameObject.SetActive(false);
+        quitPromptScreen.gameObject.SetActive(false);
+
+        DisablePauseButtons();
+        DisableQuitScreenButtons();
     }
 
     public void OnQuitButtonPressed()
@@ -250,7 +302,7 @@ public class GameManager : MonoBehaviour
         EnableQuitScreenButtons();
 
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void OnReturnToPauseScreenPressed()
@@ -260,7 +312,7 @@ public class GameManager : MonoBehaviour
         DisableQuitScreenButtons();
 
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void OnRestartButtonPressed()
@@ -271,7 +323,7 @@ public class GameManager : MonoBehaviour
     public void OnQuitToMainMenu()
     {
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
@@ -289,6 +341,9 @@ public class GameManager : MonoBehaviour
 
     public void OnGameOverReturnToMainMenu()
     {
+        isInTraining = false;
+        isInFPS = false;
+
         SceneManager.LoadSceneAsync("MainMenu");
     }
 

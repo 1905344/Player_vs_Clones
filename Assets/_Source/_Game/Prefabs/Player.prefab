@@ -96,6 +96,8 @@ MonoBehaviour:
   muzzleFlashParent: {fileID: 0}
   cameraShakeAmplitude: 5
   cameraShakeMagnitude: 5
+  gunTapFireSFX: {fileID: 0}
+  gunHoldFireSFX: {fileID: 0}
   bulletDamage: 5
   timeBetweenBullets: 0.3
   timeBetweenShooting: 0.3
@@ -111,6 +113,7 @@ MonoBehaviour:
   canShoot: 0
   isReloading: 0
   isPlayerInTrainingCourse: 0
+  isFPSTesting: 0
   updateGunPosition: 0
   gunInLeftHand: 1
   gunInRightHand: 0
@@ -212,7 +215,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2816
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -470,6 +473,7 @@ MonoBehaviour:
   health: 10
   isAlive: 0
   playerCollider: {fileID: 6513890564319554051}
+  enemyBulletDamageAmount: 0
 --- !u!1 &4063539871666877002
 GameObject:
   m_ObjectHideFlags: 0

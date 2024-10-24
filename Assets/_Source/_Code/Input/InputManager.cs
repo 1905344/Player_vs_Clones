@@ -60,11 +60,14 @@ public class InputManager : MonoBehaviour
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
 
+    //Training course booleans
     public bool isPlayerInTrainingCourse = false;
     public bool isPlayerFinishedTraining = false;
     private int getTrainingCourseID = 1;
 
     public bool levelComplete;
+
+    [SerializeField] private bool isPlayerDead = false;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -172,8 +175,11 @@ public class InputManager : MonoBehaviour
         playerActions.Training.PauseGame.performed += OnPause;
         playerActions.Player.PauseGame.performed += OnPause;
 
-        playerActions.Player.PauseGame.performed += OnPause;
+        playerActions.Player.PauseGame.performed -= OnResume;
         playerActions.Training.PauseGame.performed -= OnResume;
+        
+        playerActions.UI.PauseGame.performed += OnResume;
+        playerActions.UI.PauseGame.performed -= OnResume;
 
         //Level completed
         //GameManager.Instance.LevelCompleted += DisableGameInput;
@@ -186,11 +192,26 @@ public class InputManager : MonoBehaviour
 
         playerActions.Training.StartTrainingCourse.Enable();
         ToggleActionMap(playerActions.Training);
+
+        //Event for when the player has been killed
+        GameManager.Instance.PlayerKilled += OnPlayerDeath; 
     }
 
     private void Start()
     {
-        ToggleActionMap(playerActions.UI);
+        if (GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        {
+            ToggleActionMap(playerActions.UI);
+        }
+        else if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+        }
+
+        //if (GameManager.Instance.toggleDebug)
+        //{
+        //    Debug.Log("InputManager: The starting action map is: ");
+        //}
 
         vCam.SetFocalLength(_FOV);
         Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
@@ -202,23 +223,80 @@ public class InputManager : MonoBehaviour
 
     public void OnEnable()
     {
-        ToggleActionMap(playerActions.Player);
-        playerActions.Training.Disable();
-        playerActions.Player.Enable();
+        if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+            playerActions.Training.Disable();
+            playerActions.Player.Enable();
+        }
+        else
+        {
+            ToggleActionMap(playerActions.Training);
+            playerActions.Training.Enable();
+            playerActions.Player.Disable();
+        }
     }
 
     public void OnDisable()
     {
-        ToggleActionMap(playerActions.Training);
-        playerActions.Training.Enable();
-        playerActions.Player.Disable();
+        if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+            playerActions.Training.Disable();
+            playerActions.Player.Enable();
+        }
+        else
+        {
+            ToggleActionMap(playerActions.Training);
+            playerActions.Training.Enable();
+            playerActions.Player.Disable();
+        }
+    }
+
+    public void EnableGameInput()
+    {
+        if (isPlayerDead || pauseGame)
+        {
+            return;
+        }
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: game input enabled.");
+        }
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        playerActions.UI.Disable();
+
+        if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        {
+            ToggleActionMap(playerActions.Training);
+            playerActions.Player.Disable();
+        }
+        else if (GameManager.Instance.isInFPS && !isPlayerInTrainingCourse && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+            playerActions.Training.Disable();
+        }
     }
 
     public void DisableGameInput()
     {
-        if (!levelComplete)
+        //if (!levelComplete)
+        //{
+        //    return;
+        //}
+
+        if (isPlayerDead)
         {
             return;
+        }
+        
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: game input disabled.");
         }
 
         ToggleActionMap(playerActions.UI);
@@ -272,14 +350,21 @@ public class InputManager : MonoBehaviour
         {
             IsPlayerTappingTheFireButton = true;
             IsPlayerHoldingTheFireButton = false;
-            Debug.Log("Player is tapping the fire gun input key.");
+
+            if (!pauseGame && GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Player is tapping the fire gun input key.");
+            }
         }
         else if (context.duration > 0.51f && !IsPlayerHoldingTheFireButton)
         {
             IsPlayerHoldingTheFireButton = true;
             IsPlayerTappingTheFireButton = false;
 
-            Debug.Log("Player is holding the fire gun input key.");
+            if (!pauseGame && GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Player is holding the fire gun input key.");
+            }
         }
     }
 
@@ -298,7 +383,7 @@ public class InputManager : MonoBehaviour
         OnEnable();
         getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
 
-        if (isPlayerInTrainingCourse)
+        if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining)
         {
             return;
         }
@@ -315,6 +400,7 @@ public class InputManager : MonoBehaviour
     public void OnFinishedTraining()
     {
         OnEnable();
+        GameManager.Instance.isInTraining = false;
         isPlayerFinishedTraining = true;
         playerActions.Training.Disable();
         playerActions.Player.Fire.Disable();
@@ -363,6 +449,11 @@ public class InputManager : MonoBehaviour
             return;
         }
 
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
+        }
+
         playerActions.Disable();
         changeActionMap?.Invoke(actionMap);
         actionMap.Enable();
@@ -374,52 +465,68 @@ public class InputManager : MonoBehaviour
 
     private void OnPause(InputAction.CallbackContext context)
     {
+        if (isPlayerDead)
+        {
+            return;
+        }
+
         if (pauseGame)
         {
-            pauseGame = false;
-            return;
+            OnResume(context);
         }
         else
         {
             DisableGameInput();
             GameManager.Instance.OnPause();
             pauseGame = true;
-
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
         }
     }
 
     private void OnResume(InputAction.CallbackContext context)
     {
-        if (pauseGame)
+        if (isPlayerDead)
         {
-            if (isPlayerInTrainingCourse)
-            {
-                ToggleActionMap(playerActions.Training);
-                GameManager.Instance.OnResume();
-                pauseGame = false;
+            return;
+        }
 
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-            else
-            {
-                ToggleActionMap(playerActions.Player);
-                GameManager.Instance.OnResume();
-                pauseGame = false;
-
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-            }
+        if (!pauseGame)
+        {
+            OnPause(context);
         }
         else
         {
+            GameManager.Instance.DisablePauseUI();
+            pauseGame = false;
+            EnableGameInput();
+        }
+    }
+
+    public void OnResumeUIButtonPressed()
+    {
+        if (isPlayerDead)
+        {
             return;
+        }
+
+        if (!pauseGame)
+        {
+            return;
+        }
+        else
+        {
+            pauseGame = false;
+            EnableGameInput();
         }
     }
 
     #endregion
+
+    private void OnPlayerDeath()
+    {
+        isPlayerDead = true;
+        ToggleActionMap(playerActions.UI);
+        DisableGameInput();
+    }
 
     private void Update()
     {
@@ -461,18 +568,21 @@ public class InputManager : MonoBehaviour
 
         //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
 
-        if (isPlayerInTrainingCourse)
-        {
-            ToggleActionMap(playerActions.Player);
-        }
-        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining)
-        {
-            ToggleActionMap(playerActions.Training);
-        }
-        else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining)
-        {
-            ToggleActionMap(playerActions.Player);
-        }
-
+        //if (isPlayerInTrainingCourse)
+        //{
+        //    ToggleActionMap(playerActions.Player);
+        //}
+        //else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        //{
+        //    ToggleActionMap(playerActions.Training);
+        //}
+        //else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
+        //{
+        //    ToggleActionMap(playerActions.Player);
+        //}
+        //else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
+        //{
+        //    ToggleActionMap(playerActions.Player);
+        //}
     }
 }

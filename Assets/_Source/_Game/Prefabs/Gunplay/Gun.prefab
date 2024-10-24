@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2881682718190202874}
   - component: {fileID: 38752498397153029}
   - component: {fileID: 7814374373575129692}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Model
   m_TagString: Gun
   m_Icon: {fileID: 0}
@@ -8069,7 +8069,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9179485067189152711}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Muzzle
   m_TagString: Gun
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
@@ -8101,7 +8101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1170824037690456992}
   - component: {fileID: 1487469022151069452}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Gun
   m_TagString: Gun
   m_Icon: {fileID: 0}
@@ -8156,6 +8156,8 @@ MonoBehaviour:
   muzzleFlashParent: {fileID: 0}
   cameraShakeAmplitude: 5
   cameraShakeMagnitude: 3
+  gunTapFireSFX: {fileID: 0}
+  gunHoldFireSFX: {fileID: 0}
   bulletDamage: 5
   timeBetweenBullets: 0.3
   timeBetweenShooting: 0.1
@@ -8171,7 +8173,9 @@ MonoBehaviour:
   canShoot: 0
   isReloading: 0
   isPlayerInTrainingCourse: 0
+  isFPSTesting: 0
   updateGunPosition: 0
   gunInLeftHand: 1
   gunInRightHand: 0
   getCurrentCourseID: 0
+  showFiringLine: 0
