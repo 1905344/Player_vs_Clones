@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,10 +11,11 @@ public class enemyAiController : MonoBehaviour
     private Transform playerCharacter;
     [SerializeField] public LayerMask groundLayerMask;
     [SerializeField] public LayerMask playerLayerMask;
-    [SerializeField] private float enemyHealth = 50f;
+    [SerializeField] private float enemyHealth = 30f;
 
     //For Patrolling State
-    [SerializeField] public Vector3 walkPoint;
+    [SerializeField] public Transform walkPointTransform;
+    [SerializeField] private Vector3 walkPoint;
     [SerializeField] private bool isWalkPointSet;
     [SerializeField] public float walkPointRange;
 
@@ -44,8 +45,15 @@ public class enemyAiController : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showSightRange;
     [SerializeField] private bool showAttackRange;
-
     [SerializeField] private bool stopShooting = false;
+
+    [SerializeField] public Guid enemyID;
+
+
+    private static Guid GenerateGuid()
+    {
+        return Guid.NewGuid();
+    }
 
     #endregion
 
@@ -53,6 +61,10 @@ public class enemyAiController : MonoBehaviour
     {
         playerCharacter = GameObject.Find("Player").transform;
         meshAgent = GetComponent<NavMeshAgent>();
+
+        walkPoint = new Vector3(walkPointTransform.position.x, walkPointTransform.position.y, walkPointTransform.position.z);
+
+        enemyID = GenerateGuid();
     }
 
     private void Start()
@@ -62,6 +74,11 @@ public class enemyAiController : MonoBehaviour
 
         GameManager.Instance.EnemyHit += TakeDamage;
         GameManager.Instance.PlayerKilled += StopAttacking;
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Enemy " + enemyID + " active.");
+        }
     }
 
     #region States
@@ -135,8 +152,8 @@ public class enemyAiController : MonoBehaviour
     {
         //SoundManager.instance.PlaySFX(lostSightOfPlayerSFX);
 
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
+        float randomZ = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
+        float randomX = UnityEngine.Random.Range(-walkPointRange, walkPointRange);
 
         walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
@@ -155,15 +172,20 @@ public class enemyAiController : MonoBehaviour
 
     #region Take Damage and Destroy Enemy
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(Guid id, int damage)
     {
+        if (id != enemyID)
+        {
+            return;
+        }
+
         //SoundManager.instance.PlaySFX(enemyInjuredSFX);
 
         enemyHealth -= damage;
 
         if (GameManager.Instance.toggleDebug)
         {
-            Debug.Log("Enemy has been hit. This enemy has " + enemyHealth + " health remaining.");
+            Debug.Log("Enemy " + enemyID + " has been hit." + enemyHealth + " health remaining.");
         }
 
         if (enemyHealth <= 0)
@@ -178,14 +200,16 @@ public class enemyAiController : MonoBehaviour
 
         if (GameManager.Instance.toggleDebug)
         {
-            Debug.Log("Enemy destroyed.");
+            Debug.Log("Enemy " + enemyID + " destroyed.");
         }
 
         this.gameObject.SetActive(false);
-        Destroy(gameObject);
+        Destroy(this.gameObject);
     }
 
     #endregion
+
+    #region Debugging: Showing Gizmos
 
     private void OnDrawGizmosSelected()
     {
@@ -217,6 +241,8 @@ public class enemyAiController : MonoBehaviour
             showSightRange = false;
         }
     }
+
+    #endregion
 
     private void Update()
     {

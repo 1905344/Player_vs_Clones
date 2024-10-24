@@ -50,6 +50,7 @@ public class GunplayManager : MonoBehaviour
 
     [Header("Gun Statistics")]
     [SerializeField] private int bulletDamage = 10;
+    [SerializeField] private int headShotDamage = 30;
     [SerializeField] private float timeBetweenBullets;
     [SerializeField] private float timeBetweenShooting;
 
@@ -270,7 +271,6 @@ public class GunplayManager : MonoBehaviour
                     {
                         //To view the raycast in engine
                         Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
-                        OnDrawGizmos();
                     }
 
                     Debug.Log("GunplayManager: Gun fired!");
@@ -279,7 +279,9 @@ public class GunplayManager : MonoBehaviour
 
                 #endregion
 
-                if (_raycastHit.collider.CompareTag("Target"))
+                //Target target = _raycastHit.transform.GetComponent<Target>();
+
+                if (/*target !=null*/ _raycastHit.collider.CompareTag("Target"))
                 {
                     if (GameManager.Instance.toggleDebug)
                     {
@@ -290,9 +292,6 @@ public class GunplayManager : MonoBehaviour
 
                     //Using events
                     GameManager.Instance.TargetHit(guid, bulletDamage);
-
-                    //Using colliders
-                    //_raycastHit.collider.GetComponent<Target>().OnHitTriggerEvent(bulletDamage);
                 }
             }
         }
@@ -308,7 +307,6 @@ public class GunplayManager : MonoBehaviour
                     {
                         //To view the raycast in engine
                         Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
-                        OnDrawGizmos();
                     }
 
                     Debug.Log("GunplayManager: Gun fired!");
@@ -317,21 +315,28 @@ public class GunplayManager : MonoBehaviour
 
                 #endregion
 
+                Guid enemyGuid = new Guid();
+
                 if (_raycastHit.collider.CompareTag("Enemy"))
                 {
+                    enemyGuid = Guid.Empty;
+                    enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
+
                     if (GameManager.Instance.toggleDebug)
                     {
-                        Debug.Log("GunplayManager: Hit an enemy!");
+                        Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
                     }
 
-                    //Need to create an enemy script with a public function to take damage and reference it here
-                    //_raycastHit.collider.GetComponent<enemyScript>().TakeDamage(bulletDamage);
-
                     //Using events
-                    GameManager.Instance.OnEnemyHit(bulletDamage);
-
-                    //Using colliders
-                    //_raycastHit.collider.GetComponent<enemyAiController>().TakeDamage(bulletDamage);
+                    if (_raycastHit.collider.name == "Enemy Head")
+                    {
+                        //Additional damage if raycast hits enemy head
+                        GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
+                    }
+                    else
+                    {
+                        GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
+                    }
                 }
             }
         }
@@ -370,11 +375,11 @@ public class GunplayManager : MonoBehaviour
         bulletsRemaining--;
         bulletsFired--;
 
-        Invoke("ResetShot", timeBetweenShooting);
+        Invoke(nameof(ResetShot), timeBetweenShooting);
 
         if (bulletsFired > 0 && bulletsRemaining > 0)
         {
-            Invoke("FireGun", timeBetweenBullets);
+            Invoke(nameof(FireGun), timeBetweenBullets);
         }
     }
 
@@ -386,7 +391,7 @@ public class GunplayManager : MonoBehaviour
     private void ReloadGun()
     {
         isReloading = true;
-        Invoke("ReloadingComplete", gunReloadTime);
+        Invoke(nameof(ReloadingComplete), gunReloadTime);
     }
 
     private void ReloadingComplete()

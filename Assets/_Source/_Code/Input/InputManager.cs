@@ -175,8 +175,11 @@ public class InputManager : MonoBehaviour
         playerActions.Training.PauseGame.performed += OnPause;
         playerActions.Player.PauseGame.performed += OnPause;
 
-        playerActions.Player.PauseGame.performed += OnPause;
+        playerActions.Player.PauseGame.performed -= OnResume;
         playerActions.Training.PauseGame.performed -= OnResume;
+        
+        playerActions.UI.PauseGame.performed += OnResume;
+        playerActions.UI.PauseGame.performed -= OnResume;
 
         //Level completed
         //GameManager.Instance.LevelCompleted += DisableGameInput;
@@ -250,6 +253,35 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    public void EnableGameInput()
+    {
+        if (isPlayerDead || pauseGame)
+        {
+            return;
+        }
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: game input enabled.");
+        }
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        playerActions.UI.Disable();
+
+        if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        {
+            ToggleActionMap(playerActions.Training);
+            playerActions.Player.Disable();
+        }
+        else if (GameManager.Instance.isInFPS && !isPlayerInTrainingCourse && !GameManager.Instance.isInTraining)
+        {
+            ToggleActionMap(playerActions.Player);
+            playerActions.Training.Disable();
+        }
+    }
+
     public void DisableGameInput()
     {
         //if (!levelComplete)
@@ -267,8 +299,6 @@ public class InputManager : MonoBehaviour
             Debug.Log("Input Manager: game input disabled.");
         }
 
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = true;
         ToggleActionMap(playerActions.UI);
         playerActions.Training.Disable();
         playerActions.Player.Disable();
@@ -320,14 +350,21 @@ public class InputManager : MonoBehaviour
         {
             IsPlayerTappingTheFireButton = true;
             IsPlayerHoldingTheFireButton = false;
-            Debug.Log("Player is tapping the fire gun input key.");
+
+            if (!pauseGame && GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Player is tapping the fire gun input key.");
+            }
         }
         else if (context.duration > 0.51f && !IsPlayerHoldingTheFireButton)
         {
             IsPlayerHoldingTheFireButton = true;
             IsPlayerTappingTheFireButton = false;
 
-            Debug.Log("Player is holding the fire gun input key.");
+            if (!pauseGame && GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Player is holding the fire gun input key.");
+            }
         }
     }
 
@@ -435,52 +472,50 @@ public class InputManager : MonoBehaviour
 
         if (pauseGame)
         {
-            pauseGame = false;
-            return;
+            OnResume(context);
         }
         else
         {
             DisableGameInput();
             GameManager.Instance.OnPause();
             pauseGame = true;
-
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
         }
     }
 
     private void OnResume(InputAction.CallbackContext context)
     {
-        if (pauseGame)
+        if (isPlayerDead)
         {
-            if (isPlayerDead)
-            {
-                pauseGame = false;
-                return;
-            }
+            return;
+        }
 
-            if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
-            {
-                ToggleActionMap(playerActions.Training);
-                GameManager.Instance.OnResume();
-                pauseGame = false;
-
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-            else if (!isPlayerInTrainingCourse && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
-            {
-                ToggleActionMap(playerActions.Player);
-                GameManager.Instance.OnResume();
-                pauseGame = false;
-
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-            }
+        if (!pauseGame)
+        {
+            OnPause(context);
         }
         else
         {
+            GameManager.Instance.DisablePauseUI();
+            pauseGame = false;
+            EnableGameInput();
+        }
+    }
+
+    public void OnResumeUIButtonPressed()
+    {
+        if (isPlayerDead)
+        {
             return;
+        }
+
+        if (!pauseGame)
+        {
+            return;
+        }
+        else
+        {
+            pauseGame = false;
+            EnableGameInput();
         }
     }
 
@@ -533,21 +568,21 @@ public class InputManager : MonoBehaviour
 
         //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
 
-        if (isPlayerInTrainingCourse)
-        {
-            ToggleActionMap(playerActions.Player);
-        }
-        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
-        {
-            ToggleActionMap(playerActions.Training);
-        }
-        else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
-        {
-            ToggleActionMap(playerActions.Player);
-        }
-        else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
-        {
-            ToggleActionMap(playerActions.Player);
-        }
+        //if (isPlayerInTrainingCourse)
+        //{
+        //    ToggleActionMap(playerActions.Player);
+        //}
+        //else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        //{
+        //    ToggleActionMap(playerActions.Training);
+        //}
+        //else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
+        //{
+        //    ToggleActionMap(playerActions.Player);
+        //}
+        //else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
+        //{
+        //    ToggleActionMap(playerActions.Player);
+        //}
     }
 }
