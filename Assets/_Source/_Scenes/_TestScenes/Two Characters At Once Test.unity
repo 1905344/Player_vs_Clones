@@ -10550,7 +10550,7 @@ MonoBehaviour:
   jumpHeight: 1
   jumpSpeed: 0
   timeToJumpApex: 0
-  cameraTransform: {fileID: 1448387305}
+  cameraTransform: {fileID: 1672950869}
   disablePlayerMovement: 0
   disablePlayerJumping: 0
   onGround: 0
@@ -18720,7 +18720,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 236.66669, y: -962.5}
+  m_AnchoredPosition: {x: 236.66699, y: -962.5}
   m_SizeDelta: {x: 200, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1107660114
@@ -19328,7 +19328,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1137465876}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -42134,7 +42134,6 @@ MonoBehaviour:
   gunTapFireSFX: {fileID: 0}
   gunHoldFireSFX: {fileID: 0}
   bulletDamage: 10
-  headShotDamage: 10
   timeBetweenBullets: 0.3
   timeBetweenShooting: 0.3
   bulletSpread: 2
@@ -44166,7 +44165,6 @@ MonoBehaviour:
   gunTapFireSFX: {fileID: 0}
   gunHoldFireSFX: {fileID: 0}
   bulletDamage: 10
-  headShotDamage: 10
   timeBetweenBullets: 0.3
   timeBetweenShooting: 0.3
   bulletSpread: 2
@@ -52213,7 +52211,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1264306904275276527}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
