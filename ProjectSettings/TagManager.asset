@@ -12,6 +12,7 @@ TagManager:
   - Gun
   - CinemachineTarget
   - Bullet
+  - Door
   layers:
   - Default
   - TransparentFX
