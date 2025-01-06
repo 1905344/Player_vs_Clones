@@ -99,6 +99,7 @@ MonoBehaviour:
   gunTapFireSFX: {fileID: 0}
   gunHoldFireSFX: {fileID: 0}
   bulletDamage: 5
+  headShotDamage: 30
   timeBetweenBullets: 0.3
   timeBetweenShooting: 0.3
   bulletSpread: 2
@@ -118,6 +119,7 @@ MonoBehaviour:
   gunInLeftHand: 1
   gunInRightHand: 0
   getCurrentCourseID: 0
+  showFiringLine: 0
 --- !u!1 &1264306904778146927
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,7 +474,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   isAlive: 0
-  playerCollider: {fileID: 6513890564319554051}
   enemyBulletDamageAmount: 0
 --- !u!1 &4063539871666877002
 GameObject:
