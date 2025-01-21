@@ -8699,6 +8699,7 @@ MonoBehaviour:
   mouseHorizontalSensitivity: 0.3
   mouseVerticalSensitivity: 0.3
   vCam: {fileID: 1448387309}
+  playerTwoVCam: {fileID: 0}
   _FOV: 110
   updateFOV: 0
   holdToSprint: 1
@@ -19948,11 +19949,11 @@ Transform:
   m_GameObject: {fileID: 1378092250}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.3224936, y: 3.1544645, z: -16.803114}
+  m_LocalPosition: {x: -7.3224936, y: 3.2344644, z: -17.313114}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4307803752806252538}
+  m_Father: {fileID: 2685360782177996292}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1391106005
 GameObject:
@@ -31270,7 +31271,8 @@ Transform:
   m_LocalPosition: {x: 0, y: -0.07999992, z: 0.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1378092251}
   m_Father: {fileID: 4307803752806252538}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2745894306097330105
@@ -39358,7 +39360,6 @@ Transform:
   - {fileID: 2685360782177996292}
   - {fileID: 1787214977612834152}
   - {fileID: 1329383606}
-  - {fileID: 1378092251}
   m_Father: {fileID: 7303942567272337505}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &4307803752806252539

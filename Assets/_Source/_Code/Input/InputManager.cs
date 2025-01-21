@@ -44,6 +44,9 @@ public class InputManager : MonoBehaviour
 
     [Header("Cinemachine Virtual Camera Reference")]
     [SerializeField] CinemachineVirtualCamera vCam;
+    
+    //Only for testing the two cameras at once
+    [SerializeField] CinemachineVirtualCamera playerTwoVCam;
 
     [Space(10)]
 
@@ -139,6 +142,10 @@ public class InputManager : MonoBehaviour
 
     public bool pauseGame = false;
 
+    [Space(10)]
+
+    [SerializeField] private bool isTestingTwoCharactersAtOnce = false;
+
     #endregion
 
     private void Awake()
@@ -214,9 +221,25 @@ public class InputManager : MonoBehaviour
         //}
 
         vCam.SetFocalLength(_FOV);
-        Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+        }
 
         vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+
+        if (isTestingTwoCharactersAtOnce)
+        {
+            //Testing Two Characters At Once
+            playerTwoVCam.SetFocalLength(_FOV);
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Camera FOV is: " + playerTwoVCam.GetFocalLength());
+            }
+
+            playerTwoVCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        }
     }
 
     #region OnEnable and OnDisable
@@ -536,6 +559,12 @@ public class InputManager : MonoBehaviour
         {
             vCam.SetFocalLength(_FOV);
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+            if (isTestingTwoCharactersAtOnce)
+            {
+                playerTwoVCam.SetFocalLength(_FOV);
+                Debug.Log("Camera FOV is: " + playerTwoVCam.GetFocalLength());
+            }
 
             updateFOV = false;
         }

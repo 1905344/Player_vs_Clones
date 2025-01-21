@@ -89,6 +89,15 @@ public class GunplayManager : MonoBehaviour
 
     [SerializeField] private int getCurrentCourseID = 0;
 
+    [Space(15)]
+
+    [Header("Visual Feedback Despawn Timers")]
+    //[SerializeField] private float muzzleFlashDespawnTimer;
+    [SerializeField] private float bulletDecalDespawnTimer;
+    private float despawningTimer;
+    private bool toggleDespawnTimer = false;
+    private bool startDespawn = false;
+
     [Space(10)]
 
     [SerializeField, Tooltip("[DEBUGGING] Show a line of where the player is looking and can shoot")] private bool showFiringLine = false;
@@ -354,7 +363,7 @@ public class GunplayManager : MonoBehaviour
         //Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
         //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
 
-        CreateVisualFeedback(muzzleFlash, bulletHoleDecal);
+        CreateVisualFeedback(muzzleFlash, bulletHoleDecal, _raycastHit.point);
 
         #endregion
 
@@ -402,24 +411,50 @@ public class GunplayManager : MonoBehaviour
 
     #endregion
 
-    private void CreateVisualFeedback(GameObject flash, GameObject bulletHole)
+    #region Visual Feedback
+
+    private void CreateVisualFeedback(GameObject flash, GameObject bulletHole, Vector3 raycastHitPoint)
     {
-        if (muzzleFlashParent.childCount > 0)
-        {
-            GameObject child = muzzleFlashParent.GetChild(0).gameObject;
-            DestroyImmediate(child);
-        }
+        //if (muzzleFlashParent.childCount > 0)
+        //{
+        //    GameObject child = muzzleFlashParent.GetChild(0).gameObject;
+        //    DestroyImmediate(child);
+        //}
 
-        if (bulletDecalParent.childCount > 0)
-        {
-            GameObject child = bulletDecalParent.GetChild(0).gameObject;
-            DestroyImmediate(child);
-        }
+        //if (bulletDecalParent.childCount > 0)
+        //{
+        //    GameObject child = bulletDecalParent.GetChild(0).gameObject;
+        //    DestroyImmediate(child);
+        //}
 
-        Instantiate(flash, muzzle.position, Quaternion.identity, muzzleFlashParent);
+        Instantiate(flash, muzzle.position, Quaternion.identity, muzzleFlashParent) ;
+        Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
 
-        Instantiate(bulletHole, _raycastHit.point, Quaternion.Euler(0, 180, 0), bulletDecalParent);
+        DespawnDecals();
     }
+
+    private void DespawnDecals()
+    {
+        despawningTimer = 0f;
+        toggleDespawnTimer = true;
+    }
+
+    private void DespawnNow()
+    {
+        if (bulletDecalParent.childCount >= 10)
+        {
+            for (int i = 0; i > 10; i++)
+            {
+                DestroyImmediate(bulletDecalParent.GetChild(i).gameObject);
+            }
+        }
+        else
+        {
+            toggleDespawnTimer = false;
+        }
+    }
+
+    #endregion
 
     private void Update()
     {
@@ -467,5 +502,15 @@ public class GunplayManager : MonoBehaviour
             }
         }
             
+
+        if (toggleDespawnTimer)
+        {
+            despawningTimer = Time.deltaTime;
+
+            if (despawningTimer <= bulletDecalDespawnTimer)
+            {
+                DespawnNow();
+            }
+        }
     }
 }
