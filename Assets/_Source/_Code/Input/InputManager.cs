@@ -63,11 +63,6 @@ public class InputManager : MonoBehaviour
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
 
-    //Training course booleans
-    public bool isPlayerInTrainingCourse = false;
-    public bool isPlayerFinishedTraining = false;
-    private int getTrainingCourseID = 1;
-
     public bool levelComplete;
 
     [SerializeField] private bool isPlayerDead = false;
@@ -115,21 +110,6 @@ public class InputManager : MonoBehaviour
         return playerActions.Player.Reload.triggered;
     }
 
-    public bool PlayerStartedTrainingCourse()
-    {
-        return playerActions.Training.StartTrainingCourse.triggered;
-    }
-
-    public bool PlayerPressedPauseDuringTraining()
-    {
-        return playerActions.Training.PauseGame.triggered;
-    }
-
-    public bool PlayerPressedPauseOutsideTraining()
-    {
-        return playerActions.Player.PauseGame.triggered;
-    }
-
     public bool PlayerStartedMainGame()
     {
         return playerActions.Player.StartGame.triggered;
@@ -169,21 +149,10 @@ public class InputManager : MonoBehaviour
         playerActions.Player.Fire.started += FiringGunThisFrame;
         playerActions.Player.Fire.performed += StopFiringGunThisFrame;
 
-        //Starting the training course
-        playerActions.Training.StartTrainingCourse.performed += StartTraining;
-
-        //Starting the main game
-        playerActions.Player.StartGame.performed += StartMainGame;
-
-        //Game manager event for when the player has completed all the training courses
-        GameManager.Instance.FinishedTraining += OnFinishedTraining;
-
         //Pause and Resume Game
-        playerActions.Training.PauseGame.performed += OnPause;
         playerActions.Player.PauseGame.performed += OnPause;
 
         playerActions.Player.PauseGame.performed -= OnResume;
-        playerActions.Training.PauseGame.performed -= OnResume;
         
         playerActions.UI.PauseGame.performed += OnResume;
         playerActions.UI.PauseGame.performed -= OnResume;
@@ -197,20 +166,17 @@ public class InputManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        playerActions.Training.StartTrainingCourse.Enable();
-        ToggleActionMap(playerActions.Training);
-
         //Event for when the player has been killed
         GameManager.Instance.PlayerKilled += OnPlayerDeath; 
     }
 
     private void Start()
     {
-        if (GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
+        if (!GameManager.Instance.isInFPS)
         {
             ToggleActionMap(playerActions.UI);
         }
-        else if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
+        else if (GameManager.Instance.isInFPS)
         {
             ToggleActionMap(playerActions.Player);
         }
@@ -246,34 +212,15 @@ public class InputManager : MonoBehaviour
 
     public void OnEnable()
     {
-        if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
-        {
-            ToggleActionMap(playerActions.Player);
-            playerActions.Training.Disable();
-            playerActions.Player.Enable();
-        }
-        else
-        {
-            ToggleActionMap(playerActions.Training);
-            playerActions.Training.Enable();
-            playerActions.Player.Disable();
-        }
+        ToggleActionMap(playerActions.Player);
+        playerActions.Player.Enable();
     }
 
     public void OnDisable()
     {
-        if (GameManager.Instance.isInFPS && !GameManager.Instance.isInTraining)
-        {
-            ToggleActionMap(playerActions.Player);
-            playerActions.Training.Disable();
-            playerActions.Player.Enable();
-        }
-        else
-        {
-            ToggleActionMap(playerActions.Training);
-            playerActions.Training.Enable();
-            playerActions.Player.Disable();
-        }
+        ToggleActionMap(playerActions.UI);
+        playerActions.Player.Disable();
+        playerActions.UI.Enable();
     }
 
     public void EnableGameInput()
@@ -292,17 +239,7 @@ public class InputManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         playerActions.UI.Disable();
-
-        if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
-        {
-            ToggleActionMap(playerActions.Training);
-            playerActions.Player.Disable();
-        }
-        else if (GameManager.Instance.isInFPS && !isPlayerInTrainingCourse && !GameManager.Instance.isInTraining)
-        {
-            ToggleActionMap(playerActions.Player);
-            playerActions.Training.Disable();
-        }
+        ToggleActionMap(playerActions.Player);
     }
 
     public void DisableGameInput()
@@ -323,7 +260,6 @@ public class InputManager : MonoBehaviour
         }
 
         ToggleActionMap(playerActions.UI);
-        playerActions.Training.Disable();
         playerActions.Player.Disable();
     }
 
@@ -395,58 +331,6 @@ public class InputManager : MonoBehaviour
     {
         IsPlayerHoldingTheFireButton = false;
         IsPlayerTappingTheFireButton = false;
-    }
-
-    #endregion
-
-    #region Starting the Training Course and Disabling the Start Training Course Button
-
-    private void StartTraining(InputAction.CallbackContext context)
-    {
-        OnEnable();
-        getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
-
-        if (isPlayerInTrainingCourse && GameManager.Instance.isInTraining)
-        {
-            return;
-        }
-        else
-        {
-            isPlayerInTrainingCourse = true;
-            getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
-            Debug.Log("InputManager: The current training course is: " + getTrainingCourseID);
-            //Trigger the start training course event
-            GameManager.Instance.OnTrainingCourseStart(getTrainingCourseID);
-        }
-    }
-
-    public void OnFinishedTraining()
-    {
-        OnEnable();
-        GameManager.Instance.isInTraining = false;
-        isPlayerFinishedTraining = true;
-        playerActions.Training.Disable();
-        playerActions.Player.Fire.Disable();
-    }
-
-    #endregion
-
-    #region Starting the Main Game
-
-    private void StartMainGame(InputAction.CallbackContext context)
-    {
-        if (!isPlayerFinishedTraining)
-        {
-            return;
-        }
-
-        OnEnable();
-        getTrainingCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
-        
-        Debug.Log("InputManager: Starting the main game");
-
-        //Trigger the start training course event
-        GameManager.Instance.OnStartMainGame();
     }
 
     #endregion
@@ -586,32 +470,6 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        #region Checking if the player has pressed the start training course button
-
-        if (isPlayerInTrainingCourse)
-        {
-            playerActions.Training.StartTrainingCourse.Disable();
-        }
-
-        #endregion
-
         //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
-
-        //if (isPlayerInTrainingCourse)
-        //{
-        //    ToggleActionMap(playerActions.Player);
-        //}
-        //else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && !GameManager.Instance.isInFPS)
-        //{
-        //    ToggleActionMap(playerActions.Training);
-        //}
-        //else if (!isPlayerInTrainingCourse && isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
-        //{
-        //    ToggleActionMap(playerActions.Player);
-        //}
-        //else if (!isPlayerInTrainingCourse && !isPlayerFinishedTraining && !GameManager.Instance.isInTraining && GameManager.Instance.isInFPS)
-        //{
-        //    ToggleActionMap(playerActions.Player);
-        //}
     }
 }

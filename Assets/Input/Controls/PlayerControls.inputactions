@@ -900,54 +900,6 @@
                     "isPartOfComposite": false
                 }
             ]
-        },
-        {
-            "name": "Training",
-            "id": "a165801d-819f-4a90-b7fb-3d61e3cfda8e",
-            "actions": [
-                {
-                    "name": "Start Training Course",
-                    "type": "Button",
-                    "id": "1d9312ed-cbaa-4969-95d2-c38d6ada43f9",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Pause Game",
-                    "type": "Button",
-                    "id": "009bba2b-0882-4e54-b112-a59ddbb4f904",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "b2bbd057-ffe4-4b8d-b488-29461c586c25",
-                    "path": "<Keyboard>/enter",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Start Training Course",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4b478186-e28e-40e4-93a2-f544aa904210",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Pause Game",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
         }
     ],
     "controlSchemes": [

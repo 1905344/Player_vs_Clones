@@ -922,54 +922,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
-        },
-        {
-            ""name"": ""Training"",
-            ""id"": ""a165801d-819f-4a90-b7fb-3d61e3cfda8e"",
-            ""actions"": [
-                {
-                    ""name"": ""Start Training Course"",
-                    ""type"": ""Button"",
-                    ""id"": ""1d9312ed-cbaa-4969-95d2-c38d6ada43f9"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Pause Game"",
-                    ""type"": ""Button"",
-                    ""id"": ""009bba2b-0882-4e54-b112-a59ddbb4f904"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""b2bbd057-ffe4-4b8d-b488-29461c586c25"",
-                    ""path"": ""<Keyboard>/enter"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Start Training Course"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4b478186-e28e-40e4-93a2-f544aa904210"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Pause Game"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
         }
     ],
     ""controlSchemes"": [
@@ -1059,10 +1011,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_PauseGame = m_UI.FindAction("Pause Game", throwIfNotFound: true);
         m_UI_StartGame = m_UI.FindAction("Start Game", throwIfNotFound: true);
-        // Training
-        m_Training = asset.FindActionMap("Training", throwIfNotFound: true);
-        m_Training_StartTrainingCourse = m_Training.FindAction("Start Training Course", throwIfNotFound: true);
-        m_Training_PauseGame = m_Training.FindAction("Pause Game", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1356,60 +1304,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
-
-    // Training
-    private readonly InputActionMap m_Training;
-    private List<ITrainingActions> m_TrainingActionsCallbackInterfaces = new List<ITrainingActions>();
-    private readonly InputAction m_Training_StartTrainingCourse;
-    private readonly InputAction m_Training_PauseGame;
-    public struct TrainingActions
-    {
-        private @PlayerControls m_Wrapper;
-        public TrainingActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @StartTrainingCourse => m_Wrapper.m_Training_StartTrainingCourse;
-        public InputAction @PauseGame => m_Wrapper.m_Training_PauseGame;
-        public InputActionMap Get() { return m_Wrapper.m_Training; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(TrainingActions set) { return set.Get(); }
-        public void AddCallbacks(ITrainingActions instance)
-        {
-            if (instance == null || m_Wrapper.m_TrainingActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_TrainingActionsCallbackInterfaces.Add(instance);
-            @StartTrainingCourse.started += instance.OnStartTrainingCourse;
-            @StartTrainingCourse.performed += instance.OnStartTrainingCourse;
-            @StartTrainingCourse.canceled += instance.OnStartTrainingCourse;
-            @PauseGame.started += instance.OnPauseGame;
-            @PauseGame.performed += instance.OnPauseGame;
-            @PauseGame.canceled += instance.OnPauseGame;
-        }
-
-        private void UnregisterCallbacks(ITrainingActions instance)
-        {
-            @StartTrainingCourse.started -= instance.OnStartTrainingCourse;
-            @StartTrainingCourse.performed -= instance.OnStartTrainingCourse;
-            @StartTrainingCourse.canceled -= instance.OnStartTrainingCourse;
-            @PauseGame.started -= instance.OnPauseGame;
-            @PauseGame.performed -= instance.OnPauseGame;
-            @PauseGame.canceled -= instance.OnPauseGame;
-        }
-
-        public void RemoveCallbacks(ITrainingActions instance)
-        {
-            if (m_Wrapper.m_TrainingActionsCallbackInterfaces.Remove(instance))
-                UnregisterCallbacks(instance);
-        }
-
-        public void SetCallbacks(ITrainingActions instance)
-        {
-            foreach (var item in m_Wrapper.m_TrainingActionsCallbackInterfaces)
-                UnregisterCallbacks(item);
-            m_Wrapper.m_TrainingActionsCallbackInterfaces.Clear();
-            AddCallbacks(instance);
-        }
-    }
-    public TrainingActions @Training => new TrainingActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -1480,10 +1374,5 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnPauseGame(InputAction.CallbackContext context);
         void OnStartGame(InputAction.CallbackContext context);
-    }
-    public interface ITrainingActions
-    {
-        void OnStartTrainingCourse(InputAction.CallbackContext context);
-        void OnPauseGame(InputAction.CallbackContext context);
     }
 }

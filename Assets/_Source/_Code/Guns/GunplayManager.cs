@@ -76,7 +76,6 @@ public class GunplayManager : MonoBehaviour
 
     [Space(10)]
 
-    [SerializeField] public bool isPlayerInTrainingCourse = false;
     [SerializeField] public bool isFPSTesting = false;
 
     [Space(10)]
@@ -132,29 +131,18 @@ public class GunplayManager : MonoBehaviour
     {
         inputManager = InputManager.Instance;
 
-        GameManager.Instance.TrainingCourseStarted += EnableGun;
-        GameManager.Instance.TrainingCourseEnded += DisableGun;
-        GameManager.Instance.FinishedTraining += DisableGunAfterTraining;
-
         if (isFPSTesting)
         {
-            isPlayerInTrainingCourse = false;
-
             canShoot = true;
             bulletsRemainingText.gameObject.SetActive(true);
             gameObject.SetActive(true);
         }
         else
         {
-            getCurrentCourseID = TrainingCourseManager.Instance.currentTrainingCourse;
+            canShoot = false;
 
-            isPlayerInTrainingCourse = true;
-            isFPSTesting = false;
-
-            canShoot = true;
-
-            bulletsRemainingText.gameObject.SetActive(true);
-            gameObject.SetActive(true);
+            bulletsRemainingText.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         updateGunPosition = true;
@@ -164,7 +152,6 @@ public class GunplayManager : MonoBehaviour
 
     public void EnableGun(int courseID)
     {
-        isPlayerInTrainingCourse = true;
         updateGunPosition = true;
         canShoot = true;
 
@@ -183,7 +170,6 @@ public class GunplayManager : MonoBehaviour
 
     public void DisableGun(int courseID)
     {
-        isPlayerInTrainingCourse = false;
         canShoot = false;
         bulletsRemaining = magazineClipSize;
 
@@ -196,7 +182,6 @@ public class GunplayManager : MonoBehaviour
     {
         if (!isFPSTesting)
         {
-            isPlayerInTrainingCourse = false;
             canShoot = false;
 
             Debug.Log("GunplayManager: Disabling the gun!");
@@ -268,84 +253,45 @@ public class GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        if (isPlayerInTrainingCourse)
+        if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
         {
-            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isTarget))
+            #region Debugging
+
+            if (GameManager.Instance.toggleDebug)
             {
-                #region Debugging
-
-                if (GameManager.Instance.toggleDebug)
+                if (showFiringLine)
                 {
-                    if (showFiringLine)
-                    {
-                        //To view the raycast in engine
-                        Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
-                    }
-
-                    Debug.Log("GunplayManager: Gun fired!");
-                    Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
+                    //To view the raycast in engine
+                    Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
                 }
 
-                #endregion
-
-                //Target target = _raycastHit.transform.GetComponent<Target>();
-
-                if (/*target !=null*/ _raycastHit.collider.CompareTag("Target"))
-                {
-                    if (GameManager.Instance.toggleDebug)
-                    {
-                        Debug.Log("Hit a target!");
-                    }
-
-                    Guid guid = _raycastHit.collider.GetComponent<Target>().targetGuid;
-
-                    //Using events
-                    GameManager.Instance.TargetHit(guid, bulletDamage);
-                }
+                Debug.Log("GunplayManager: Gun fired!");
+                Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
             }
-        }
-        else if (!isPlayerInTrainingCourse && isFPSTesting)
-        {
-            if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+
+            #endregion
+
+            Guid enemyGuid = new Guid();
+
+            if (_raycastHit.collider.CompareTag("Enemy"))
             {
-                #region Debugging
+                enemyGuid = Guid.Empty;
+                enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
 
                 if (GameManager.Instance.toggleDebug)
                 {
-                    if (showFiringLine)
-                    {
-                        //To view the raycast in engine
-                        Debug.DrawLine(_camera.transform.position, _raycastHit.point, Color.red, 5f);
-                    }
-
-                    Debug.Log("GunplayManager: Gun fired!");
-                    Debug.Log("GunplayManager: Bullet hit: " + _raycastHit.collider.name);
+                    Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
                 }
 
-                #endregion
-
-                Guid enemyGuid = new Guid();
-
-                if (_raycastHit.collider.CompareTag("Enemy"))
+                //Using events
+                if (_raycastHit.collider.name == "Enemy Head")
                 {
-                    enemyGuid = Guid.Empty;
-                    enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
-
-                    if (GameManager.Instance.toggleDebug)
-                    {
-                        Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
-                    }
-
-                    //Using events
-                    if (_raycastHit.collider.name == "Enemy Head")
-                    {
-                        //Additional damage if raycast hits enemy head
-                        GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
-                    }
-                    else
-                    {
-                        GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
-                    }
+                    //Additional damage if raycast hits enemy head
+                    GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
+                }
+                else
+                {
+                    GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
             }
         }
@@ -469,7 +415,7 @@ public class GunplayManager : MonoBehaviour
             bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
         }
 
-        if (isPlayerInTrainingCourse && !isFPSTesting)
+        if (!isFPSTesting)
         {
             if (updateGunPosition)
             {
@@ -485,7 +431,7 @@ public class GunplayManager : MonoBehaviour
                 updateGunPosition = false;
             }
         }
-        else if (isFPSTesting && !isPlayerInTrainingCourse)
+        else
         {
             if (updateGunPosition)
             {
@@ -501,7 +447,6 @@ public class GunplayManager : MonoBehaviour
                 updateGunPosition = false;
             }
         }
-            
 
         if (toggleDespawnTimer)
         {

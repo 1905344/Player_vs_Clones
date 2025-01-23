@@ -21,17 +21,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //Events for when a target is hit
-    public event Action<Guid, int> OnTargetHit;
-
-    //Ending training courses
-    public event Action<int> TrainingCourseStarted;
-    public event Action TrainingCourseRestarted;
-    public event Action<int> TrainingCourseEnded;
-
-    //Changing to the player gameplay
-    public event Action FinishedTraining;
-
     //Events for A.I. Behaviours
     public event Action SetAiBehaviour;
 
@@ -69,7 +58,6 @@ public class GameManager : MonoBehaviour
     [Space(10)]
 
     [Header("Game States")]
-    public bool isInTraining = false;
     public bool isInFPS = false;
 
     [Space(10)]
@@ -90,54 +78,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        TrainingCourseRestarted += OnRestartButtonPressed;
-    }
-
     #region Event Functions
-
-    public void TargetHit(Guid guid, int damage)
-    {
-        if (OnTargetHit != null)
-        {
-            OnTargetHit(guid, damage);
-        }
-    }
-
-    public void OnTrainingCourseStart(int ID)
-    {
-        if (TrainingCourseStarted != null)
-        {
-            isInTraining = true;
-            TrainingCourseStarted(ID);
-        }
-    }
-
-    public void OnTrainingCourseRestart()
-    {
-        if (TrainingCourseRestarted != null)
-        {
-            TrainingCourseRestarted();
-        }
-    }
-
-    public void OnTrainingCourseEnd(int ID)
-    {
-        if (TrainingCourseEnded != null)
-        {
-            TrainingCourseEnded(ID);
-        }
-    }
-
-    public void OnPlayerFinishedTraining()
-    {
-        if (FinishedTraining != null)
-        {
-            isInTraining = false;
-            FinishedTraining();
-        }
-    }
 
     public void OnSetAiBehaviour()
     {
@@ -193,8 +134,6 @@ public class GameManager : MonoBehaviour
         if (OnStartGame != null)
         {
             isInFPS = false;
-            isInTraining = true;
-
             OnStartGame();
         }
     }
@@ -317,7 +256,8 @@ public class GameManager : MonoBehaviour
 
     public void OnRestartButtonPressed()
     {
-
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadSceneAsync(currentScene.buildIndex);
     }
 
     public void OnQuitToMainMenu()
@@ -341,7 +281,6 @@ public class GameManager : MonoBehaviour
 
     public void OnGameOverReturnToMainMenu()
     {
-        isInTraining = false;
         isInFPS = false;
 
         SceneManager.LoadSceneAsync("MainMenu");
@@ -353,4 +292,17 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
+
+    private void Update()
+    {
+        if (isInFPS)
+        { 
+            InputManager.Instance.OnEnable();
+        }
+        else
+        {
+            InputManager.Instance.OnDisable();
+        }
+
+    }
 }

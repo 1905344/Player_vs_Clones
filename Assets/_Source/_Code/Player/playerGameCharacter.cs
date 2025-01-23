@@ -54,8 +54,6 @@ public class playerGameCharacter : MonoBehaviour
         if (isAlive)
         {
             isAlive = false;
-            asymmGameplayManager.Instance.OnGameOver();
-
             GameManager.Instance.OnPlayerKilled();
 
             if (GameManager.Instance.toggleDebug)
