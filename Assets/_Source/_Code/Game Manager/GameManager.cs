@@ -24,10 +24,13 @@ public class GameManager : MonoBehaviour
     //Events for A.I. Behaviours
     public event Action SetAiBehaviour;
 
-    //Events for the asymmetrical gameplay
+    //Gameplay events
     public event Action<int> PlayerHit;
     public event Action PlayerKilled;
     public event Action<Guid, int> EnemyHit;
+
+    //Event for gun recoil
+    public event Action gunRecoil;
 
     //Event to start the main game
     public event Action OnStartGame;
@@ -36,24 +39,29 @@ public class GameManager : MonoBehaviour
     //public event Action LevelFailed;
     public event Action LevelCompleted;
 
+
     [Space(20)]
 
     [Header("U.I. Elements")]
+    [SerializeField] Transform tutorialScreen;
     [SerializeField] Transform pauseScreen;
-    [SerializeField] Transform quitPromptScreen;
+    //[SerializeField] Transform quitPromptScreen;
     [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
 
-    [SerializeField] Button resumeButton;
-    [SerializeField] Button restartButton;
-    [SerializeField] Button quitButton;
+    [Header("Buttons")]
+    [SerializeField] Button tutorialStartGame;
+    [SerializeField] Button tutorialQuitGame;
+    [SerializeField] Button resumeFromPauseMenuButton;
+    [SerializeField] Button restartFromPauseMenuButton;
+    [SerializeField] Button quitFromPauseMenuButton;
 
     [Space(5)]
 
-    [SerializeField] Button returnToPauseScreen;
-    [SerializeField] Button quitToMainMenuButton;
-    [SerializeField] Button quitGameButton;
+    //[SerializeField] Button returnToPauseScreen;
+    //[SerializeField] Button quitToMainMenuButton;
+    [SerializeField] Button quitGameFromGameOverScreenButton;
 
     [Space(10)]
 
@@ -138,6 +146,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void OnGunFired()
+    {
+        if (gunRecoil != null)
+        {
+            OnGunFired();
+        }
+    }
+
+    #endregion
+
+    #region Tutorial Screen Function
+
+    public void OnStartGameFromTutorial()
+    {
+        #region Disable buttons
+
+        tutorialStartGame.enabled = false;
+        tutorialStartGame.interactable = false;
+        tutorialQuitGame.enabled = false;
+        tutorialQuitGame.interactable = false;
+
+        #endregion
+
+        tutorialScreen.gameObject.SetActive(false);
+    }
+
     #endregion
 
     #region Pause Game Functions
@@ -146,46 +180,46 @@ public class GameManager : MonoBehaviour
 
     private void EnablePauseButtons()
     {
-        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(resumeFromPauseMenuButton.gameObject);
 
-        resumeButton.enabled = true;
-        resumeButton.interactable = true;
+        resumeFromPauseMenuButton.enabled = true;
+        resumeFromPauseMenuButton.interactable = true;
 
-        restartButton.enabled = true;
-        restartButton.interactable = true;
+        restartFromPauseMenuButton.enabled = true;
+        restartFromPauseMenuButton.interactable = true;
 
-        quitButton.enabled = true;
-        quitButton.interactable = true;
+        quitFromPauseMenuButton.enabled = true;
+        quitFromPauseMenuButton.interactable = true;
     }
 
     private void DisablePauseButtons()
     {
-        resumeButton.enabled = false;
-        resumeButton.interactable = false;
+        resumeFromPauseMenuButton.enabled = false;
+        resumeFromPauseMenuButton.interactable = false;
 
-        restartButton.enabled = false;
-        restartButton.interactable = false;
+        restartFromPauseMenuButton.enabled = false;
+        restartFromPauseMenuButton.interactable = false;
 
-        quitGameButton.enabled = false;
-        quitGameButton.interactable = false;
+        quitGameFromGameOverScreenButton.enabled = false;
+        quitGameFromGameOverScreenButton.interactable = false;
     }
 
     private void EnableQuitScreenButtons()
     {
-        quitToMainMenuButton.enabled = true;
-        quitToMainMenuButton.interactable = true;
+        //quitToMainMenuButton.enabled = true;
+        //quitToMainMenuButton.interactable = true;
 
-        quitGameButton.enabled = true;
-        quitGameButton.interactable = true;
+        quitGameFromGameOverScreenButton.enabled = true;
+        quitGameFromGameOverScreenButton.interactable = true;
     }
 
     private void DisableQuitScreenButtons()
     {
-        quitToMainMenuButton.enabled = false;
-        quitToMainMenuButton.interactable = false;
+        //quitToMainMenuButton.enabled = false;
+        //quitToMainMenuButton.interactable = false;
 
-        quitGameButton.enabled = false;
-        quitGameButton.interactable = false;
+        quitGameFromGameOverScreenButton.enabled = false;
+        quitGameFromGameOverScreenButton.interactable = false;
     }
 
     #endregion
@@ -228,7 +262,7 @@ public class GameManager : MonoBehaviour
         //In case the player presses the escape to resume instead
         //of the U.I. button to resume the game
         pauseScreen.gameObject.SetActive(false);
-        quitPromptScreen.gameObject.SetActive(false);
+        //quitPromptScreen.gameObject.SetActive(false);
 
         DisablePauseButtons();
         DisableQuitScreenButtons();
@@ -236,7 +270,7 @@ public class GameManager : MonoBehaviour
 
     public void OnQuitButtonPressed()
     {
-        quitPromptScreen.gameObject.SetActive(true);
+        //quitPromptScreen.gameObject.SetActive(true);
         DisablePauseButtons();
         EnableQuitScreenButtons();
 
@@ -246,7 +280,7 @@ public class GameManager : MonoBehaviour
 
     public void OnReturnToPauseScreenPressed()
     {
-        quitPromptScreen.gameObject.SetActive(false);
+        //quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
         DisableQuitScreenButtons();
 

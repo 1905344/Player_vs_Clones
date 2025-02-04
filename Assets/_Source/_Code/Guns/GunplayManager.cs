@@ -18,7 +18,6 @@ public class GunplayManager : MonoBehaviour
 
     [SerializeField] private GameObject leftHand;
     [SerializeField] private GameObject rightHand;
-    private InputManager inputManager;
 
     [Space(10)]
 
@@ -99,6 +98,14 @@ public class GunplayManager : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Gun Recoil Variables")]
+    [SerializeField, Tooltip("Degrees of deflection up.")] private AnimationCurve gunRecoilUp;
+    [SerializeField, Tooltip("Degrees of deflection right.")] private AnimationCurve gunRecoilRight;
+    [SerializeField, Tooltip ("How long the gun recoil should last.")] private float gunRecoilTimeInterval = 0.25f;
+    private float gunRecoilTimer;
+    [SerializeField] private bool isGunRecoiling;
+
+
     [SerializeField, Tooltip("[DEBUGGING] Show a line of where the player is looking and can shoot")] private bool showFiringLine = false;
 
     #endregion
@@ -129,8 +136,6 @@ public class GunplayManager : MonoBehaviour
 
     private void Start()
     {
-        inputManager = InputManager.Instance;
-
         if (isFPSTesting)
         {
             canShoot = true;
@@ -197,11 +202,11 @@ public class GunplayManager : MonoBehaviour
 
         if (allowFireButtonHold)
         {
-            isShooting = inputManager.IsPlayerHoldingTheFireButton;
+            isShooting = InputManager.Instance.IsPlayerHoldingTheFireButton;
         }
         else
         {
-            isShooting = inputManager.IsPlayerTappingTheFireButton;
+            isShooting = InputManager.Instance.IsPlayerTappingTheFireButton;
         }
 
         #endregion
@@ -218,7 +223,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Reloading 
 
-        if (inputManager.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
+        if (InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
         {
             ReloadGun();
         }
@@ -313,6 +318,12 @@ public class GunplayManager : MonoBehaviour
 
         #endregion
 
+        #region Recoil
+
+        GunRecoil();
+
+        #endregion
+
         #region Audio Feedback: Gun Fired SFX
 
         if (allowFireButtonHold)
@@ -337,6 +348,40 @@ public class GunplayManager : MonoBehaviour
             Invoke(nameof(FireGun), timeBetweenBullets);
         }
     }
+
+    #region Recoil
+
+    private void GunRecoil()
+    {
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("GunplayManager: Gun recoil function has been called.");
+        }
+
+        #endregion
+
+        isGunRecoiling = true;
+    }
+
+    private void ApplyRecoil(float recoilAngle)
+    {
+        float up = gunRecoilUp.Evaluate(recoilAngle);
+        float right = gunRecoilRight.Evaluate(recoilAngle);
+
+        if (recoilAngle == 0)
+        {
+            up = 0;
+            right = 0;
+        }
+
+        up = -up;
+
+        this.transform.localRotation = Quaternion.Euler(up, right, 0);
+    }
+
+    #endregion
 
     private void ResetShot()
     {
@@ -457,5 +502,33 @@ public class GunplayManager : MonoBehaviour
                 DespawnNow();
             }
         }
+
+        #region Recoil timer
+
+        if (gunRecoilTimer == 0)
+        {
+            if (isGunRecoiling)
+            {
+                gunRecoilTimer = Time.deltaTime;
+            }
+        }
+
+        if (gunRecoilTimer < 0)
+        {
+            float countdown = gunRecoilTimer / gunRecoilTimeInterval;
+
+            gunRecoilTimer += Time.deltaTime;
+
+            if (gunRecoilTimer > gunRecoilTimeInterval)
+            {
+                gunRecoilTimer = 0;
+                countdown = 0;
+                isGunRecoiling = false;
+            }
+
+            ApplyRecoil(countdown);
+        }
+
+        #endregion
     }
 }

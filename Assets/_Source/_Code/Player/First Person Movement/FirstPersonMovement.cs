@@ -35,6 +35,9 @@ public class FirstPersonMovement : MonoBehaviour
     [Header("Cinemachine Virtual Camera Reference")]
     [SerializeField] private Transform cameraTransform;
 
+    [Space(10)]
+    [SerializeField] private bool isGunRecoilActive = false;
+
     [Space(15)]
 
     [Header("Debugging")]
@@ -58,6 +61,9 @@ public class FirstPersonMovement : MonoBehaviour
         cameraTransform = Camera.main.transform;
         GameManager.Instance.OnStartGame += EnablePlayerMovement;
         GameManager.Instance.PlayerKilled += DisablePlayerMovement;
+
+        GameManager.Instance.gunRecoil += ApplyGunRecoilVisually;
+        GameManager.Instance.gunRecoil -= ApplyGunRecoilVisually;
     }
 
     #region Enable and Disable Player Movement
@@ -75,6 +81,11 @@ public class FirstPersonMovement : MonoBehaviour
     }
 
     #endregion
+
+    private void ApplyGunRecoilVisually()
+    {
+
+    }
 
     private void Update()
     {
@@ -105,26 +116,32 @@ public class FirstPersonMovement : MonoBehaviour
         playerMovement = InputManager.Instance.GetPlayerMovement();
         characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
-        characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
-        characterMove.y = 0f;
+        if (isGunRecoilActive)
+        {
+            characterMove = -cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
+            characterMove.y = 0f;
+        }
+
+        //characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
+        //characterMove.y = 0f;
 
         //Sprinting
 
         isSprinting = InputManager.Instance.isPlayerSprintingThisFrame;
 
-        if (isSprinting)
-        {
-            movementSpeed = sprintSpeed;
-            //Debug.Log("Character is sprinting!");
-        }
-        else
-        {
-            movementSpeed = moveSpeed;
-            //Debug.Log("Character is not sprinting!");
-        }
+        //if (isSprinting)
+        //{
+        //    movementSpeed = sprintSpeed;
+        //    //Debug.Log("Character is sprinting!");
+        //}
+        //else
+        //{
+        //    movementSpeed = moveSpeed;
+        //    //Debug.Log("Character is not sprinting!");
+        //}
 
-        charController.Move(characterMove * movementSpeed * Time.deltaTime);
-        charController.Move(playerVelocity * Time.deltaTime);
+        //charController.Move(characterMove * movementSpeed * Time.deltaTime);
+        //charController.Move(playerVelocity * Time.deltaTime);
 
         //Rotating the body game object when the player rotates the camera with the mouse
         characterBodyTransform.rotation = cameraTransform.rotation;

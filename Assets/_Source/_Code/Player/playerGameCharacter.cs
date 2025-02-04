@@ -1,8 +1,7 @@
-using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using TMPro;
+using UnityEngine.Rendering.UI;
+using UnityEngine.UIElements;
 
 public class playerGameCharacter : MonoBehaviour
 {
@@ -16,11 +15,20 @@ public class playerGameCharacter : MonoBehaviour
 
     [SerializeField] private int enemyBulletDamageAmount;
 
+    [Space(10)]
+
+    [Header("U.I. Elements")]
+    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private Color32 healthTextColour;
+    [SerializeField] private bool updateHealthTextColour;
+
     #endregion
 
     private void Awake()
     {
         isAlive = true;
+        healthTextColour = Color.green;
+        updateHealthTextColour = true;
     }
 
     private void Start()
@@ -30,12 +38,7 @@ public class playerGameCharacter : MonoBehaviour
 
     public void OnPlayerHit(int damage)
     {
-        if (!isAlive)
-        {
-            return;
-        }
-
-        health -= damage;
+        #region Debug
 
         if (GameManager.Instance.toggleDebug)
         {
@@ -43,10 +46,41 @@ public class playerGameCharacter : MonoBehaviour
             Debug.Log("Player has " + health + " health remaining.");
         }
 
+        #endregion
+
+        if (!isAlive)
+        {
+            return;
+        }
+
+        health -= damage;
+
         if (health <= 0)
         {
             OnPlayerDeath();
         }
+
+        #region UpdateHealthText Colour
+
+        float currentHealthPercentage = health / 100;
+
+        if (currentHealthPercentage < 0.7 && currentHealthPercentage >= 0.55) 
+        {
+            healthTextColour = new Color(255, 205, 0, 255);
+            updateHealthTextColour = true;
+        }
+        else if (currentHealthPercentage < 1 && currentHealthPercentage >= 0.75)
+        {
+            healthTextColour = new Color(255, 155, 0, 255);
+            updateHealthTextColour = true;
+        }
+        else if (currentHealthPercentage < 1 && currentHealthPercentage >= 0.75)
+        {
+            healthTextColour = Color.red;
+            updateHealthTextColour = true;
+        }
+
+        #endregion
     }
 
     private void OnPlayerDeath()
@@ -54,14 +88,22 @@ public class playerGameCharacter : MonoBehaviour
         if (isAlive)
         {
             isAlive = false;
+
             GameManager.Instance.OnPlayerKilled();
 
             if (GameManager.Instance.toggleDebug)
             {
                 Debug.Log("Player has been killed.");
             }
+        }
+    }
 
-            //Application.Quit();
+    private void Update()
+    {
+        if (updateHealthTextColour)
+        {
+            healthText.color = healthTextColour;
+            updateHealthTextColour = false;
         }
     }
 }

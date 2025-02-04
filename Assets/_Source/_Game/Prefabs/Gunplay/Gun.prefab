@@ -8005,6 +8005,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8159,6 +8162,7 @@ MonoBehaviour:
   gunTapFireSFX: {fileID: 0}
   gunHoldFireSFX: {fileID: 0}
   bulletDamage: 5
+  headShotDamage: 30
   timeBetweenBullets: 0.3
   timeBetweenShooting: 0.1
   bulletSpread: 0
@@ -8172,10 +8176,78 @@ MonoBehaviour:
   isShooting: 0
   canShoot: 0
   isReloading: 0
-  isPlayerInTrainingCourse: 0
   isFPSTesting: 0
   updateGunPosition: 0
   gunInLeftHand: 1
   gunInRightHand: 0
   getCurrentCourseID: 0
+  bulletDecalDespawnTimer: 0
+  gunRecoilUp:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 14.528873
+      outSlope: 14.528873
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.024999999
+      value: 0.36322182
+      inSlope: 7.0255475
+      outSlope: 7.0255475
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.706247
+      value: 0.037737
+      inSlope: -0.477778
+      outSlope: -0.477778
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  gunRecoilRight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 9.739569
+      outSlope: 9.739569
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.011065347
+      value: 0.10777171
+      inSlope: 4.7573814
+      outSlope: 4.7573814
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.42929995
+      value: 0.013750184
+      inSlope: -0.22480571
+      outSlope: -0.22480571
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  gunRecoilTimeInterval: 0.25
+  isGunRecoiling: 0
   showFiringLine: 0
