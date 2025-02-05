@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -36,7 +37,11 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     [Space(10)]
+
+    [Header("Gun Recoil Variables")]
     [SerializeField] private bool isGunRecoilActive = false;
+    [SerializeField] private float gunRecoilMoveSpeed;
+    [SerializeField] private Vector2 gunRecoilMoveAmount = new Vector2(10f,10f);
 
     [Space(15)]
 
@@ -62,8 +67,8 @@ public class FirstPersonMovement : MonoBehaviour
         GameManager.Instance.OnStartGame += EnablePlayerMovement;
         GameManager.Instance.PlayerKilled += DisablePlayerMovement;
 
-        GameManager.Instance.gunRecoil += ApplyGunRecoilVisually;
-        GameManager.Instance.gunRecoil -= ApplyGunRecoilVisually;
+        GameManager.Instance.gunRecoil += ApplyGunRecoil;
+        GameManager.Instance.gunRecoil -= StopGunRecoil;
     }
 
     #region Enable and Disable Player Movement
@@ -82,9 +87,19 @@ public class FirstPersonMovement : MonoBehaviour
 
     #endregion
 
-    private void ApplyGunRecoilVisually()
+    private void ApplyGunRecoil()
     {
+        if (isGunRecoilActive)
+        {
+            return;
+        }
 
+        isGunRecoilActive = true;
+    }
+
+    private void StopGunRecoil()
+    {
+        isGunRecoilActive = false;
     }
 
     private void Update()
@@ -114,12 +129,21 @@ public class FirstPersonMovement : MonoBehaviour
         #region Player Movement and Sprinting
 
         playerMovement = InputManager.Instance.GetPlayerMovement();
-        characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
+        //characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
+
+        //Recoil moves the player
+        characterMove = new Vector3(gunRecoilMoveAmount.x, 0f, gunRecoilMoveAmount.y);
 
         if (isGunRecoilActive)
         {
             characterMove = -cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
             characterMove.y = 0f;
+
+            //Might need to change Time.deltaTime to a fixed time variable
+            charController.Move(characterMove * gunRecoilMoveSpeed * Time.deltaTime);
+            charController.Move(playerVelocity * Time.deltaTime);
+
+            StopGunRecoil();
         }
 
         //characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;

@@ -362,6 +362,7 @@ public class GunplayManager : MonoBehaviour
 
         #endregion
 
+        GameManager.Instance.OnGunFired();
         isGunRecoiling = true;
     }
 
