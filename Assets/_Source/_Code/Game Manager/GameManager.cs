@@ -31,8 +31,8 @@ public class GameManager : MonoBehaviour
     public event Action<Guid, int> EnemyHit;
 
     //Event for gun recoil
-    public event Action gunRecoil;
-
+    public event Action GunRecoil;
+    
     //Event to start the main game
     public event Action OnStartGame;
 
@@ -161,9 +161,9 @@ public class GameManager : MonoBehaviour
 
     public void OnGunFired()
     {
-        if (gunRecoil != null)
+        if (GunRecoil != null)
         {
-            OnGunFired();
+            GunRecoil();
         }
     }
 

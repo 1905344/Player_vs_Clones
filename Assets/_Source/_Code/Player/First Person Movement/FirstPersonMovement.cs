@@ -9,6 +9,7 @@ public class FirstPersonMovement : MonoBehaviour
     [Header("Player Components")]
     [SerializeField] private CharacterController charController;
     [SerializeField] private GameObject characterBodyObject;
+    [SerializeField] private Rigidbody characterRigidBody;
     private Transform characterBodyTransform;
 
     [Space(15)]
@@ -40,8 +41,12 @@ public class FirstPersonMovement : MonoBehaviour
 
     [Header("Gun Recoil Variables")]
     [SerializeField] private bool isGunRecoilActive = false;
-    [SerializeField] private float gunRecoilMoveSpeed;
-    [SerializeField] private Vector2 gunRecoilMoveAmount = new Vector2(10f,10f);
+    [SerializeField, Tooltip("How fast the player should move after applying recoil")] private float gunRecoilMoveSpeed;
+    [SerializeField, Tooltip("How long the recoil should move the player for")] private float recoilMoveTimeInterval;
+    //[SerializeField, Tooltip("The force applied to the player - how far you want the player to move")] private Vector2 gunRecoilMoveAmount = new Vector2(10f, 10f);
+    [SerializeField, Tooltip("The force applied to the player - how far you want the player to move")] private float gunRecoilMoveAmount;
+    [SerializeField, Tooltip("How much force to apply to smaller objects if the player collides with them")] private float collisionPushStrength;
+    private float recoilMoveTimer;
 
     [Space(15)]
 
@@ -59,6 +64,7 @@ public class FirstPersonMovement : MonoBehaviour
     {
         charController = GetComponent<CharacterController>();
         characterBodyTransform = characterBodyObject.transform;
+        characterRigidBody = GetComponent<Rigidbody>();
     }
 
     private void Start()
@@ -67,8 +73,8 @@ public class FirstPersonMovement : MonoBehaviour
         GameManager.Instance.OnStartGame += EnablePlayerMovement;
         GameManager.Instance.PlayerKilled += DisablePlayerMovement;
 
-        GameManager.Instance.gunRecoil += ApplyGunRecoil;
-        GameManager.Instance.gunRecoil -= StopGunRecoil;
+        GameManager.Instance.GunRecoil += ApplyGunRecoil;
+        GameManager.Instance.GunRecoil -= StopGunRecoil;
     }
 
     #region Enable and Disable Player Movement
@@ -87,6 +93,8 @@ public class FirstPersonMovement : MonoBehaviour
 
     #endregion
 
+    #region Gun Recoil Effecting Movement
+
     private void ApplyGunRecoil()
     {
         if (isGunRecoilActive)
@@ -94,12 +102,57 @@ public class FirstPersonMovement : MonoBehaviour
             return;
         }
 
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("FirstPersonMovement: Gun's recoil is moving the character backwards");
+        }
+
+        #endregion
+
         isGunRecoilActive = true;
+        recoilMoveTimer += Time.deltaTime;
     }
 
     private void StopGunRecoil()
     {
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("FirstPersonMovement: Stopping gun recoil movement.");
+        }
+
+        #endregion
+
+        if (!isGunRecoilActive)
+        {
+            return;
+        }
+
+        recoilMoveTimer = 0f;
         isGunRecoilActive = false;
+    }
+
+    #endregion
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        //characterRigidBody = hit.collider.attachedRigidbody;
+
+        //if (hit.collider.CompareTag("Wall"))
+        //{
+        //    StopGunRecoil();
+        //}
+        
+        if (hit.moveDirection.y < -0.3)
+        {
+            return;
+        }
+
+        Vector3 pushDireciton = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+        characterRigidBody.linearVelocity = pushDireciton * collisionPushStrength;
     }
 
     private void Update()
@@ -123,7 +176,7 @@ public class FirstPersonMovement : MonoBehaviour
             canJump = true;
             isJumping = false;
         }
-        
+
         #endregion
 
         #region Player Movement and Sprinting
@@ -132,18 +185,45 @@ public class FirstPersonMovement : MonoBehaviour
         //characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
         //Recoil moves the player
-        characterMove = new Vector3(gunRecoilMoveAmount.x, 0f, gunRecoilMoveAmount.y);
+        //characterMove = new Vector3(gunRecoilMoveAmount.x, 0f, gunRecoilMoveAmount.y);
 
         if (isGunRecoilActive)
         {
-            characterMove = -cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
-            characterMove.y = 0f;
+            Vector3 forceBackwardMove = cameraTransform.TransformDirection(Vector3.back);
 
-            //Might need to change Time.deltaTime to a fixed time variable
-            charController.Move(characterMove * gunRecoilMoveSpeed * Time.deltaTime);
-            charController.Move(playerVelocity * Time.deltaTime);
+            //float moveTimer = recoilMoveTimer / recoilMoveTimeInterval;
 
-            StopGunRecoil();
+            if (recoilMoveTimer > 0)
+            {
+                recoilMoveTimer += Time.deltaTime;
+
+                //characterMove = -cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
+                //characterMove.y = 0f;
+
+                //Might need to change Time.deltaTime to a fixed time variable
+                //charController.Move(characterMove * gunRecoilMoveSpeed * Time.deltaTime);
+                //charController.Move(playerVelocity * Time.deltaTime);
+
+                float setMoveSpeed = gunRecoilMoveSpeed * gunRecoilMoveAmount;
+                charController.SimpleMove(forceBackwardMove * setMoveSpeed);
+
+                if (recoilMoveTimer > recoilMoveTimeInterval | characterRigidBody.CompareTag("Wall"))
+                {
+                    #region Debug
+
+                    if (GameManager.Instance.toggleDebug)
+                    {
+                        if (characterRigidBody.CompareTag("Wall"))
+                        {
+                            Debug.Log("FirstPersonMovement: Stopping recoil because character has hit a wall.");
+                        }
+                    }
+
+                    #endregion
+
+                    StopGunRecoil();
+                }
+            }
         }
 
         //characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
@@ -151,7 +231,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         //Sprinting
 
-        isSprinting = InputManager.Instance.isPlayerSprintingThisFrame;
+        //isSprinting = InputManager.Instance.isPlayerSprintingThisFrame;
 
         //if (isSprinting)
         //{
@@ -169,7 +249,6 @@ public class FirstPersonMovement : MonoBehaviour
 
         //Rotating the body game object when the player rotates the camera with the mouse
         characterBodyTransform.rotation = cameraTransform.rotation;
-
         #endregion
 
         #region Player Jumping

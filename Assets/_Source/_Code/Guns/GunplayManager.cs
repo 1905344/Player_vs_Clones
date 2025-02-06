@@ -2,17 +2,19 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Cinemachine;
 
 public class GunplayManager : MonoBehaviour
 {
     #region Variables
 
     [Header("References")]
-    [SerializeField] private Camera _camera;
+    //[SerializeField] private Camera _camera;
+    [SerializeField] private CinemachineVirtualCamera _camera;
     [SerializeField] private Transform muzzle;
     private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
-    [SerializeField] private LayerMask isTarget;
+    [SerializeField] private Transform applyRecoilTarget;
 
     [Space(5)]
 
@@ -75,17 +77,9 @@ public class GunplayManager : MonoBehaviour
 
     [Space(10)]
 
-    [SerializeField] public bool isFPSTesting = false;
-
-    [Space(10)]
-
     [SerializeField] private bool updateGunPosition = false;
     [SerializeField, Tooltip("Enable this to place the gun in the 'left hand' of the character")] public bool gunInLeftHand = true;
     [SerializeField, Tooltip("Enable this to place the gun in the 'right hand' of the character")] public bool gunInRightHand = false;
-
-    [Space(15)]
-
-    [SerializeField] private int getCurrentCourseID = 0;
 
     [Space(15)]
 
@@ -101,7 +95,7 @@ public class GunplayManager : MonoBehaviour
     [Header("Gun Recoil Variables")]
     [SerializeField, Tooltip("Degrees of deflection up.")] private AnimationCurve gunRecoilUp;
     [SerializeField, Tooltip("Degrees of deflection right.")] private AnimationCurve gunRecoilRight;
-    [SerializeField, Tooltip ("How long the gun recoil should last.")] private float gunRecoilTimeInterval = 0.25f;
+    [SerializeField, Tooltip("How long the gun recoil should last.")] private float gunRecoilTimeInterval;
     private float gunRecoilTimer;
     [SerializeField] private bool isGunRecoiling;
 
@@ -131,25 +125,13 @@ public class GunplayManager : MonoBehaviour
         this.gameObject.SetActive(true);
 
         #endregion
-
     }
 
     private void Start()
     {
-        if (isFPSTesting)
-        {
-            canShoot = true;
-            bulletsRemainingText.gameObject.SetActive(true);
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            canShoot = false;
-
-            bulletsRemainingText.gameObject.SetActive(false);
-            gameObject.SetActive(false);
-        }
-
+        canShoot = true;
+        bulletsRemainingText.gameObject.SetActive(true);
+        gameObject.SetActive(true);
         updateGunPosition = true;
     }
 
@@ -181,17 +163,6 @@ public class GunplayManager : MonoBehaviour
         Debug.Log("GunplayManager: Disabling the gun!");
         bulletsRemainingText.gameObject.SetActive(false);
         gameObject.SetActive(false);
-    }
-
-    public void DisableGunAfterTraining()
-    {
-        if (!isFPSTesting)
-        {
-            canShoot = false;
-
-            Debug.Log("GunplayManager: Disabling the gun!");
-            gameObject.SetActive(false);
-        }
     }
 
     #endregion
@@ -379,7 +350,7 @@ public class GunplayManager : MonoBehaviour
 
         up = -up;
 
-        this.transform.localRotation = Quaternion.Euler(up, right, 0);
+        applyRecoilTarget.localRotation = Quaternion.Euler(up, right, 0);
     }
 
     #endregion
@@ -461,37 +432,18 @@ public class GunplayManager : MonoBehaviour
             bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
         }
 
-        if (!isFPSTesting)
+        if (updateGunPosition)
         {
-            if (updateGunPosition)
+            if (gunInLeftHand)
             {
-                if (gunInLeftHand)
-                {
-                    transform.SetParent(leftHand.transform);
-                }
-                else if (gunInRightHand)
-                {
-                    transform.SetParent(rightHand.transform);
-                }
-
-                updateGunPosition = false;
+                transform.SetParent(leftHand.transform);
             }
-        }
-        else
-        {
-            if (updateGunPosition)
+            else if (gunInRightHand)
             {
-                if (gunInLeftHand)
-                {
-                    transform.SetParent(leftHand.transform);
-                }
-                else if (gunInRightHand)
-                {
-                    transform.SetParent(rightHand.transform);
-                }
-
-                updateGunPosition = false;
+                transform.SetParent(rightHand.transform);
             }
+
+            updateGunPosition = false;
         }
 
         if (toggleDespawnTimer)
@@ -514,20 +466,20 @@ public class GunplayManager : MonoBehaviour
             }
         }
 
-        if (gunRecoilTimer < 0)
+        if (gunRecoilTimer > 0)
         {
-            float countdown = gunRecoilTimer / gunRecoilTimeInterval;
+            float recoil = gunRecoilTimer / gunRecoilTimeInterval;
 
             gunRecoilTimer += Time.deltaTime;
 
             if (gunRecoilTimer > gunRecoilTimeInterval)
             {
                 gunRecoilTimer = 0;
-                countdown = 0;
+                recoil = 0;
                 isGunRecoiling = false;
             }
 
-            ApplyRecoil(countdown);
+            ApplyRecoil(recoil);
         }
 
         #endregion

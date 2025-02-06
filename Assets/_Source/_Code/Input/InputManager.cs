@@ -187,14 +187,14 @@ public class InputManager : MonoBehaviour
             Debug.Log("InputManager: The starting action map is: ");
         }
 
-        mouseXSensSlider.onValueChanged.AddListener (delegate { ApplyMouseXSens(); });
-        mouseYSensSlider.onValueChanged.AddListener(delegate { ApplyMouseYSens(); });
+        //mouseXSensSlider.onValueChanged.AddListener(delegate { ApplyMouseXSens(); });
+        //mouseYSensSlider.onValueChanged.AddListener(delegate { ApplyMouseYSens(); });
 
         SetToggleStates();
         SetMouseSensSliders();
 
-        invertMouseYToggle.onValueChanged.AddListener(delegate { InvertMouseYToggled(); });
-        mouseAccelerationToggle.onValueChanged.AddListener(delegate { MouseAccelerationToggled(); });
+        //invertMouseYToggle.onValueChanged.AddListener(delegate { InvertMouseYToggled(); });
+        //mouseAccelerationToggle.onValueChanged.AddListener(delegate { MouseAccelerationToggled(); });
 
         ApplyMouseXSens();
         ApplyMouseYSens();
@@ -455,7 +455,7 @@ public class InputManager : MonoBehaviour
 
         if (GameManager.Instance.toggleDebug)
         {
-            Debug.Log("Input Manager: Mouse verical sensitivity has been changed to: " + mouseVerticalSensitivity.ToString());  ;
+            Debug.Log("Input Manager: Mouse verical sensitivity has been changed to: " + mouseVerticalSensitivity.ToString());
         }
     }
 

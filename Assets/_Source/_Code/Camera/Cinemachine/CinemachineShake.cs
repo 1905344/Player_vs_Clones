@@ -16,6 +16,8 @@ public class CinemachineShake : MonoBehaviour
     private float shakeTimerLength;
     private float shakeStartingIntensity;
 
+    private bool startShaking = false;
+
     #endregion
 
     private void Awake()
@@ -31,17 +33,42 @@ public class CinemachineShake : MonoBehaviour
 
         shakeStartingIntensity = intensity;
         shakeTimerLength = time;
-        shakeTimer = time;
+        //shakeTimer = time;
+        shakeTimer += Time.deltaTime;
+        startShaking = true;
+
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("CinemachineShake: Shaking the camera!");
+        }
+
+        #endregion
+    }
+
+    private void StopShaking()
+    {
+        shakeTimer = 0;
+        startShaking = false;
     }
 
     private void Update()
     {
-        if (shakeTimer > 0)
+        if (startShaking)
         {
-            shakeTimer -= Time.deltaTime;
-            //Debug.Log("CinemachineShake: Shaking the camera!");
-            
-            cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = Mathf.Lerp(shakeStartingIntensity, 0f, 1 - (shakeTimer / shakeTimerLength));
+            if (shakeTimer > 0)
+            {
+                shakeTimer += Time.deltaTime;
+                
+                cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = Mathf.Lerp(shakeStartingIntensity, 0f, 1 - (shakeTimer / shakeTimerLength));
+
+                if (shakeTimer > shakeTimerLength)
+                {
+                    StopShaking();
+                }
+            }
         }
+        
     }
 }
