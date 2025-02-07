@@ -1,4 +1,3 @@
-using Autodesk.Fbx;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -44,7 +43,6 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private bool isGunRecoilActive = false;
     [SerializeField, Tooltip("How fast the player should move after applying recoil")] private float gunRecoilMoveSpeed;
     [SerializeField, Tooltip("How long the recoil should move the player for")] private float recoilMoveTimeInterval;
-    //[SerializeField, Tooltip("The force applied to the player - how far you want the player to move")] private Vector2 gunRecoilMoveAmount = new Vector2(10f, 10f);
     [SerializeField, Tooltip("The force applied to the player - how far you want the player to move")] private float gunRecoilMoveAmount;
     [SerializeField, Tooltip("How much force to apply to smaller objects if the player collides with them")] private float collisionPushStrength;
     private float recoilMoveTimer;
@@ -144,6 +142,11 @@ public class FirstPersonMovement : MonoBehaviour
 
         if (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("Enemy"))
         {
+            if (!onGround)
+            {
+                return;
+            }
+
             StopGunRecoil();
         }
         
@@ -207,14 +210,14 @@ public class FirstPersonMovement : MonoBehaviour
 
                 float setMoveSpeed = gunRecoilMoveSpeed * gunRecoilMoveAmount;
                 charController.SimpleMove(forceBackwardMove * setMoveSpeed);
-
+                
                 if (recoilMoveTimer > recoilMoveTimeInterval || characterRigidBody.CompareTag("Wall") || characterRigidBody.CompareTag("Enemy"))
                 {
                     #region Debug
 
                     if (GameManager.Instance.toggleDebug)
                     {
-                        if (characterRigidBody.CompareTag("Wall"))
+                        if (characterRigidBody.CompareTag("Wall") || characterRigidBody.CompareTag("Enemy"))
                         {
                             Debug.Log("FirstPersonMovement: Stopping recoil because character has hit a wall.");
                         }
@@ -222,16 +225,18 @@ public class FirstPersonMovement : MonoBehaviour
 
                     #endregion
 
-                    Vector3 stopMove = new Vector3(0f, charController.velocity.y, 0f);
-
-                    if (onGround && charController.velocity.y < 0)
-                    {
-                        charController.SimpleMove(stopMove);
-                    }
+                    Vector3 stopMove = new Vector3(0f, playerGravity, 0f);
+                    charController.SimpleMove(stopMove * Time.deltaTime);
 
                     StopGunRecoil();
                 }
             }
+        }
+
+        if (!onGround && !isGunRecoilActive)
+        {
+            Vector3 fallMove = new Vector3(0f, playerGravity, 0f);
+            charController.SimpleMove(fallMove * Time.deltaTime);
         }
 
         //characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;

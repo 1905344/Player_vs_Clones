@@ -34,6 +34,7 @@ public class playerGameCharacter : MonoBehaviour
     private void Start()
     {
         GameManager.Instance.PlayerHit += OnPlayerHit;
+        healthText.text = health.ToString() + "/100";
     }
 
     public void OnPlayerHit(int damage)
@@ -102,6 +103,7 @@ public class playerGameCharacter : MonoBehaviour
     {
         if (updateHealthTextColour)
         {
+            healthText.text = health.ToString() + "/100";
             healthText.color = healthTextColour;
             updateHealthTextColour = false;
         }

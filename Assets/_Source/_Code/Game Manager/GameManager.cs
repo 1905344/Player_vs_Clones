@@ -101,6 +101,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        tutorialScreen.gameObject.SetActive(true);
+        tutorialStartGame.interactable = true;
+        tutorialQuitGame.interactable = true;
+        InputManager.Instance.DisableGameInput();
+    }
+
     #region Event Functions
 
     public void OnSetAiBehaviour()
@@ -139,7 +147,8 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerKilled != null)
         {
-            OnGameOverReturnToMainMenu();
+            //OnGameOverReturnToMainMenu();
+            gameOverScreen.gameObject.SetActive(true);
         }
     }
 
@@ -169,7 +178,7 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Tutorial Screen Function
+    #region Tutorial Screen Functions
 
     public void OnStartGameFromTutorial()
     {
@@ -183,6 +192,8 @@ public class GameManager : MonoBehaviour
         #endregion
 
         tutorialScreen.gameObject.SetActive(false);
+        Cursor.visible = false;
+        InputManager.Instance.OnEnable();
     }
 
     #endregion

@@ -10129,7 +10129,7 @@ PrefabInstance:
     - target: {fileID: 5994575152267880745, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 73.973
+      value: 71.853
       objectReference: {fileID: 0}
     - target: {fileID: 5994575152267880745, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
@@ -39433,12 +39433,12 @@ MonoBehaviour:
   timeToJumpApex: 0
   cameraTransform: {fileID: 1448387305}
   isGunRecoilActive: 0
-  gunRecoilMoveSpeed: 4.3
-  recoilMoveTimeInterval: 1.25
-  gunRecoilMoveAmount: 7
-  collisionPushStrength: 0
+  gunRecoilMoveSpeed: 3
+  recoilMoveTimeInterval: 2
+  gunRecoilMoveAmount: 6
+  collisionPushStrength: 4
   disablePlayerMovement: 1
-  disablePlayerJumping: 1
+  disablePlayerJumping: 0
   onGround: 0
   canJump: 0
   isJumping: 0
@@ -39523,19 +39523,19 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 448
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 592
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.09, z: 0}
 --- !u!1 &880294626
 GameObject:
   m_ObjectHideFlags: 0
@@ -40125,7 +40125,7 @@ MonoBehaviour:
     placeholders and there is currently no audio. <br><br><br><size=60%><b>Objective:</b></size><br><br><size=45%>Kill
     all the enemies.\r\n<br><br><size=45%><b>The controls are:</b></size>\r\r\n<br>Look
     around/move camera:<pos=45%><b>Mouse</b>\r\n<br>Fire gun:<pos=45%><b>Left mouse
-    button</b>\r\n<br>Reload gun:<pos=45%><b>R</b>"
+    button</b>\r\n<br>Reload gun:<pos=45%><b>R</b>\n<br>Pause:<pos=45%><b>Escape</b>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -41051,7 +41051,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 949590573}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -42669,7 +42669,7 @@ PrefabInstance:
     - target: {fileID: 6739799188869481046, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 14.320001
+      value: 14.500001
       objectReference: {fileID: 0}
     - target: {fileID: 6739799188869481046, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
@@ -44276,9 +44276,9 @@ RectTransform:
   - {fileID: 917349527}
   m_Father: {fileID: 641701278}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -362.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1171000019
@@ -44323,9 +44323,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0, g: 0.7058824, b: 1, a: 1}
+    m_PressedColor: {r: 0, g: 0.039215688, b: 1, a: 1}
+    m_SelectedColor: {r: 0, g: 0.7058824, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -49084,9 +49084,9 @@ RectTransform:
   - {fileID: 1059817315}
   m_Father: {fileID: 641701278}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1440, y: -362.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1372085719
@@ -49131,9 +49131,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0, g: 0.7058824, b: 1, a: 1}
+    m_PressedColor: {r: 0, g: 0.039215688, b: 1, a: 1}
+    m_SelectedColor: {r: 0, g: 0.7058824, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -50005,7 +50005,7 @@ PrefabInstance:
     - target: {fileID: 877279558861809619, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 14.320001
+      value: 14.47
       objectReference: {fileID: 0}
     - target: {fileID: 877279558861809619, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
@@ -58448,7 +58448,7 @@ MonoBehaviour:
   timeBetweenShooting: 0.5
   bulletSpread: 5
   bulletRange: 80
-  gunReloadTime: 2.2
+  gunReloadTime: 1.35
   magazineClipSize: 7
   bulletsPerLeftMouseTap: 1
   bulletsRemaining: 0
@@ -60242,7 +60242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1851312458
 RectTransform:
   m_ObjectHideFlags: 0

@@ -263,6 +263,8 @@ public class InputManager : MonoBehaviour
         vCam.SetCameraPOV(0, 0, mouseAcceleration, invertMouseY);
         playerActions.Player.Disable();
         ToggleActionMap(playerActions.UI);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     #endregion
