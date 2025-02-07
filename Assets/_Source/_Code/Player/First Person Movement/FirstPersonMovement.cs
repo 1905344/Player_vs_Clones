@@ -10,6 +10,7 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField] private CharacterController charController;
     [SerializeField] private GameObject characterBodyObject;
     [SerializeField] private Rigidbody characterRigidBody;
+    [SerializeField] private CapsuleCollider characterCollider;
     private Transform characterBodyTransform;
 
     [Space(15)]
@@ -141,10 +142,10 @@ public class FirstPersonMovement : MonoBehaviour
     {
         //characterRigidBody = hit.collider.attachedRigidbody;
 
-        //if (hit.collider.CompareTag("Wall"))
-        //{
-        //    StopGunRecoil();
-        //}
+        if (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("Enemy"))
+        {
+            StopGunRecoil();
+        }
         
         if (hit.moveDirection.y < -0.3)
         {
@@ -207,7 +208,7 @@ public class FirstPersonMovement : MonoBehaviour
                 float setMoveSpeed = gunRecoilMoveSpeed * gunRecoilMoveAmount;
                 charController.SimpleMove(forceBackwardMove * setMoveSpeed);
 
-                if (recoilMoveTimer > recoilMoveTimeInterval | characterRigidBody.CompareTag("Wall"))
+                if (recoilMoveTimer > recoilMoveTimeInterval || characterRigidBody.CompareTag("Wall") || characterRigidBody.CompareTag("Enemy"))
                 {
                     #region Debug
 
@@ -220,6 +221,13 @@ public class FirstPersonMovement : MonoBehaviour
                     }
 
                     #endregion
+
+                    Vector3 stopMove = new Vector3(0f, charController.velocity.y, 0f);
+
+                    if (onGround && charController.velocity.y < 0)
+                    {
+                        charController.SimpleMove(stopMove);
+                    }
 
                     StopGunRecoil();
                 }

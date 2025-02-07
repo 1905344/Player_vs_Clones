@@ -10,7 +10,7 @@ public class GunplayManager : MonoBehaviour
 
     [Header("References")]
     //[SerializeField] private Camera _camera;
-    [SerializeField] private CinemachineVirtualCamera _camera;
+    [SerializeField] private Camera _camera;
     [SerializeField] private Transform muzzle;
     private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
