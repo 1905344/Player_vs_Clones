@@ -194,7 +194,6 @@ public class FirstPersonMovement : MonoBehaviour
         if (isGunRecoilActive)
         {
             Vector3 forceBackwardMove = cameraTransform.TransformDirection(Vector3.back);
-
             //float moveTimer = recoilMoveTimer / recoilMoveTimeInterval;
 
             if (recoilMoveTimer > 0)

@@ -99,13 +99,13 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 2240
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 4864
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
@@ -150,4 +150,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileID: 0
-  projectileLifespan: 5
+  projectileLifespan: 6
+  projectileCollider: {fileID: 706181931694686439}

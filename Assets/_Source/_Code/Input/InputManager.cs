@@ -250,10 +250,10 @@ public class InputManager : MonoBehaviour
         //    return;
         //}
 
-        if (isPlayerDead)
-        {
-            return;
-        }
+        //if (isPlayerDead)
+        //{
+        //    return;
+        //}
         
         if (GameManager.Instance.toggleDebug)
         {

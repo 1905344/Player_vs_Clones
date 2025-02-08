@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class projectileScript : MonoBehaviour
 {
@@ -11,9 +13,9 @@ public class projectileScript : MonoBehaviour
     public int damage { get; set; }
     
     [SerializeField] private float projectileLifespan = 10f;
+    [SerializeField] private SphereCollider projectileCollider;
     private float timer;
-    private bool timerFinished = false;
-
+    
     #endregion
 
     private void Awake()
@@ -22,16 +24,26 @@ public class projectileScript : MonoBehaviour
         {
             Debug.Log("Projectile " + projectileID + " instantiated.");
         }
+
+        projectileCollider = GetComponent<SphereCollider>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
+        #region Debug
+
         if (GameManager.Instance.toggleDebug)
         {
-            Debug.Log("Projectile hit: " + collision.collider.tag);
+            Debug.Log("Projectile hit: " + other.gameObject.tag.ToString());
         }
 
-        if (collision.collider.CompareTag("Player"))
+        #endregion
+
+        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag(""))
+        {
+            DestroyProjectile();
+        }
+        else if (other.gameObject.CompareTag("Player"))
         {
             //Using events
             GameManager.Instance.OnPlayerHit(damage);
@@ -40,30 +52,29 @@ public class projectileScript : MonoBehaviour
             //Using colliders
             //collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
         }
-        else if (!collision.collider.CompareTag("Player"))
-        {
-            DestroyProjectile();
-        }
     }
 
     private void DestroyProjectile()
     {
-        if (GameManager.Instance.toggleDebug && timerFinished)
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Destroyed projectile " + projectileID + " because it has reached the end of its lifespan.");
         }
 
-        Destroy(this.gameObject);
+        #endregion
+
+        Destroy(gameObject);
     }
 
     private void Update()
     {
         timer += Time.deltaTime;
 
-        if (timer >= projectileLifespan && !timerFinished)
+        if (timer >= projectileLifespan)
         {
             timer = 0f;
-            timerFinished = true;
             DestroyProjectile();
         }
     }
