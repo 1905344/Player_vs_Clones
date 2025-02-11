@@ -8,6 +8,8 @@ public class FirstPersonMovement : MonoBehaviour
     [Header("Player Components")]
     [SerializeField] private CharacterController charController;
     [SerializeField] private GameObject characterBodyObject;
+    [SerializeField] private Rigidbody characterRigidBody;
+    [SerializeField] private CapsuleCollider characterCollider;
     private Transform characterBodyTransform;
 
     [Space(15)]
@@ -51,6 +53,8 @@ public class FirstPersonMovement : MonoBehaviour
     {
         charController = GetComponent<CharacterController>();
         characterBodyTransform = characterBodyObject.transform;
+        characterCollider = GetComponent<CapsuleCollider>();
+        characterRigidBody = GetComponent<Rigidbody>();
     }
 
     private void Start()
@@ -75,6 +79,26 @@ public class FirstPersonMovement : MonoBehaviour
     }
 
     #endregion
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        //Push a smaller object
+        /*if (hit.moveDirection.y < -0.3)
+        {
+            return;
+        }
+
+        Vector3 pushDireciton = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+        characterRigidBody.linearVelocity = pushDireciton * collisionPushStrength;*/
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        /*if (other.tag == "")
+        {
+            //Do something
+        }*/
+    }
 
     private void Update()
     {

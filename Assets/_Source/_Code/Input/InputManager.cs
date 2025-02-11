@@ -2,6 +2,8 @@ using Cinemachine;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
@@ -40,13 +42,27 @@ public class InputManager : MonoBehaviour
     [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis")]
     public float mouseVerticalSensitivity = 0.3f;
 
+    [Space(10)]
+
+    [Header("U.I. for Settings Page")]
+    [SerializeField] Slider mouseXSensSlider;
+    [SerializeField] Slider mouseYSensSlider;
+    [SerializeField] Toggle invertMouseYToggle;
+    [SerializeField] Toggle mouseAccelerationToggle;
+    //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseXSensTextInput;
+    //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseYSensTextInput;
+    [SerializeField] TextMeshProUGUI mouseXSensText;
+    [SerializeField] TextMeshProUGUI mouseYSensText;
+    private bool updateMouseXSensText = false;
+    private bool updateMouseYSensText = false;
+
     [Space(15)]
 
     [Header("Cinemachine Virtual Camera Reference")]
     [SerializeField] CinemachineVirtualCamera vCam;
     
     //Only for testing the two cameras at once
-    [SerializeField] CinemachineVirtualCamera playerTwoVCam;
+    //[SerializeField] CinemachineVirtualCamera playerTwoVCam;
 
     [Space(10)]
 
@@ -63,7 +79,7 @@ public class InputManager : MonoBehaviour
     public bool isPressingFireButton = false;
     public bool isHoldingFireButton = false;
 
-    public bool levelComplete;
+    public bool levelComplete = false;
 
     [SerializeField] private bool isPlayerDead = false;
 
@@ -122,9 +138,9 @@ public class InputManager : MonoBehaviour
 
     public bool pauseGame = false;
 
-    [Space(10)]
+    //[Space(10)]
 
-    [SerializeField] private bool isTestingTwoCharactersAtOnce = false;
+    //[SerializeField] private bool isTestingTwoCharactersAtOnce = false;
 
     #endregion
 
@@ -172,40 +188,45 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
-        if (!GameManager.Instance.isInFPS)
-        {
-            ToggleActionMap(playerActions.UI);
-        }
-        else if (GameManager.Instance.isInFPS)
-        {
-            ToggleActionMap(playerActions.Player);
-        }
+        SetToggleStates();
+        SetMouseSensSliders();
 
-        //if (GameManager.Instance.toggleDebug)
-        //{
-        //    Debug.Log("InputManager: The starting action map is: ");
-        //}
+        ApplyMouseXSens();
+        ApplyMouseYSens();
 
         vCam.SetFocalLength(_FOV);
-        if (GameManager.Instance.toggleDebug)
-        {
-            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
-        }
-
         vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
 
-        if (isTestingTwoCharactersAtOnce)
+        /*if (isTestingTwoCharactersAtOnce)
         {
             //Testing Two Characters At Once
             playerTwoVCam.SetFocalLength(_FOV);
+
+            #region Debug
 
             if (GameManager.Instance.toggleDebug)
             {
                 Debug.Log("Camera FOV is: " + playerTwoVCam.GetFocalLength());
             }
 
+            #endregion
+
             playerTwoVCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        }*/
+
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("InputManager: The starting action map is: ");
         }
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+        }
+
+        #endregion
     }
 
     #region OnEnable and OnDisable
@@ -225,19 +246,24 @@ public class InputManager : MonoBehaviour
 
     public void EnableGameInput()
     {
-        if (isPlayerDead || pauseGame)
-        {
-            return;
-        }
+        #region Debug
 
         if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input enabled.");
         }
 
+        #endregion
+
+        if (isPlayerDead || pauseGame)
+        {
+            return;
+        }
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
+        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
         playerActions.UI.Disable();
         ToggleActionMap(playerActions.Player);
     }
@@ -249,18 +275,20 @@ public class InputManager : MonoBehaviour
         //    return;
         //}
 
-        if (isPlayerDead)
-        {
-            return;
-        }
-        
+        #region Debug
+
         if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input disabled.");
         }
 
-        ToggleActionMap(playerActions.UI);
+        #endregion
+
+        vCam.SetCameraPOV(0, 0, mouseAcceleration, invertMouseY);
         playerActions.Player.Disable();
+        ToggleActionMap(playerActions.UI);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     #endregion
@@ -356,14 +384,18 @@ public class InputManager : MonoBehaviour
             return;
         }
 
+        playerActions.Disable();
+        changeActionMap?.Invoke(actionMap);
+        actionMap.Enable();
+
+        #region Debug
+
         if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
         }
 
-        playerActions.Disable();
-        changeActionMap?.Invoke(actionMap);
-        actionMap.Enable();
+        #endregion
     }
 
     #endregion
@@ -402,6 +434,9 @@ public class InputManager : MonoBehaviour
         }
         else
         {
+            SetToggleStates();
+            SetMouseSensSliders();
+
             GameManager.Instance.DisablePauseUI();
             pauseGame = false;
             EnableGameInput();
@@ -421,6 +456,9 @@ public class InputManager : MonoBehaviour
         }
         else
         {
+            SetToggleStates();
+            SetMouseSensSliders();
+
             pauseGame = false;
             EnableGameInput();
         }
@@ -435,6 +473,104 @@ public class InputManager : MonoBehaviour
         DisableGameInput();
     }
 
+    #region Settings Functions
+
+    #region MouseSensitivity
+
+    public void ApplyMouseXSens()
+    {
+        mouseHorizontalSensitivity = mouseXSensSlider.value;
+        //mouseXSensTextInput.text = mouseHorizontalSensitivity.ToString();
+        updateMouseXSensText = true;
+
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: Mouse horizontal sensitivity has been changed to: " + mouseHorizontalSensitivity.ToString());
+        }
+
+        #endregion
+    }
+
+    public void ApplyMouseYSens()
+    {
+        mouseVerticalSensitivity = mouseYSensSlider.value;
+        //mouseYSensTextInput.text = mouseVerticalSensitivity.ToString();
+        updateMouseYSensText = true;
+
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: Mouse verical sensitivity has been changed to: " + mouseVerticalSensitivity.ToString());
+        }
+
+        #endregion
+    }
+
+    private void SetMouseSensSliders()
+    {
+        mouseXSensSlider.value = mouseHorizontalSensitivity;
+        mouseYSensSlider.value = mouseVerticalSensitivity;
+    }
+
+    #endregion
+
+    #region U.I. Toggle Functions
+
+    private void SetToggleStates()
+    {
+        invertMouseYToggle.isOn = invertMouseY;
+        mouseAccelerationToggle.isOn = mouseAcceleration;
+    }
+
+    private void InvertMouseYToggled()
+    {
+        if (invertMouseY)
+        {
+            invertMouseY = false;
+        }
+        else
+        {
+            invertMouseY = true;
+        }
+
+        #region Debug
+        
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: Invert mouse Y has been toggled.");
+        }
+
+        #endregion
+    }
+
+    private void MouseAccelerationToggled()
+    {
+        if (mouseAcceleration)
+        {
+            mouseAcceleration = false;
+        }
+        else
+        {
+            mouseAcceleration = true;
+        }
+
+        #region Debug
+
+        if (GameManager.Instance.toggleDebug)
+        {
+            Debug.Log("Input Manager: Mouse acceleration has been toggled.");
+        }
+
+        #endregion
+    }
+
+    #endregion
+
+    #endregion
+
     private void Update()
     {
         #region Update the first person camera (Cinemachine virtual camera) FOV (Field Of View)
@@ -442,15 +578,25 @@ public class InputManager : MonoBehaviour
         if (updateFOV)
         {
             vCam.SetFocalLength(_FOV);
-            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
 
-            if (isTestingTwoCharactersAtOnce)
+            /*if (isTestingTwoCharactersAtOnce)
             {
                 playerTwoVCam.SetFocalLength(_FOV);
+
+                #region Debug
+
                 Debug.Log("Camera FOV is: " + playerTwoVCam.GetFocalLength());
-            }
+
+                #endregion
+            }*/
 
             updateFOV = false;
+
+            #region Debug
+
+            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+            #endregion
         }
 
         #endregion
@@ -470,6 +616,29 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        //Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
+        #region Update Mouse Sensitivity Text
+
+        if (updateMouseXSensText)
+        {
+            mouseXSensText.text = mouseHorizontalSensitivity.ToString();
+            updateMouseXSensText = false;
+        }
+
+        if (updateMouseYSensText)
+        {
+            mouseYSensText.text = mouseVerticalSensitivity.ToString();
+            updateMouseYSensText = false;
+        }
+
+        #endregion
+
+        #region Debugging
+
+        //if (GameManager.Instance.toggleDebug)
+        //{
+        //    Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
+        //}
+
+        #endregion
     }
 }

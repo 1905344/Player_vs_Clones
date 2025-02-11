@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -21,9 +22,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //Events for A.I. Behaviours
-    public event Action SetAiBehaviour;
-
     //Events for the asymmetrical gameplay
     public event Action<int> PlayerHit;
     public event Action PlayerKilled;
@@ -39,26 +37,49 @@ public class GameManager : MonoBehaviour
     [Space(20)]
 
     [Header("U.I. Elements")]
+    [SerializeField] Transform tutorialScreen;
     [SerializeField] Transform pauseScreen;
-    [SerializeField] Transform quitPromptScreen;
+    [SerializeField] Transform settingsScreen;
+    //[SerializeField] Transform quitPromptScreen;
     [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
 
-    [SerializeField] Button resumeButton;
-    [SerializeField] Button restartButton;
-    [SerializeField] Button quitButton;
+    [SerializeField] TextMeshProUGUI pauseTitleText;
 
     [Space(5)]
 
-    [SerializeField] Button returnToPauseScreen;
-    [SerializeField] Button quitToMainMenuButton;
-    [SerializeField] Button quitGameButton;
+    [Header("Pause Menu Buttons")]
+    [SerializeField] Button resumeFromPauseMenuButton;
+    [SerializeField] Button restartFromPauseMenuButton;
+    [SerializeField] Button settingsPauseMenuButton;
+    [SerializeField] Button quitFromPauseMenuButton;
 
-    [Space(10)]
+    [Space(5)]
 
-    [Header("Game States")]
-    public bool isInFPS = false;
+    [Header("Tutorial Screen Buttons")]
+    [SerializeField] Button tutorialStartGame;
+    [SerializeField] Button tutorialQuitGame;
+
+    [Space(5)]
+
+    [Header("Settings Menu Buttons")]
+    [SerializeField] Button returnFromSettingsPageButton;
+    [SerializeField] Slider mouseXSensitivitySlider;
+    [SerializeField] Slider mouseYSensitivitySlider;
+    //[SerializeField] TMP_InputField mouseXSensitivtyTextInput;
+    //[SerializeField] TMP_InputField mouseYSensitivtyTextInput;
+    [SerializeField] TextMeshProUGUI mouseXSensitivityText;
+    [SerializeField] TextMeshProUGUI mouseYSensitivityText;
+    [SerializeField] Toggle invertMouseY;
+    [SerializeField] Toggle mouseAcceleration;
+
+    [Space(5)]
+
+    [Header("Game Over Screen")]
+    //[SerializeField] Button returnToPauseScreen;
+    //[SerializeField] Button quitToMainMenuButton;
+    [SerializeField] Button quitGameFromGameOverScreenButton;
 
     [Space(10)]
 
@@ -78,15 +99,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #region Event Functions
-
-    public void OnSetAiBehaviour()
+    private void Start()
     {
-        if (SetAiBehaviour != null)
-        {
-            SetAiBehaviour();
-        }
+        tutorialScreen.gameObject.SetActive(true);
+        tutorialStartGame.interactable = true;
+        tutorialQuitGame.interactable = true;
+        InputManager.Instance.DisableGameInput();
     }
+
+    #region Event Functions
 
     //public void OnLevelFailed()
     //{
@@ -116,8 +137,9 @@ public class GameManager : MonoBehaviour
     {
         if (PlayerKilled != null)
         {
-            isInFPS = false;
-            OnGameOverReturnToMainMenu();
+            //OnGameOverReturnToMainMenu();
+            PlayerKilled();
+            gameOverScreen.gameObject.SetActive(true);
         }
     }
 
@@ -133,9 +155,28 @@ public class GameManager : MonoBehaviour
     {
         if (OnStartGame != null)
         {
-            isInFPS = false;
             OnStartGame();
         }
+    }
+
+    #endregion
+
+    #region Tutorial Screen Functions
+
+    public void OnStartGameFromTutorial()
+    {
+        #region Disable buttons
+
+        tutorialStartGame.enabled = false;
+        tutorialStartGame.interactable = false;
+        tutorialQuitGame.enabled = false;
+        tutorialQuitGame.interactable = false;
+
+        #endregion
+
+        tutorialScreen.gameObject.SetActive(false);
+        Cursor.visible = false;
+        InputManager.Instance.OnEnable();
     }
 
     #endregion
@@ -146,49 +187,137 @@ public class GameManager : MonoBehaviour
 
     private void EnablePauseButtons()
     {
-        EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+        EventSystem.current.SetSelectedGameObject(resumeFromPauseMenuButton.gameObject);
 
-        resumeButton.enabled = true;
-        resumeButton.interactable = true;
+        resumeFromPauseMenuButton.enabled = true;
+        resumeFromPauseMenuButton.interactable = true;
+        resumeFromPauseMenuButton.gameObject.SetActive(true);
 
-        restartButton.enabled = true;
-        restartButton.interactable = true;
+        restartFromPauseMenuButton.enabled = true;
+        restartFromPauseMenuButton.interactable = true;
+        restartFromPauseMenuButton.gameObject.SetActive(true);
 
-        quitButton.enabled = true;
-        quitButton.interactable = true;
+        settingsPauseMenuButton.enabled = true;
+        settingsPauseMenuButton.interactable = true;
+        settingsPauseMenuButton.gameObject.SetActive(true);
+
+        quitFromPauseMenuButton.enabled = true;
+        quitFromPauseMenuButton.interactable = true;
+        quitFromPauseMenuButton.gameObject.SetActive(true);
+
+        pauseTitleText.gameObject.SetActive(true);
     }
 
     private void DisablePauseButtons()
     {
-        resumeButton.enabled = false;
-        resumeButton.interactable = false;
+        resumeFromPauseMenuButton.enabled = false;
+        resumeFromPauseMenuButton.interactable = false;
+        resumeFromPauseMenuButton.gameObject.SetActive(false);
 
-        restartButton.enabled = false;
-        restartButton.interactable = false;
+        restartFromPauseMenuButton.enabled = false;
+        restartFromPauseMenuButton.interactable = false;
+        restartFromPauseMenuButton.gameObject.SetActive(false);
 
-        quitGameButton.enabled = false;
-        quitGameButton.interactable = false;
+        settingsPauseMenuButton.enabled = false;
+        settingsPauseMenuButton.interactable = false;
+        settingsPauseMenuButton.gameObject.SetActive(false);
+
+        quitFromPauseMenuButton.enabled = false;
+        quitFromPauseMenuButton.interactable = false;
+        quitFromPauseMenuButton.gameObject.SetActive(false);
+
+        pauseTitleText.gameObject.SetActive(false);
     }
 
-    private void EnableQuitScreenButtons()
+    private void EnableSettingsUi()
     {
-        quitToMainMenuButton.enabled = true;
-        quitToMainMenuButton.interactable = true;
+        returnFromSettingsPageButton.enabled = true;
+        returnFromSettingsPageButton.interactable = true;
+        returnFromSettingsPageButton.gameObject.SetActive(true);
 
-        quitGameButton.enabled = true;
-        quitGameButton.interactable = true;
+        mouseXSensitivitySlider.enabled = true;
+        mouseXSensitivitySlider.interactable = true;
+        mouseXSensitivitySlider.gameObject.SetActive(true);
+
+        mouseYSensitivitySlider.enabled = true;
+        mouseYSensitivitySlider.interactable = true;
+        mouseYSensitivitySlider.gameObject.SetActive(true);
+
+        //mouseXSensitivtyTextInput.enabled = true;
+        //mouseXSensitivtyTextInput.interactable = true;
+        //mouseXSensitivtyTextInput.gameObject.SetActive(true);
+
+        //mouseYSensitivtyTextInput.enabled = true;
+        //mouseYSensitivtyTextInput.interactable = true;
+        //mouseYSensitivtyTextInput.gameObject.SetActive(true);
+
+        mouseXSensitivityText.gameObject.SetActive(true);
+        mouseYSensitivityText.gameObject.SetActive(true);
+
+        invertMouseY.enabled = true;
+        invertMouseY.interactable = true;
+        invertMouseY.gameObject.SetActive(true);
+
+        mouseAcceleration.enabled = true;
+        mouseAcceleration.interactable = true;
+        mouseAcceleration.gameObject.SetActive(true);
     }
 
-    private void DisableQuitScreenButtons()
+    private void DisableSettingsUi()
     {
-        quitToMainMenuButton.enabled = false;
-        quitToMainMenuButton.interactable = false;
+        returnFromSettingsPageButton.enabled = false;
+        returnFromSettingsPageButton.interactable = false;
+        returnFromSettingsPageButton.gameObject.SetActive(false);
 
-        quitGameButton.enabled = false;
-        quitGameButton.interactable = false;
+        mouseXSensitivitySlider.enabled = false;
+        mouseXSensitivitySlider.interactable = false;
+        mouseXSensitivitySlider.gameObject.SetActive(false);
+
+        mouseYSensitivitySlider.enabled = false;
+        mouseYSensitivitySlider.interactable = false;
+        mouseYSensitivitySlider.gameObject.SetActive(false);
+
+        //mouseXSensitivtyTextInput.enabled = false;
+        //mouseXSensitivtyTextInput.interactable = false;
+        //mouseXSensitivtyTextInput.gameObject.SetActive(false);
+
+        //mouseYSensitivtyTextInput.enabled = false;
+        //mouseYSensitivtyTextInput.interactable = false;
+        //mouseYSensitivtyTextInput.gameObject.SetActive(false);
+
+        mouseXSensitivityText.gameObject.SetActive(false);
+        mouseYSensitivityText.gameObject.SetActive(false);
+
+        invertMouseY.enabled = false;
+        invertMouseY.interactable = false;
+        invertMouseY.gameObject.SetActive(false);
+
+        mouseAcceleration.enabled = false;
+        mouseAcceleration.interactable = false;
+        mouseAcceleration.gameObject.SetActive(false);
     }
+
+    //private void EnableQuitScreenButtons()
+    //{
+    //    //quitToMainMenuButton.enabled = true;
+    //    //quitToMainMenuButton.interactable = true;
+
+    //    quitGameFromGameOverScreenButton.enabled = true;
+    //    quitGameFromGameOverScreenButton.interactable = true;
+    //}
+
+    //private void DisableQuitScreenButtons()
+    //{
+    //    //quitToMainMenuButton.enabled = false;
+    //    //quitToMainMenuButton.interactable = false;
+
+    //    quitGameFromGameOverScreenButton.enabled = false;
+    //    quitGameFromGameOverScreenButton.interactable = false;
+    //}
 
     #endregion
+
+    #region Functions for Pause Screen Buttons
 
     public void OnPause()
     {
@@ -218,7 +347,7 @@ public class GameManager : MonoBehaviour
             DisablePauseUI();
 
             Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked; 
+            Cursor.lockState = CursorLockMode.Locked;
             InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
@@ -228,27 +357,28 @@ public class GameManager : MonoBehaviour
         //In case the player presses the escape to resume instead
         //of the U.I. button to resume the game
         pauseScreen.gameObject.SetActive(false);
-        quitPromptScreen.gameObject.SetActive(false);
+        settingsScreen.gameObject.SetActive(false);
+        //quitPromptScreen.gameObject.SetActive(false);
 
         DisablePauseButtons();
-        DisableQuitScreenButtons();
+        //DisableQuitScreenButtons();
     }
 
-    public void OnQuitButtonPressed()
-    {
-        quitPromptScreen.gameObject.SetActive(true);
-        DisablePauseButtons();
-        EnableQuitScreenButtons();
+    //public void OnQuitButtonPressed()
+    //{
+    //    quitPromptScreen.gameObject.SetActive(true);
+    //    DisablePauseButtons();
+    //    EnableQuitScreenButtons();
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-    }
+    //    Cursor.visible = true;
+    //    Cursor.lockState = CursorLockMode.None;
+    //}
 
     public void OnReturnToPauseScreenPressed()
     {
-        quitPromptScreen.gameObject.SetActive(false);
+        //quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
-        DisableQuitScreenButtons();
+        //DisableQuitScreenButtons();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -256,16 +386,27 @@ public class GameManager : MonoBehaviour
 
     public void OnRestartButtonPressed()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadSceneAsync(currentScene.buildIndex);
+        RestartScene("Prototype_1_Level");
     }
 
-    public void OnQuitToMainMenu()
+    public void OnSettingsButtonPressed()
     {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        SceneManager.LoadSceneAsync("MainMenu");
+        DisablePauseButtons();
+        EnableSettingsPage();
     }
+
+    public void OnReturnFromSettingsButtonPressed()
+    {
+        EnablePauseButtons();
+        DisableSettingsPage();
+    }
+
+    //public void OnQuitToMainMenu()
+    //{
+    //    Cursor.visible = true;
+    //    Cursor.lockState = CursorLockMode.None;
+    //    LoadMainMenu();
+    //}
 
     public void OnApplicationQuit()
     {
@@ -277,32 +418,49 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Game Over Functions
+    #region Enable and Disable Settings Page
 
-    public void OnGameOverReturnToMainMenu()
+    private void EnableSettingsPage()
     {
-        isInFPS = false;
-
-        SceneManager.LoadSceneAsync("MainMenu");
+        settingsScreen.gameObject.SetActive(true);
+        EnableSettingsUi();
     }
 
-    public void RestartLevelFromGameOverScreen()
+    private void DisableSettingsPage()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        settingsScreen.gameObject.SetActive(false);
+        DisableSettingsUi();
     }
 
     #endregion
 
-    private void Update()
-    {
-        if (isInFPS)
-        { 
-            InputManager.Instance.OnEnable();
-        }
-        else
-        {
-            InputManager.Instance.OnDisable();
-        }
+    #endregion
 
+    #region Game Over Functions
+
+    public void OnGameOverReturnToMainMenu()
+    {
+        LoadMainMenu();
     }
+
+    public void RestartLevelFromGameOverScreen()
+    {
+        RestartScene("Prototype_1_Level");
+    }
+
+    #endregion
+
+    #region Game Functions
+
+    private void RestartScene(string name)
+    {
+        SceneManager.LoadSceneAsync(name);
+    }
+
+    private void LoadMainMenu()
+    {
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+
+    #endregion
 }

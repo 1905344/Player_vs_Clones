@@ -49,7 +49,6 @@ public class enemyAiController : MonoBehaviour
 
     [SerializeField] public Guid enemyID;
 
-
     private static Guid GenerateGuid()
     {
         return Guid.NewGuid();
@@ -75,10 +74,14 @@ public class enemyAiController : MonoBehaviour
         GameManager.Instance.EnemyHit += TakeDamage;
         GameManager.Instance.PlayerKilled += StopAttacking;
 
+        #region Debugging
+
         if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " active.");
         }
+
+        #endregion
     }
 
     #region States
