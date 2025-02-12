@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting.Dependencies.Sqlite;
 
 public class InputManager : MonoBehaviour
 {
@@ -183,7 +184,10 @@ public class InputManager : MonoBehaviour
         Cursor.visible = false;
 
         //Event for when the player has been killed
-        GameManager.Instance.PlayerKilled += OnPlayerDeath; 
+        GameManager.Instance.PlayerKilled += OnPlayerDeath;
+
+        mouseXSensText.maxVisibleCharacters = 4;
+        mouseYSensText.maxVisibleCharacters = 4;
     }
 
     private void Start()
@@ -218,14 +222,10 @@ public class InputManager : MonoBehaviour
 
         if (GameManager.Instance.toggleDebug)
         {
-            Debug.Log("InputManager: The starting action map is: ");
-        }
-
-        if (GameManager.Instance.toggleDebug)
-        {
+            Debug.Log("InputManager: The starting action map is: " + _currentControlScheme);
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
         }
-
+        
         #endregion
     }
 

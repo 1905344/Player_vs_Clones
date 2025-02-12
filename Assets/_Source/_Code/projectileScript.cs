@@ -34,7 +34,7 @@ public class projectileScript : MonoBehaviour
 
         #endregion
 
-        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag(""))
+        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag("Environment"))
         {
             DestroyProjectile();
         }

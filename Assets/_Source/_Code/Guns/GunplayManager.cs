@@ -28,8 +28,6 @@ public class GunplayManager : MonoBehaviour
     //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
-    [SerializeField, Tooltip("Parent object for the instantiated muzzle flashes")] private Transform muzzleFlashParent;
-
     private List<GameObject> muzzleFlashList = new List<GameObject>();
     private List<GameObject> bulletHoleDecalList = new List<GameObject>();
 
@@ -269,7 +267,13 @@ public class GunplayManager : MonoBehaviour
                 {
                     GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
+
+                //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
             }
+            //else if (_raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground") || _raycastHit.collider.CompareTag("Environment"))
+            //{
+            //    CreateVisualFeedback(muzzleFlash, bulletHoleDecal, _raycastHit.point);
+            //}
         }
 
         #endregion
@@ -379,13 +383,13 @@ public class GunplayManager : MonoBehaviour
         //    DestroyImmediate(child);
         //}
 
-        //if (bulletDecalParent.childCount > 0)
+        //if (bulletDecalParent.childCount > 10)
         //{
         //    GameObject child = bulletDecalParent.GetChild(0).gameObject;
         //    DestroyImmediate(child);
         //}
 
-        Instantiate(flash, muzzle.position, Quaternion.identity, muzzleFlashParent) ;
+        Instantiate(flash, muzzle.position, Quaternion.identity);
         Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
 
         DespawnDecals();
@@ -419,14 +423,35 @@ public class GunplayManager : MonoBehaviour
     {
         GunInput();
 
+        #region Reloading
+
         if (isReloading)
         {
             bulletsRemainingText.text = "Reloading...";
+            GameManager.Instance.HideReloadPrompt();
         }
         else
         {
             bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
         }
+
+        if (isShooting && !isReloading && bulletsRemaining == 0 && canShoot)
+        {
+            GameManager.Instance.ShowReloadPrompt();
+
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("GunplayManager: Prompting reload text.");
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region Gun Position
 
         if (updateGunPosition)
         {
@@ -451,6 +476,8 @@ public class GunplayManager : MonoBehaviour
                 DespawnNow();
             }
         }
+
+        #endregion
 
         #region Recoil timer
 

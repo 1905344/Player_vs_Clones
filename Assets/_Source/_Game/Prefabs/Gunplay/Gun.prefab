@@ -8005,6 +8005,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8117,7 +8120,7 @@ Transform:
   m_GameObject: {fileID: 6256033644400136632}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.3799999, z: 1.14}
+  m_LocalPosition: {x: 0, y: 0, z: 1.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8142,29 +8145,28 @@ MonoBehaviour:
   isEnemy:
     serializedVersion: 2
     m_Bits: 256
-  isTarget:
-    serializedVersion: 2
-    m_Bits: 512
+  applyRecoilTarget: {fileID: 1170824037690456992}
   leftHand: {fileID: 0}
   rightHand: {fileID: 0}
-  muzzleFlash: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4,
+  muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc,
     type: 3}
-  bulletHoleDecal: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980,
+  bulletHoleDecal: {fileID: 1341869769842038, guid: 8b7a1ffda5bb7474b8fae646c45ce7b4,
     type: 3}
   bulletsRemainingText: {fileID: 0}
   bulletDecalParent: {fileID: 0}
-  muzzleFlashParent: {fileID: 0}
-  cameraShakeAmplitude: 5
-  cameraShakeMagnitude: 3
+  muzzleFlashParent: {fileID: 9179485067189152711}
+  cameraShakeAmplitude: 0.2
+  cameraShakeMagnitude: 0.8
   gunTapFireSFX: {fileID: 0}
   gunHoldFireSFX: {fileID: 0}
-  bulletDamage: 5
-  timeBetweenBullets: 0.3
-  timeBetweenShooting: 0.1
-  bulletSpread: 0
-  bulletRange: 0
-  gunReloadTime: 0
-  magazineClipSize: 27
+  bulletDamage: 100
+  headShotDamage: 120
+  timeBetweenBullets: 0.5
+  timeBetweenShooting: 0.5
+  bulletSpread: 5
+  bulletRange: 80
+  gunReloadTime: 1.35
+  magazineClipSize: 7
   bulletsPerLeftMouseTap: 1
   bulletsRemaining: 0
   bulletsFired: 0
@@ -8172,10 +8174,94 @@ MonoBehaviour:
   isShooting: 0
   canShoot: 0
   isReloading: 0
-  isPlayerInTrainingCourse: 0
-  isFPSTesting: 0
   updateGunPosition: 0
-  gunInLeftHand: 1
-  gunInRightHand: 0
-  getCurrentCourseID: 0
+  gunInLeftHand: 0
+  gunInRightHand: 1
+  bulletDecalDespawnTimer: 2
+  gunRecoilUp:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0025163293
+      value: 0.35615122
+      inSlope: 405.54166
+      outSlope: 405.54166
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.1619176
+      value: 65
+      inSlope: 92.48663
+      outSlope: 92.48663
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.42963007
+      value: 5.9510922
+      inSlope: -29.053465
+      outSlope: -29.053465
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0025163
+      value: 0
+      inSlope: -4.353262
+      outSlope: -4.353262
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  gunRecoilRight:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0025163293
+      value: 0.35615122
+      inSlope: 16.586123
+      outSlope: 16.586123
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.1619176
+      value: 3
+      inSlope: 9.226899
+      outSlope: 9.226899
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.42963007
+      value: 3.5
+      inSlope: -29.053465
+      outSlope: -29.053465
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0025163
+      value: 0
+      inSlope: -4.353262
+      outSlope: -4.353262
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  gunRecoilTimeInterval: 0.85
+  isGunRecoiling: 0
   showFiringLine: 0

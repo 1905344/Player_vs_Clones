@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -34,9 +35,25 @@ public class GameManager : MonoBehaviour
     //public event Action LevelFailed;
     public event Action LevelCompleted;
 
+    [Header("Reload Prompt Variables")]
+    private bool startReloadPromptTimer = false;
+    [SerializeField, Tooltip("")] private bool enableReloadPromptTextAsTimer;
+    
+    [Space(5)]
+
+    [SerializeField,Tooltip("How long the prompt should stay on screen for")] private float reloadPromptLength;
+    [SerializeField,Range(0, 100), Tooltip("The alpha value for the reload prompt text colour to tween")] private int reloadPromptTextAlpha;
+    [SerializeField, Tooltip("The frequency of the tweening of the alpha value for the reload prompt text colour")] private float reloadPromptTextAlphaTime;
+    private float promptTimer;
+    private bool toggleReloadPromptText = false;
+
     [Space(20)]
 
     [Header("U.I. Elements")]
+    [SerializeField] TextMeshProUGUI reloadPromptText;
+
+    [Space(5)]
+
     [SerializeField] Transform tutorialScreen;
     [SerializeField] Transform pauseScreen;
     [SerializeField] Transform settingsScreen;
@@ -83,7 +100,9 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Debugging and Testing")]
     [SerializeField] public bool toggleDebug = false;
+    [SerializeField] public bool skipTutorial = false;
 
     #endregion
 
@@ -101,10 +120,20 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        tutorialScreen.gameObject.SetActive(true);
-        tutorialStartGame.interactable = true;
-        tutorialQuitGame.interactable = true;
-        InputManager.Instance.DisableGameInput();
+        if (!skipTutorial)
+        {
+            tutorialScreen.gameObject.SetActive(true);
+            tutorialStartGame.interactable = true;
+            tutorialQuitGame.interactable = true;
+            InputManager.Instance.DisableGameInput();
+        }
+        else
+        {
+            tutorialScreen.gameObject.SetActive(false);
+            tutorialStartGame.interactable = false;
+            tutorialQuitGame.interactable = false;
+            InputManager.Instance.EnableGameInput();
+        }
     }
 
     #region Event Functions
@@ -462,5 +491,55 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
+    public void ShowReloadPrompt()
+    {
+        if (enableReloadPromptTextAsTimer)
+        {
+            startReloadPromptTimer = true;
+        }
+        else
+        {
+            toggleReloadPromptText = true;
+        }
+        
+        reloadPromptText.gameObject.SetActive(true);
+    }
+
+    public void HideReloadPrompt()
+    {
+        if (enableReloadPromptTextAsTimer)
+        {
+            promptTimer = 0f;
+            startReloadPromptTimer = false;
+        }
+        else
+        {
+            toggleReloadPromptText = false;
+        }
+
+        reloadPromptText.gameObject.SetActive(false);
+        reloadPromptText.alpha = 0.5f;
+    }
+
     #endregion
+
+    private void Update()
+    {
+        if (startReloadPromptTimer)
+        {
+            promptTimer += Time.deltaTime;
+
+            reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
+
+            if (promptTimer > reloadPromptLength)
+            {
+                HideReloadPrompt();
+            }
+        }
+
+        if (toggleReloadPromptText)
+        {
+            reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
+        }
+    }
 }
