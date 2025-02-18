@@ -46,6 +46,7 @@ public class FirstPersonMovement : MonoBehaviour
     [SerializeField, Tooltip("The force applied to the player - how far you want the player to move")] private float gunRecoilMoveAmount;
     [SerializeField, Tooltip("How much force to apply to smaller objects if the player collides with them")] private float collisionPushStrength;
     private float recoilMoveTimer;
+    [SerializeField] private Vector3 forceBackwardMove;
 
     [Space(15)]
 
@@ -110,6 +111,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         #endregion
 
+        forceBackwardMove = cameraTransform.TransformDirection(Vector3.back);
         isGunRecoilActive = true;
         recoilMoveTimer += Time.deltaTime;
     }
@@ -193,7 +195,8 @@ public class FirstPersonMovement : MonoBehaviour
 
         if (isGunRecoilActive)
         {
-            Vector3 forceBackwardMove = cameraTransform.TransformDirection(Vector3.back);
+            //Vector3 forceBackwardMove = cameraTransform.forward * -1;
+
             //float moveTimer = recoilMoveTimer / recoilMoveTimeInterval;
 
             if (recoilMoveTimer > 0)
