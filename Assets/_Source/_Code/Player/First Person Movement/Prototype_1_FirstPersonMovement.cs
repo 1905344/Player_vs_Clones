@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class FirstPersonMovement : MonoBehaviour
+public class Prototype_1_FirstPersonMovement : MonoBehaviour
 {
     #region Variables
 
@@ -70,11 +70,11 @@ public class FirstPersonMovement : MonoBehaviour
     private void Start()
     {
         cameraTransform = Camera.main.transform;
-        GameManager.Instance.OnStartGame += EnablePlayerMovement;
-        GameManager.Instance.PlayerKilled += DisablePlayerMovement;
+        Prototype_1_GameManager.Instance.OnStartGame += EnablePlayerMovement;
+        Prototype_1_GameManager.Instance.PlayerKilled += DisablePlayerMovement;
 
-        GameManager.Instance.GunRecoil += ApplyGunRecoil;
-        GameManager.Instance.GunRecoil -= StopGunRecoil;
+        Prototype_1_GameManager.Instance.GunRecoil += ApplyGunRecoil;
+        Prototype_1_GameManager.Instance.GunRecoil -= StopGunRecoil;
     }
 
     #region Enable and Disable Player Movement
@@ -104,7 +104,7 @@ public class FirstPersonMovement : MonoBehaviour
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("FirstPersonMovement: Gun's recoil is moving the character backwards");
         }
@@ -120,7 +120,7 @@ public class FirstPersonMovement : MonoBehaviour
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("FirstPersonMovement: Stopping gun recoil movement.");
         }
@@ -217,7 +217,7 @@ public class FirstPersonMovement : MonoBehaviour
                 {
                     #region Debug
 
-                    if (GameManager.Instance.toggleDebug)
+                    if (Prototype_1_GameManager.Instance.toggleDebug)
                     {
                         if (characterRigidBody.CompareTag("Wall") || characterRigidBody.CompareTag("Enemy"))
                         {

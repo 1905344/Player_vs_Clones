@@ -5,16 +5,16 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class Prototype_1_GameManager : MonoBehaviour
 {
     //This script will check the relevant player behaviours to then 
     //set the states for the finite state machine / A.I.
 
     #region Variables
 
-    private static GameManager instance;
+    private static Prototype_1_GameManager instance;
 
-    public static GameManager Instance
+    public static Prototype_1_GameManager Instance
     {
         get
         {

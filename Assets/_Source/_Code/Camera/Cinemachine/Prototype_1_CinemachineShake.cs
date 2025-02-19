@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
-public class CinemachineShake : MonoBehaviour
+public class Prototype_1_CinemachineShake : MonoBehaviour
 {
     #region Variables
 
-    public static CinemachineShake Instance { get; private set; }
+    public static Prototype_1_CinemachineShake Instance { get; private set; }
 
     private CinemachineVirtualCamera vCam;
     private CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin;
@@ -39,7 +39,7 @@ public class CinemachineShake : MonoBehaviour
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("CinemachineShake: Shaking the camera!");
         }

@@ -69,13 +69,13 @@ public class enemyAiController : MonoBehaviour
 
     private void Start()
     {
-        //GameManager.Instance.LevelCompleted += DestroyThisEnemy;
-        //GameManager.Instance.LevelFailed += DestroyThisEnemy;
+        //Prototype_1_GameManager.Instance.LevelCompleted += DestroyThisEnemy;
+        //Prototype_1_GameManager.Instance.LevelFailed += DestroyThisEnemy;
 
-        GameManager.Instance.EnemyHit += TakeDamage;
-        GameManager.Instance.PlayerKilled += StopAttacking;
+        Prototype_1_GameManager.Instance.EnemyHit += TakeDamage;
+        Prototype_1_GameManager.Instance.PlayerKilled += StopAttacking;
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " active.");
         }
@@ -124,8 +124,8 @@ public class enemyAiController : MonoBehaviour
             //Attacking code - currently this is a placeholder
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 
-            rb.gameObject.GetComponent<projectileScript>().projectileID = bulletsFired;
-            rb.gameObject.GetComponent<projectileScript>().damage = bulletDamage;
+            rb.gameObject.GetComponent<Prototype_1_projectileScript>().projectileID = bulletsFired;
+            rb.gameObject.GetComponent<Prototype_1_projectileScript>().damage = bulletDamage;
 
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 2f, ForceMode.Impulse);
@@ -183,7 +183,7 @@ public class enemyAiController : MonoBehaviour
 
         enemyHealth -= damage;
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " has been hit." + enemyHealth + " health remaining.");
         }
@@ -198,7 +198,7 @@ public class enemyAiController : MonoBehaviour
     {
         //SoundManager.instance.PlaySFX(enemyDeathSFX);
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " destroyed.");
         }
@@ -273,7 +273,7 @@ public class enemyAiController : MonoBehaviour
 
         #region Debugging
 
-        if (GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
+        if (Prototype_1_GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
         {
             OnDrawGizmosSelected();
         }

@@ -205,7 +205,7 @@ GameObject:
   - component: {fileID: 1587541945111850713}
   - component: {fileID: 6202841229665896146}
   m_Layer: 8
-  m_Name: fastDefensive
+  m_Name: Prototype_1_fastDefensive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

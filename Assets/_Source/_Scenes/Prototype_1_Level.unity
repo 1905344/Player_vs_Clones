@@ -1331,7 +1331,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1488730272}
+      objectReference: {fileID: 403203282}
     - target: {fileID: 961090313276076710, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_Mass
@@ -1395,7 +1395,7 @@ PrefabInstance:
     - target: {fileID: 2815397401517748121, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_Name
-      value: SlowAgressiveEnemy (1)
+      value: Prototype_1_SlowAgressiveEnemy (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2815397401517748121, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
@@ -1427,6 +1427,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 403203282}
+    - target: {fileID: 4748123175954637842, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 5994575152267880745, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3749,10 +3754,15 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1744357218}
+    - target: {fileID: 2528496354677318827, guid: 295b10a2875b3ec4abf5ec0be933d280,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Name
-      value: fastDefensive (2)
+      value: Prototype_1_fastDefensive (2)
       objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
@@ -3763,7 +3773,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1377742059}
+      objectReference: {fileID: 1744357218}
     - target: {fileID: 6202841229665896146, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Mass
@@ -6277,7 +6287,7 @@ PrefabInstance:
     - target: {fileID: 2815397401517748121, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_Name
-      value: SlowAgressiveEnemy
+      value: Prototype_1_SlowAgressiveEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 2815397401517748121, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
@@ -6309,6 +6319,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1488730272}
+    - target: {fileID: 4748123175954637842, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 5994575152267880745, guid: bab2e3cdf3310b74eb5b0e4015659e0e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -16246,10 +16261,15 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1377742059}
+    - target: {fileID: 2528496354677318827, guid: 295b10a2875b3ec4abf5ec0be933d280,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Name
-      value: fastDefensive
+      value: Prototype_1_fastDefensive
       objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
@@ -29541,6 +29561,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 2096731418}
+    - target: {fileID: 1316528713366455346, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 2046588993277065979, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_Mass
@@ -29559,7 +29584,7 @@ PrefabInstance:
     - target: {fileID: 3040102589653549699, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_Name
-      value: FastAggressiveEnemy
+      value: Prototype_1_FastAggressiveEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 3040102589653549699, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
@@ -30618,6 +30643,7 @@ MonoBehaviour:
   recoilMoveTimeInterval: 2
   gunRecoilMoveAmount: 6
   collisionPushStrength: 4
+  forceBackwardMove: {x: 0, y: 0, z: 0}
   disablePlayerMovement: 1
   disablePlayerJumping: 0
   onGround: 0
@@ -32677,6 +32703,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1419155709}
+    - target: {fileID: 1316528713366455346, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 2046588993277065979, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_Mass
@@ -32695,7 +32726,7 @@ PrefabInstance:
     - target: {fileID: 3040102589653549699, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_Name
-      value: FastAggressiveEnemy (1)
+      value: Prototype_1_FastAggressiveEnemy (1)
       objectReference: {fileID: 0}
     - target: {fileID: 3040102589653549699, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
@@ -32716,7 +32747,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 2096731418}
+      objectReference: {fileID: 1419155709}
     - target: {fileID: 7368086097771896636, guid: 5ef9fb70a3d25fa41bbd15db9147fbde,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -33798,10 +33829,15 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1783298055}
+    - target: {fileID: 2528496354677318827, guid: 295b10a2875b3ec4abf5ec0be933d280,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Name
-      value: fastDefensive (1)
+      value: Prototype_1_fastDefensive (1)
       objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
@@ -33812,7 +33848,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1377742059}
+      objectReference: {fileID: 1783298055}
     - target: {fileID: 6202841229665896146, guid: 295b10a2875b3ec4abf5ec0be933d280,
         type: 3}
       propertyPath: m_Mass
@@ -39707,7 +39743,7 @@ PrefabInstance:
     - target: {fileID: 3858149752393733893, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Name
-      value: slowDefensive (1)
+      value: Prototype_1_slowDefensive (1)
       objectReference: {fileID: 0}
     - target: {fileID: 3858149752393733893, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
@@ -39783,12 +39819,17 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1014404377}
+      objectReference: {fileID: 1085177454}
     - target: {fileID: 7706536874141308185, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1085177454}
+    - target: {fileID: 7706536874141308185, guid: 041121a48049bf443b68877e7db9276b,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 7789017214537526848, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Mass
@@ -44758,7 +44799,7 @@ PrefabInstance:
     - target: {fileID: 3858149752393733893, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Name
-      value: slowDefensive
+      value: Prototype_1_slowDefensive
       objectReference: {fileID: 0}
     - target: {fileID: 3858149752393733893, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
@@ -44840,6 +44881,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1014404377}
+    - target: {fileID: 7706536874141308185, guid: 041121a48049bf443b68877e7db9276b,
+        type: 3}
+      propertyPath: m_VersionIndex
+      value: 2826
+      objectReference: {fileID: 0}
     - target: {fileID: 7789017214537526848, guid: 041121a48049bf443b68877e7db9276b,
         type: 3}
       propertyPath: m_Mass

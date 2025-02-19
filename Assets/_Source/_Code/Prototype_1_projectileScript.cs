@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class projectileScript : MonoBehaviour
+public class Prototype_1_projectileScript : MonoBehaviour
 {
     #region Variables
 
@@ -20,7 +20,7 @@ public class projectileScript : MonoBehaviour
 
     private void Awake()
     {
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Projectile " + projectileID + " instantiated.");
         }
@@ -32,21 +32,21 @@ public class projectileScript : MonoBehaviour
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Projectile hit: " + other.gameObject.tag.ToString());
         }
 
         #endregion
 
-        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag(""))
+        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag("Environment"))
         {
             DestroyProjectile();
         }
         else if (other.gameObject.CompareTag("Player"))
         {
             //Using events
-            GameManager.Instance.OnPlayerHit(damage);
+            Prototype_1_GameManager.Instance.OnPlayerHit(damage);
 
             DestroyProjectile();
             //Using colliders
@@ -58,7 +58,7 @@ public class projectileScript : MonoBehaviour
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Destroyed projectile " + projectileID + " because it has reached the end of its lifespan.");
         }

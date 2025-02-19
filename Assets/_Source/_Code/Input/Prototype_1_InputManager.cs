@@ -168,21 +168,21 @@ public class InputManager : MonoBehaviour
         playerActions.UI.PauseGame.performed -= OnResume;
 
         //Level completed
-        //GameManager.Instance.LevelCompleted += DisableGameInput;
-        //GameManager.Instance.LevelFailed += DisableGameInput;
+        //Prototype_1_GameManager.Instance.LevelCompleted += DisableGameInput;
+        //Prototype_1_GameManager.Instance.LevelFailed += DisableGameInput;
 
-        //GameManager.Instance.OnStartGame += OnEnable;
+        //Prototype_1_GameManager.Instance.OnStartGame += OnEnable;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
         //Event for when the player has been killed
-        GameManager.Instance.PlayerKilled += OnPlayerDeath;
+        Prototype_1_GameManager.Instance.PlayerKilled += OnPlayerDeath;
     }
 
     private void Start()
     {
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("InputManager: The starting action map is: ");
         }
@@ -200,7 +200,7 @@ public class InputManager : MonoBehaviour
         ApplyMouseYSens();
 
         vCam.SetFocalLength(_FOV);
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
         }
@@ -230,7 +230,7 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input enabled.");
         }
@@ -255,7 +255,7 @@ public class InputManager : MonoBehaviour
         //    return;
         //}
         
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input disabled.");
         }
@@ -314,7 +314,7 @@ public class InputManager : MonoBehaviour
             IsPlayerTappingTheFireButton = true;
             IsPlayerHoldingTheFireButton = false;
 
-            if (!pauseGame && GameManager.Instance.toggleDebug)
+            if (!pauseGame && Prototype_1_GameManager.Instance.toggleDebug)
             {
                 Debug.Log("Player is tapping the fire gun input key.");
             }
@@ -324,7 +324,7 @@ public class InputManager : MonoBehaviour
             IsPlayerHoldingTheFireButton = true;
             IsPlayerTappingTheFireButton = false;
 
-            if (!pauseGame && GameManager.Instance.toggleDebug)
+            if (!pauseGame && Prototype_1_GameManager.Instance.toggleDebug)
             {
                 Debug.Log("Player is holding the fire gun input key.");
             }
@@ -360,7 +360,7 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
         }
@@ -388,7 +388,7 @@ public class InputManager : MonoBehaviour
         else
         {
             DisableGameInput();
-            GameManager.Instance.OnPause();
+            Prototype_1_GameManager.Instance.OnPause();
             pauseGame = true;
         }
     }
@@ -409,7 +409,7 @@ public class InputManager : MonoBehaviour
             SetToggleStates();
             SetMouseSensSliders();
 
-            GameManager.Instance.DisablePauseUI();
+            Prototype_1_GameManager.Instance.DisablePauseUI();
             pauseGame = false;
             EnableGameInput();
         }
@@ -444,7 +444,7 @@ public class InputManager : MonoBehaviour
         mouseHorizontalSensitivity = mouseXSensSlider.value;
         mouseXSensTextInput.text = mouseHorizontalSensitivity.ToString();
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: Mouse horizontal sensitivity has been changed to: " + mouseHorizontalSensitivity.ToString());
         }
@@ -455,7 +455,7 @@ public class InputManager : MonoBehaviour
         mouseVerticalSensitivity = mouseYSensSlider.value;
         mouseYSensTextInput.text = mouseVerticalSensitivity.ToString();
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: Mouse verical sensitivity has been changed to: " + mouseVerticalSensitivity.ToString());
         }
@@ -476,7 +476,7 @@ public class InputManager : MonoBehaviour
     //    mouseXSensTextInput.text = inputText;
     //    ApplyMouseXSens();
 
-    //    if (GameManager.Instance.toggleDebug)
+    //    if (Prototype_1_GameManager.Instance.toggleDebug)
     //    {
     //        Debug.Log("Input Manager: Horizontal mouse sensitivity is: " + mouseHorizontalSensitivity.ToString());
     //    }
@@ -487,7 +487,7 @@ public class InputManager : MonoBehaviour
     //    inputText = mouseVerticalSensitivity.ToString();
     //    ApplyMouseYSens();
 
-    //    if (GameManager.Instance.toggleDebug)
+    //    if (Prototype_1_GameManager.Instance.toggleDebug)
     //    {
     //        Debug.Log("Input Manager: Vertical mouse sensitivity is: " + mouseVerticalSensitivity.ToString());
     //    }
@@ -534,7 +534,7 @@ public class InputManager : MonoBehaviour
             invertMouseY = true;
         }
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: Invert mouse Y has been toggled.");
         }
@@ -551,7 +551,7 @@ public class InputManager : MonoBehaviour
             mouseAcceleration = true;
         }
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: Mouse acceleration has been toggled.");
         }
@@ -605,7 +605,7 @@ public class InputManager : MonoBehaviour
 
         #region Debugging
         
-        //if (GameManager.Instance.toggleDebug)
+        //if (Prototype_1_GameManager.Instance.toggleDebug)
         //{
         //    Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
         //}

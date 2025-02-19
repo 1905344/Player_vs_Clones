@@ -205,7 +205,7 @@ GameObject:
   - component: {fileID: 4651572854005074884}
   - component: {fileID: 961090313276076710}
   m_Layer: 8
-  m_Name: SlowAgressiveEnemy
+  m_Name: Prototype_1_SlowAgressiveEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.Rendering.UI;
 using UnityEngine.UIElements;
 
-public class playerGameCharacter : MonoBehaviour
+public class Prototype_1_playerGameCharacter : MonoBehaviour
 {
     #region Variables
 
@@ -33,7 +33,7 @@ public class playerGameCharacter : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.PlayerHit += OnPlayerHit;
+        Prototype_1_GameManager.Instance.PlayerHit += OnPlayerHit;
         healthText.text = health.ToString() + "/100";
         healthText.color = healthTextColour;
     }
@@ -42,7 +42,7 @@ public class playerGameCharacter : MonoBehaviour
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Player has been hit for " + damage.ToString() + " damage!");
             Debug.Log("Player has " + health.ToString() + " health remaining.");
@@ -71,9 +71,9 @@ public class playerGameCharacter : MonoBehaviour
         {
             isAlive = false;
 
-            GameManager.Instance.OnPlayerKilled();
+            Prototype_1_GameManager.Instance.OnPlayerKilled();
 
-            if (GameManager.Instance.toggleDebug)
+            if (Prototype_1_GameManager.Instance.toggleDebug)
             {
                 Debug.Log("Player has been killed.");
             }

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using Cinemachine;
 
-public class GunplayManager : MonoBehaviour
+public class Prototype_1_GunplayManager : MonoBehaviour
 {
     #region Variables
 
@@ -233,7 +233,7 @@ public class GunplayManager : MonoBehaviour
         {
             #region Debugging
 
-            if (GameManager.Instance.toggleDebug)
+            if (Prototype_1_GameManager.Instance.toggleDebug)
             {
                 if (showFiringLine)
                 {
@@ -254,7 +254,7 @@ public class GunplayManager : MonoBehaviour
                 enemyGuid = Guid.Empty;
                 enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
 
-                if (GameManager.Instance.toggleDebug)
+                if (Prototype_1_GameManager.Instance.toggleDebug)
                 {
                     Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
                 }
@@ -263,11 +263,11 @@ public class GunplayManager : MonoBehaviour
                 if (_raycastHit.collider.name == "Enemy Head")
                 {
                     //Additional damage if raycast hits enemy head
-                    GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
+                    Prototype_1_GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
                 }
                 else
                 {
-                    GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
+                    Prototype_1_GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
             }
         }
@@ -276,7 +276,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Camera Shake
 
-        CinemachineShake.Instance.ShakeCamera(cameraShakeMagnitude, cameraShakeAmplitude);
+        Prototype_1_CinemachineShake.Instance.ShakeCamera(cameraShakeMagnitude, cameraShakeAmplitude);
 
         #endregion
 
@@ -326,14 +326,14 @@ public class GunplayManager : MonoBehaviour
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("GunplayManager: Gun recoil function has been called.");
         }
 
         #endregion
 
-        GameManager.Instance.OnGunFired();
+        Prototype_1_GameManager.Instance.OnGunFired();
         isGunRecoiling = true;
     }
 
