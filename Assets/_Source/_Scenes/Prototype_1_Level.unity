@@ -5382,8 +5382,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 526809921}
         m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
-        m_MethodName: OnInvertMouseYToggled
-        m_Mode: 1
+        m_MethodName: set_invertMouseY
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -30618,6 +30618,7 @@ MonoBehaviour:
   recoilMoveTimeInterval: 2
   gunRecoilMoveAmount: 6
   collisionPushStrength: 4
+  forceBackwardMove: {x: 0, y: 0, z: 0}
   disablePlayerMovement: 1
   disablePlayerJumping: 0
   onGround: 0
@@ -51097,8 +51098,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 526809921}
         m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
-        m_MethodName: OnMouseAccelerationToggled
-        m_Mode: 1
+        m_MethodName: set_mouseAcceleration
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -52416,7 +52417,7 @@ MonoBehaviour:
     m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
     m_InputAxisValue: 0
-    m_InvertInput: 1
+    m_InvertInput: 0
     m_MinValue: -70
     m_MaxValue: 70
     m_Wrap: 0
