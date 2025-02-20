@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Cinemachine;
+using UnityEngine;
 
 public class Prototype_1_CinemachineShake : MonoBehaviour
 {
@@ -60,7 +58,7 @@ public class Prototype_1_CinemachineShake : MonoBehaviour
             if (shakeTimer > 0)
             {
                 shakeTimer += Time.deltaTime;
-                
+
                 cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = Mathf.Lerp(shakeStartingIntensity, 0f, 1 - (shakeTimer / shakeTimerLength));
 
                 if (shakeTimer > shakeTimerLength)
@@ -69,6 +67,6 @@ public class Prototype_1_CinemachineShake : MonoBehaviour
                 }
             }
         }
-        
+
     }
 }

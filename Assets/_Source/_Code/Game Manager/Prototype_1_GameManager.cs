@@ -32,7 +32,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     //Event for gun recoil
     public event Action GunRecoil;
-    
+
     //Event to start the main game
     public event Action OnStartGame;
 
@@ -106,7 +106,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         tutorialScreen.gameObject.SetActive(true);
         tutorialStartGame.interactable = true;
         tutorialQuitGame.interactable = true;
-        InputManager.Instance.DisableGameInput();
+        Prototype_1_InputManager.Instance.DisableGameInput();
     }
 
     #region Event Functions
@@ -194,7 +194,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
         tutorialScreen.gameObject.SetActive(false);
         Cursor.visible = false;
-        InputManager.Instance.OnEnable();
+        Prototype_1_InputManager.Instance.OnEnable();
     }
 
     #endregion
@@ -256,7 +256,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         mouseXSensitivitySlider.enabled = true;
         mouseXSensitivitySlider.interactable = true;
         mouseXSensitivitySlider.gameObject.SetActive(true);
-        
+
         mouseYSensitivitySlider.enabled = true;
         mouseYSensitivitySlider.interactable = true;
         mouseYSensitivitySlider.gameObject.SetActive(true);
@@ -264,7 +264,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         //mouseXSensitivtyTextInput.enabled = true;
         //mouseXSensitivtyTextInput.interactable = true;
         //mouseXSensitivtyTextInput.gameObject.SetActive(true);
-        
+
         //mouseYSensitivtyTextInput.enabled = true;
         //mouseYSensitivtyTextInput.interactable = true;
         //mouseYSensitivtyTextInput.gameObject.SetActive(true);
@@ -283,7 +283,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         returnFromSettingsPageButton.enabled = false;
         returnFromSettingsPageButton.interactable = false;
         returnFromSettingsPageButton.gameObject.SetActive(false);
-        
+
         mouseXSensitivitySlider.enabled = false;
         mouseXSensitivitySlider.interactable = false;
         mouseXSensitivitySlider.gameObject.SetActive(false);
@@ -344,7 +344,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     public void OnResume()
     {
-        if (!InputManager.Instance.pauseGame)
+        if (!Prototype_1_InputManager.Instance.pauseGame)
         {
             return;
         }
@@ -359,8 +359,8 @@ public class Prototype_1_GameManager : MonoBehaviour
             DisablePauseUI();
 
             Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked; 
-            InputManager.Instance.OnResumeUIButtonPressed();
+            Cursor.lockState = CursorLockMode.Locked;
+            Prototype_1_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using Cinemachine;
 
 public class Prototype_1_GunplayManager : MonoBehaviour
 {
@@ -11,7 +10,6 @@ public class Prototype_1_GunplayManager : MonoBehaviour
     [Header("References")]
     //[SerializeField] private Camera _camera;
     [SerializeField] private Camera _camera;
-    [SerializeField] private Transform muzzle;
     private RaycastHit _raycastHit;
     [SerializeField] private LayerMask isEnemy;
     [SerializeField] private Transform applyRecoilTarget;
@@ -150,7 +148,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         {
             rightHand.gameObject.SetActive(true);
         }
-        
+
         bulletsRemainingText.gameObject.SetActive(true);
         gameObject.SetActive(true);
     }
@@ -173,11 +171,11 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
         if (allowFireButtonHold)
         {
-            isShooting = InputManager.Instance.IsPlayerHoldingTheFireButton;
+            isShooting = Prototype_1_InputManager.Instance.IsPlayerHoldingTheFireButton;
         }
         else
         {
-            isShooting = InputManager.Instance.IsPlayerTappingTheFireButton;
+            isShooting = Prototype_1_InputManager.Instance.IsPlayerTappingTheFireButton;
         }
 
         #endregion
@@ -194,7 +192,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
         #region Reloading 
 
-        if (InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
+        if (Prototype_1_InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
         {
             ReloadGun();
         }
@@ -252,7 +250,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
             if (_raycastHit.collider.CompareTag("Enemy"))
             {
                 enemyGuid = Guid.Empty;
-                enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
+                enemyGuid = _raycastHit.collider.GetComponentInParent<Prototype_1_enemyAiController>().enemyID;
 
                 if (Prototype_1_GameManager.Instance.toggleDebug)
                 {
@@ -305,7 +303,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         {
             SoundManager.instance.PlaySFX(gunTapFireSFX);
         }
-        
+
 
         #endregion
 
@@ -390,7 +388,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         //    DestroyImmediate(child);
         //}
 
-        Instantiate(flash, muzzle.position, Quaternion.identity, muzzleFlashParent) ;
+        Instantiate(flash, muzzleFlash.transform.position, Quaternion.identity, muzzleFlashParent);
         Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
 
         DespawnDecals();

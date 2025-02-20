@@ -23,8 +23,8 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
     private float directionX;
     private float directionZ;
     [SerializeField] private float playerGravity;
-    
-    [Space(10)]    
+
+    [Space(10)]
 
     [SerializeField] private float jumpHeight;
     [SerializeField] private float jumpSpeed;
@@ -151,7 +151,7 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
             StopGunRecoil();
         }
-        
+
         if (hit.moveDirection.y < -0.3)
         {
             return;
@@ -169,7 +169,7 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
         {
             jumpHeight = 0;
         }
-        
+
         #endregion
 
         #region Ground Check
@@ -187,7 +187,7 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
         #region Player Movement and Sprinting
 
-        playerMovement = InputManager.Instance.GetPlayerMovement();
+        playerMovement = Prototype_1_InputManager.Instance.GetPlayerMovement();
         //characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
         //Recoil moves the player
@@ -212,7 +212,7 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
                 float setMoveSpeed = gunRecoilMoveSpeed * gunRecoilMoveAmount;
                 charController.SimpleMove(forceBackwardMove * setMoveSpeed);
-                
+
                 if (recoilMoveTimer > recoilMoveTimeInterval || characterRigidBody.CompareTag("Wall") || characterRigidBody.CompareTag("Enemy"))
                 {
                     #region Debug
@@ -246,7 +246,7 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
         //Sprinting
 
-        //isSprinting = InputManager.Instance.isPlayerSprintingThisFrame;
+        //isSprinting = Prototype_1_InputManager.Instance.isPlayerSprintingThisFrame;
 
         //if (isSprinting)
         //{
@@ -268,14 +268,14 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
         #region Player Jumping
 
-        if (InputManager.Instance.PlayerJumped() && onGround && canJump)
+        if (Prototype_1_InputManager.Instance.PlayerJumped() && onGround && canJump)
         {
             //Debug.Log("Jumping!");
             canJump = false;
             isJumping = true;
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * playerGravity);
         }
-        else if (onGround && playerVelocity.y <= 0.01f) 
+        else if (onGround && playerVelocity.y <= 0.01f)
         {
             isJumping = false;
             canJump = true;

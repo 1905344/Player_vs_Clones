@@ -1,7 +1,5 @@
-using UnityEngine;
 using TMPro;
-using UnityEngine.Rendering.UI;
-using UnityEngine.UIElements;
+using UnityEngine;
 
 public class Prototype_1_playerGameCharacter : MonoBehaviour
 {

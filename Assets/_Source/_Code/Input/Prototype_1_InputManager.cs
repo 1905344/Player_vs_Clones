@@ -5,13 +5,13 @@ using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
 
-public class InputManager : MonoBehaviour
+public class Prototype_1_InputManager : MonoBehaviour
 {
     #region Variables
 
-    private static InputManager _instance;
+    private static Prototype_1_InputManager _instance;
 
-    public static InputManager Instance
+    public static Prototype_1_InputManager Instance
     {
         get
         {
@@ -37,7 +37,7 @@ public class InputManager : MonoBehaviour
     [SerializeField, Tooltip("How sensitive the mouse is on the horizontal axis"), Range(0.01f, 5f)]
     public float mouseHorizontalSensitivity = 0.3f;
 
-    [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis"), Range(0.01f,5f)]
+    [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis"), Range(0.01f, 5f)]
     public float mouseVerticalSensitivity = 0.3f;
 
     [Space(10)]
@@ -54,7 +54,7 @@ public class InputManager : MonoBehaviour
 
     [Header("Cinemachine Virtual Camera Reference")]
     [SerializeField] CinemachineVirtualCamera vCam;
-    
+
     //Only for testing the two cameras at once
     //[SerializeField] CinemachineVirtualCamera playerTwoVCam;
 
@@ -163,7 +163,7 @@ public class InputManager : MonoBehaviour
         playerActions.Player.PauseGame.performed += OnPause;
 
         playerActions.Player.PauseGame.performed -= OnResume;
-        
+
         playerActions.UI.PauseGame.performed += OnResume;
         playerActions.UI.PauseGame.performed -= OnResume;
 
@@ -184,7 +184,7 @@ public class InputManager : MonoBehaviour
     {
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
-            Debug.Log("InputManager: The starting action map is: ");
+            Debug.Log("InputManager: The starting action map is: " + _currentControlScheme);
         }
 
         //mouseXSensSlider.onValueChanged.AddListener(delegate { ApplyMouseXSens(); });
@@ -254,7 +254,7 @@ public class InputManager : MonoBehaviour
         //{
         //    return;
         //}
-        
+
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input disabled.");
@@ -604,7 +604,7 @@ public class InputManager : MonoBehaviour
         #endregion
 
         #region Debugging
-        
+
         //if (Prototype_1_GameManager.Instance.toggleDebug)
         //{
         //    Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);

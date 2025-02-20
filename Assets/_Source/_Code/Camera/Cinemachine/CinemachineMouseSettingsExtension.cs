@@ -10,14 +10,14 @@ public class CinemachineMouseSettingsExtension : CinemachineExtension
     private CinemachinePOV camPOV;
 
     //InputManager reference
-    private InputManager inputManager;
+    //private InputManager inputManager;
 
     #endregion
 
     protected override void Awake()
     {
         //Referencing the InputManager by calling the instance
-        inputManager = InputManager.Instance;
+        //inputManager = InputManager.Instance;
 
         //Call the Awake function of the InputManager
         base.Awake();

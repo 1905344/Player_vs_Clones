@@ -15,7 +15,7 @@ public class MouseControlCamera : MonoBehaviour
     private float xRotation;
 
     //Input manager
-    private InputManager inputManager;
+    //private InputManager inputManager;
 
     #endregion
 

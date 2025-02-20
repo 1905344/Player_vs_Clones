@@ -1,9 +1,8 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class enemyAiController : MonoBehaviour
+public class Prototype_1_enemyAiController : MonoBehaviour
 {
     #region Variables
 
@@ -163,7 +162,7 @@ public class enemyAiController : MonoBehaviour
         }
     }
 
-    private void ResetAttack() 
+    private void ResetAttack()
     {
         hasAttackedAlready = false;
     }
@@ -229,7 +228,7 @@ public class enemyAiController : MonoBehaviour
 
             showSightRange = false;
         }
-        else if (showAttackRange && showSightRange) 
+        else if (showAttackRange && showSightRange)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, aiAttackRange);

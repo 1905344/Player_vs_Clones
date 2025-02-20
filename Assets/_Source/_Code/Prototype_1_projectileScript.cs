@@ -1,9 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Prototype_1_projectileScript : MonoBehaviour
 {
@@ -11,11 +6,11 @@ public class Prototype_1_projectileScript : MonoBehaviour
 
     public int projectileID;
     public int damage { get; set; }
-    
+
     [SerializeField] private float projectileLifespan = 10f;
     [SerializeField] private SphereCollider projectileCollider;
     private float timer;
-    
+
     #endregion
 
     private void Awake()
