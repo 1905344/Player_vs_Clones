@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.Cinemachine;
+using Cinemachine;
 
 public static class virtualCameraFOV
 {

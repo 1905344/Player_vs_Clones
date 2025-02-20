@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.Cinemachine;
+using Cinemachine;
 using Unity.VisualScripting;
 
 public static class virtualCameraSensitivity

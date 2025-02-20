@@ -16540,14 +16540,16 @@ MonoBehaviour:
   isGamepad: 0
   isKeyboard: 1
   _currentControlScheme: 
+  mouseAcceleration: 0
+  invertMouseY: 0
   mouseHorizontalSensitivity: 0.3
   mouseVerticalSensitivity: 0.3
   mouseXSensSlider: {fileID: 1873559566}
   mouseYSensSlider: {fileID: 455658438}
   invertMouseYToggle: {fileID: 362354894}
   mouseAccelerationToggle: {fileID: 2009982397}
-  mouseXSensTextInput: {fileID: 0}
-  mouseYSensTextInput: {fileID: 0}
+  mouseXSensText: {fileID: 0}
+  mouseYSensText: {fileID: 0}
   vCam: {fileID: 0}
   _FOV: 90
   updateFOV: 0
@@ -35315,24 +35317,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 863c4a17e6fe97241b4c9e571e5c99ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableReloadPromptTextAsTimer: 0
+  reloadPromptLength: 0
+  reloadPromptTextAlpha: 0
+  reloadPromptTextAlphaTime: 0
+  reloadPromptText: {fileID: 0}
   tutorialScreen: {fileID: 1851312458}
   pauseScreen: {fileID: 692814434}
   settingsScreen: {fileID: 1476962071}
   gameOverScreen: {fileID: 561964350}
   pauseTitleText: {fileID: 64896479}
-  tutorialStartGame: {fileID: 1171000020}
-  tutorialQuitGame: {fileID: 1372085720}
   resumeFromPauseMenuButton: {fileID: 2085521497}
   restartFromPauseMenuButton: {fileID: 1219386699}
   settingsPauseMenuButton: {fileID: 398887378}
   quitFromPauseMenuButton: {fileID: 1733939773}
+  tutorialStartGame: {fileID: 1171000020}
+  tutorialQuitGame: {fileID: 1372085720}
   returnFromSettingsPageButton: {fileID: 220047289}
   mouseXSensitivitySlider: {fileID: 1873559566}
   mouseYSensitivitySlider: {fileID: 455658438}
+  mouseXSensitivityText: {fileID: 0}
+  mouseYSensitivityText: {fileID: 0}
   invertMouseY: {fileID: 362354894}
   mouseAcceleration: {fileID: 2009982397}
   quitGameFromGameOverScreenButton: {fileID: 1237336844}
   toggleDebug: 1
+  skipTutorial: 0
 --- !u!1 &1588628803
 GameObject:
   m_ObjectHideFlags: 0
@@ -37954,7 +37964,7 @@ PrefabInstance:
     - target: {fileID: 7277323520357362092, guid: b4d25fc628933c34b87de6735d639419,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2847
+      value: 2853
       objectReference: {fileID: 0}
     - target: {fileID: 7814374373575129692, guid: b4d25fc628933c34b87de6735d639419,
         type: 3}

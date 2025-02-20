@@ -1,4 +1,4 @@
-using Unity.Cinemachine;
+using Cinemachine;
 using UnityEngine;
 
 public class CinemachineShake : MonoBehaviour
@@ -7,7 +7,7 @@ public class CinemachineShake : MonoBehaviour
 
     public static CinemachineShake Instance { get; private set; }
 
-    private CinemachineCamera vCam;
+    private CinemachineVirtualCamera vCam;
     private CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin;
 
     private float shakeTimer;
@@ -21,7 +21,7 @@ public class CinemachineShake : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        vCam = GetComponent<CinemachineCamera>();
+        vCam = GetComponent<CinemachineVirtualCamera>();
         cinemachineBasicMultiChannelPerlin = vCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
