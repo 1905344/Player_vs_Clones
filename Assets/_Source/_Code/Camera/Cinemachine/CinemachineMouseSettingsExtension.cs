@@ -1,5 +1,5 @@
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 
 public class CinemachineMouseSettingsExtension : CinemachineExtension
