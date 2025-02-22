@@ -2,7 +2,6 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -36,8 +35,8 @@ public class GameManager : MonoBehaviour
     public event Action LevelCompleted;
 
     [Header("Reload Prompt Variables")]
-    private bool startReloadPromptTimer = false;
-    [SerializeField, Tooltip("")] private bool enableReloadPromptTextAsTimer;
+    private bool startReloadPromptTimer  = false;
+    [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = false;
     
     [Space(5)]
 
@@ -80,16 +79,27 @@ public class GameManager : MonoBehaviour
 
     [Space(5)]
 
-    [Header("Settings Menu Buttons")]
+    [Header("Settings Menu U.I. Elements")]
     [SerializeField] Button returnFromSettingsPageButton;
+
+    [Space(3)]
+
+    [SerializeField] Slider fovSlider;
     [SerializeField] Slider mouseXSensitivitySlider;
     [SerializeField] Slider mouseYSensitivitySlider;
+
+    [Space(5)]
     //[SerializeField] TMP_InputField mouseXSensitivtyTextInput;
     //[SerializeField] TMP_InputField mouseYSensitivtyTextInput;
+    [SerializeField] TextMeshProUGUI fovText;
     [SerializeField] TextMeshProUGUI mouseXSensitivityText;
     [SerializeField] TextMeshProUGUI mouseYSensitivityText;
+
+    [Space(5)]
+
     [SerializeField] Toggle invertMouseY;
     [SerializeField] Toggle mouseAcceleration;
+    [SerializeField] Toggle promptForReloadToggle;
 
     [Space(5)]
 
@@ -120,6 +130,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        SetReloadPromptToggle();
+
         if (!skipTutorial)
         {
             tutorialScreen.gameObject.SetActive(true);
@@ -264,6 +276,10 @@ public class GameManager : MonoBehaviour
         returnFromSettingsPageButton.interactable = true;
         returnFromSettingsPageButton.gameObject.SetActive(true);
 
+        fovSlider.enabled = true;
+        fovSlider.interactable = true;
+        fovSlider.gameObject.SetActive(true);
+
         mouseXSensitivitySlider.enabled = true;
         mouseXSensitivitySlider.interactable = true;
         mouseXSensitivitySlider.gameObject.SetActive(true);
@@ -280,6 +296,7 @@ public class GameManager : MonoBehaviour
         //mouseYSensitivtyTextInput.interactable = true;
         //mouseYSensitivtyTextInput.gameObject.SetActive(true);
 
+        fovText.gameObject.SetActive(true);
         mouseXSensitivityText.gameObject.SetActive(true);
         mouseYSensitivityText.gameObject.SetActive(true);
 
@@ -290,6 +307,10 @@ public class GameManager : MonoBehaviour
         mouseAcceleration.enabled = true;
         mouseAcceleration.interactable = true;
         mouseAcceleration.gameObject.SetActive(true);
+
+        promptForReloadToggle.enabled = true;
+        promptForReloadToggle.interactable = true;
+        promptForReloadToggle.gameObject.SetActive(true);
     }
 
     private void DisableSettingsUi()
@@ -297,6 +318,10 @@ public class GameManager : MonoBehaviour
         returnFromSettingsPageButton.enabled = false;
         returnFromSettingsPageButton.interactable = false;
         returnFromSettingsPageButton.gameObject.SetActive(false);
+
+        fovSlider.enabled = false;
+        fovSlider.interactable = false;
+        fovSlider.gameObject.SetActive(false);
 
         mouseXSensitivitySlider.enabled = false;
         mouseXSensitivitySlider.interactable = false;
@@ -314,6 +339,7 @@ public class GameManager : MonoBehaviour
         //mouseYSensitivtyTextInput.interactable = false;
         //mouseYSensitivtyTextInput.gameObject.SetActive(false);
 
+        fovText.gameObject.SetActive(false);
         mouseXSensitivityText.gameObject.SetActive(false);
         mouseYSensitivityText.gameObject.SetActive(false);
 
@@ -324,6 +350,10 @@ public class GameManager : MonoBehaviour
         mouseAcceleration.enabled = false;
         mouseAcceleration.interactable = false;
         mouseAcceleration.gameObject.SetActive(false);
+
+        promptForReloadToggle.enabled = false;
+        promptForReloadToggle.interactable = false;
+        promptForReloadToggle.gameObject.SetActive(false);
     }
 
     //private void EnableQuitScreenButtons()
@@ -367,10 +397,14 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            #region Debug
+
             if (toggleDebug)
             {
                 Debug.Log("Resuming the game.");
             }
+
+            #endregion
 
             Time.timeScale = 1.0f;
             DisablePauseUI();
@@ -463,6 +497,15 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    #region Settings Page: Reload Prompt Toggle
+
+    private void SetReloadPromptToggle()
+    {
+        promptForReloadToggle.isOn = enableReloadPromptTextAsTimer;
+    }
+
+    #endregion
+
     #endregion
 
     #region Game Over Functions
@@ -493,29 +536,27 @@ public class GameManager : MonoBehaviour
 
     public void ShowReloadPrompt()
     {
-        if (enableReloadPromptTextAsTimer)
+        if (!enableReloadPromptTextAsTimer)
         {
-            startReloadPromptTimer = true;
+            return;
         }
-        else
-        {
-            toggleReloadPromptText = true;
-        }
-        
+
+        startReloadPromptTimer = true;
+        toggleReloadPromptText = true;
         reloadPromptText.gameObject.SetActive(true);
     }
 
     public void HideReloadPrompt()
     {
-        if (enableReloadPromptTextAsTimer)
+        if (!enableReloadPromptTextAsTimer)
         {
-            promptTimer = 0f;
-            startReloadPromptTimer = false;
+            return;
+            
         }
-        else
-        {
-            toggleReloadPromptText = false;
-        }
+
+        promptTimer = 0f;
+        startReloadPromptTimer = false;
+        toggleReloadPromptText = false;
 
         reloadPromptText.gameObject.SetActive(false);
         reloadPromptText.alpha = 0.5f;

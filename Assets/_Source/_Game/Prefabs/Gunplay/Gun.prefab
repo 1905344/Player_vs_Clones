@@ -8142,29 +8142,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 0}
   muzzle: {fileID: 9179485067189152711}
-  isEnemy:
-    serializedVersion: 2
-    m_Bits: 256
   applyRecoilTarget: {fileID: 1170824037690456992}
   leftHand: {fileID: 0}
   rightHand: {fileID: 0}
+  isEnemy:
+    serializedVersion: 2
+    m_Bits: 256
+  isGround:
+    serializedVersion: 2
+    m_Bits: 64
+  isWall:
+    serializedVersion: 2
+    m_Bits: 128
+  isEnvironment:
+    serializedVersion: 2
+    m_Bits: 8192
   muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc,
     type: 3}
   bulletHoleDecal: {fileID: 1341869769842038, guid: 8b7a1ffda5bb7474b8fae646c45ce7b4,
     type: 3}
   bulletsRemainingText: {fileID: 0}
   bulletDecalParent: {fileID: 0}
-  muzzleFlashParent: {fileID: 9179485067189152711}
   cameraShakeAmplitude: 0.2
   cameraShakeMagnitude: 0.8
   gunTapFireSFX: {fileID: 0}
   gunHoldFireSFX: {fileID: 0}
   bulletDamage: 100
   headShotDamage: 120
-  timeBetweenBullets: 0.5
-  timeBetweenShooting: 0.5
+  timeBetweenBullets: 1.15
+  timeBetweenShooting: 1.15
   bulletSpread: 5
-  bulletRange: 80
+  bulletRange: 30
   gunReloadTime: 1.35
   magazineClipSize: 7
   bulletsPerLeftMouseTap: 1
@@ -8178,6 +8186,8 @@ MonoBehaviour:
   gunInLeftHand: 0
   gunInRightHand: 1
   bulletDecalDespawnTimer: 2
+  bulletDecalLimit: 100
+  bulletDecalDestroyAmount: 99
   gunRecoilUp:
     serializedVersion: 2
     m_Curve:

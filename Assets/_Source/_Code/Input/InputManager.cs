@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
-using Unity.VisualScripting.Dependencies.Sqlite;
 
 public class InputManager : MonoBehaviour
 {
@@ -28,11 +27,9 @@ public class InputManager : MonoBehaviour
 
     [SerializeField] public string _currentControlScheme;
 
-    [Space(15)]
-
     [Header("Mouse Settings")]
-    public bool mouseAcceleration = false;
-    public bool invertMouseY = false;
+    public bool mouseAcceleration { get; set; } = false;
+    public bool invertMouseY { get; set; } = true;
 
     [Space(10)]
 
@@ -46,12 +43,20 @@ public class InputManager : MonoBehaviour
     [Space(10)]
 
     [Header("U.I. for Settings Page")]
+    [SerializeField] Slider cameraFOVSlider;
     [SerializeField] Slider mouseXSensSlider;
     [SerializeField] Slider mouseYSensSlider;
+
+    [Space(5)]
+
     [SerializeField] Toggle invertMouseYToggle;
     [SerializeField] Toggle mouseAccelerationToggle;
+
+    [Space(5)]
+
     //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseXSensTextInput;
     //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseYSensTextInput;
+    [SerializeField] TextMeshProUGUI cameraFOVText;
     [SerializeField] TextMeshProUGUI mouseXSensText;
     [SerializeField] TextMeshProUGUI mouseYSensText;
     private bool updateMouseXSensText = false;
@@ -68,7 +73,7 @@ public class InputManager : MonoBehaviour
     [Space(10)]
 
     [Header("Camera Field of View")]
-    [SerializeField, Range(90f, 180f)] private float _FOV = 90f;
+    [SerializeField, Range(60f, 180f)] private float _FOV = 90f;
 
     public bool updateFOV;
 
@@ -194,6 +199,7 @@ public class InputManager : MonoBehaviour
     {
         SetToggleStates();
         SetMouseSensSliders();
+        SetCameraFOVSlider();
 
         ApplyMouseXSens();
         ApplyMouseYSens();
@@ -434,8 +440,9 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            SetToggleStates();
+            //SetToggleStates();
             SetMouseSensSliders();
+            SetCameraFOVSlider();
 
             GameManager.Instance.DisablePauseUI();
             pauseGame = false;
@@ -456,8 +463,9 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            SetToggleStates();
+            //SetToggleStates();
             SetMouseSensSliders();
+            SetCameraFOVSlider();
 
             pauseGame = false;
             EnableGameInput();
@@ -474,6 +482,22 @@ public class InputManager : MonoBehaviour
     }
 
     #region Settings Functions
+
+    #region Field of View
+
+    public void OnCameraFOVChange()
+    {
+        _FOV = cameraFOVSlider.value;
+        updateFOV = true;
+    }
+
+    private void SetCameraFOVSlider()
+    {
+        cameraFOVSlider.value = _FOV;
+        cameraFOVText.text = _FOV.ToString();
+    }
+
+    #endregion
 
     #region MouseSensitivity
 
@@ -521,47 +545,22 @@ public class InputManager : MonoBehaviour
 
     private void SetToggleStates()
     {
-        invertMouseYToggle.isOn = invertMouseY;
+        invertMouseYToggle.isOn = !invertMouseY;
         mouseAccelerationToggle.isOn = mouseAcceleration;
-    }
-
-    private void InvertMouseYToggled()
-    {
-        if (invertMouseY)
-        {
-            invertMouseY = false;
-        }
-        else
-        {
-            invertMouseY = true;
-        }
-
-        #region Debug
         
-        if (GameManager.Instance.toggleDebug)
-        {
-            Debug.Log("Input Manager: Invert mouse Y has been toggled.");
-        }
-
-        #endregion
-    }
-
-    private void MouseAccelerationToggled()
-    {
-        if (mouseAcceleration)
-        {
-            mouseAcceleration = false;
-        }
-        else
-        {
-            mouseAcceleration = true;
-        }
-
         #region Debug
 
         if (GameManager.Instance.toggleDebug)
         {
-            Debug.Log("Input Manager: Mouse acceleration has been toggled.");
+            if (invertMouseYToggle.isOn)
+            {
+                Debug.Log("Input Manager: Invert mouse Y has been toggled.");
+            }
+
+            if (mouseAccelerationToggle.isOn)
+            {
+                Debug.Log("Input Manager: Mouse acceleration has been toggled.");
+            }
         }
 
         #endregion
@@ -577,6 +576,7 @@ public class InputManager : MonoBehaviour
 
         if (updateFOV)
         {
+            cameraFOVText.text = _FOV.ToString();
             vCam.SetFocalLength(_FOV);
 
             /*if (isTestingTwoCharactersAtOnce)
@@ -589,7 +589,7 @@ public class InputManager : MonoBehaviour
 
                 #endregion
             }*/
-
+            
             updateFOV = false;
 
             #region Debug

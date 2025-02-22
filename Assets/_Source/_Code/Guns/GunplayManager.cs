@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class GunplayManager : MonoBehaviour
 {
@@ -11,13 +12,17 @@ public class GunplayManager : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private Transform muzzle;
     private RaycastHit _raycastHit;
-    [SerializeField] private LayerMask isEnemy;
     [SerializeField] private Transform applyRecoilTarget;
-
-    [Space(5)]
-
     [SerializeField] private GameObject leftHand;
     [SerializeField] private GameObject rightHand;
+
+    [Space(10)]
+
+    [Header("Layer Masks")]
+    [SerializeField] private LayerMask isEnemy;
+    [SerializeField] private LayerMask isGround;
+    [SerializeField] private LayerMask isWall;
+    [SerializeField] private LayerMask isEnvironment;
 
     [Space(10)]
 
@@ -28,8 +33,7 @@ public class GunplayManager : MonoBehaviour
     //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
-    private List<GameObject> muzzleFlashList = new List<GameObject>();
-    private List<GameObject> bulletHoleDecalList = new List<GameObject>();
+    private Vector3 bulletHoleDecalSpawnLocation;
 
     [Space(10)]
 
@@ -79,12 +83,14 @@ public class GunplayManager : MonoBehaviour
 
     [Space(15)]
 
-    [Header("Visual Feedback Despawn Timers")]
-    //[SerializeField] private float muzzleFlashDespawnTimer;
+    [Header("Visual Feedback Despawning")]
     [SerializeField] private float bulletDecalDespawnTimer;
     private float despawningTimer;
-    private bool toggleDespawnTimer = false;
+    private bool despawnBulletHoleDecals = false;
     private bool startDespawn = false;
+    private bool spawnBulletDecal = false;
+    [SerializeField, Tooltip("The maximum number of bullet decals spawned by the player")] private float bulletDecalLimit;
+    [SerializeField, Tooltip("The number of bullet decals to destroy when the limit is reached")] private float bulletDecalDestroyAmount;
 
     [Space(10)]
 
@@ -252,29 +258,83 @@ public class GunplayManager : MonoBehaviour
                 enemyGuid = Guid.Empty;
                 enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
 
+                #region Debug
+
                 if (GameManager.Instance.toggleDebug)
                 {
                     Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
                 }
+
+                #endregion
 
                 //Using events
                 if (_raycastHit.collider.name == "Enemy Head")
                 {
                     //Additional damage if raycast hits enemy head
                     GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
+
+                    #region Debug
+
+                    if (GameManager.Instance.toggleDebug)
+                    {
+                        Debug.Log("GunplayManager: Hit enemy " + enemyGuid + "'s head!");
+                    }
+
+                    #endregion
                 }
                 else
                 {
                     GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
-
-                //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
             }
-            //else if (_raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground") || _raycastHit.collider.CompareTag("Environment"))
-            //{
-            //    CreateVisualFeedback(muzzleFlash, bulletHoleDecal, _raycastHit.point);
-            //}
         }
+        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isWall))
+        {
+            bulletHoleDecalSpawnLocation = _raycastHit.point;
+
+            spawnBulletDecal = true;
+
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("GunplayManager: Hit a wall. Spawning a bullet decal.");
+            }
+
+            #endregion
+        }
+        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isGround))
+        {
+            bulletHoleDecalSpawnLocation = _raycastHit.point;
+
+            spawnBulletDecal = true;
+
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("GunplayManager: Hit the ground. Spawning a bullet decal.");
+            }
+
+            #endregion
+        }
+        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnvironment))
+        {
+            bulletHoleDecalSpawnLocation = _raycastHit.point;
+
+            spawnBulletDecal = true;
+
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("GunplayManager: Hit an environment object. Spawning a bullet decal.");
+            }
+
+            #endregion
+        }
+
+
 
         #endregion
 
@@ -285,11 +345,8 @@ public class GunplayManager : MonoBehaviour
         #endregion
 
         #region Visual Feedback: Bullet Hole & Muzzle Flash
-
-        //Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
-        //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
-
-        CreateVisualFeedback(muzzleFlash, bulletHoleDecal, _raycastHit.point);
+        
+        CreateVisualFeedback(muzzleFlash, bulletHoleDecal, bulletHoleDecalSpawnLocation);
 
         #endregion
 
@@ -377,44 +434,42 @@ public class GunplayManager : MonoBehaviour
 
     private void CreateVisualFeedback(GameObject flash, GameObject bulletHole, Vector3 raycastHitPoint)
     {
-        //if (muzzleFlashParent.childCount > 0)
-        //{
-        //    GameObject child = muzzleFlashParent.GetChild(0).gameObject;
-        //    DestroyImmediate(child);
-        //}
-
-        //if (bulletDecalParent.childCount > 10)
-        //{
-        //    GameObject child = bulletDecalParent.GetChild(0).gameObject;
-        //    DestroyImmediate(child);
-        //}
+        if (spawnBulletDecal)
+        {
+            Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
+            spawnBulletDecal = false;
+        }
 
         Instantiate(flash, muzzle.position, Quaternion.identity);
-        Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
-
-        DespawnDecals();
     }
 
-    private void DespawnDecals()
+    private void DespawnBulletHoleDecals()
     {
-        despawningTimer = 0f;
-        toggleDespawnTimer = true;
-    }
-
-    private void DespawnNow()
-    {
-        if (bulletDecalParent.childCount >= 10)
+        if (!despawnBulletHoleDecals)
         {
-            for (int i = 0; i > 10; i++)
+            return;
+        }
+
+        //Could change the for loop to remove all but X amount from the limit
+        //Example 1: i < bulletDecalLimit - 1
+        //Example 2: i < bulletDecalLimit - bulletDecalDestroyAmount
+
+
+        for (int i = 0; i < bulletDecalDestroyAmount; i++)
+        {
+            Destroy(bulletDecalParent.GetChild(i).gameObject);
+
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
             {
-                DestroyImmediate(bulletDecalParent.GetChild(i).gameObject);
+                Debug.Log("GunplayManager: Destroying bullet hole decals.");
             }
+
+            #endregion
         }
-        else
-        {
-            despawningTimer = 0f;
-            toggleDespawnTimer = false;
-        }
+
+        despawnBulletHoleDecals = false;
     }
 
     #endregion
@@ -437,16 +492,19 @@ public class GunplayManager : MonoBehaviour
 
         if (isShooting && !isReloading && bulletsRemaining == 0 && canShoot)
         {
-            GameManager.Instance.ShowReloadPrompt();
-
-            #region Debug
-
-            if (GameManager.Instance.toggleDebug)
+            if (GameManager.Instance.enableReloadPromptTextAsTimer)
             {
-                Debug.Log("GunplayManager: Prompting reload text.");
-            }
+                GameManager.Instance.ShowReloadPrompt();
 
-            #endregion
+                #region Debug
+
+                if (GameManager.Instance.toggleDebug)
+                {
+                    Debug.Log("GunplayManager: Prompting reload text.");
+                }
+
+                #endregion
+            }
         }
 
         #endregion
@@ -466,15 +524,15 @@ public class GunplayManager : MonoBehaviour
 
             updateGunPosition = false;
         }
-        
-        if (toggleDespawnTimer)
-        {
-            despawningTimer += Time.deltaTime;
 
-            if (despawningTimer <= bulletDecalDespawnTimer)
-            {
-                DespawnNow();
-            }
+        #endregion
+
+        #region Despawning Bullet Hole Decals
+
+        if (bulletDecalParent.childCount >= bulletDecalLimit)
+        {
+            despawnBulletHoleDecals = true;
+            DespawnBulletHoleDecals();
         }
 
         #endregion
