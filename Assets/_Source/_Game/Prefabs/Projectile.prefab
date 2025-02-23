@@ -99,7 +99,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 2240
+    m_Bits: 10432
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 4864

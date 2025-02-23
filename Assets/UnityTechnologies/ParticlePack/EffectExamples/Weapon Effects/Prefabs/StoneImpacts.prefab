@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4294938251131082}
   - component: {fileID: 198742569389947464}
   - component: {fileID: 199495713393331546}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: HitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,14 +44,14 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1001450281483978}
   serializedVersion: 8
-  lengthInSec: 0.1
+  lengthInSec: 5
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 0
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -4805,7 +4805,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4869,7 +4869,7 @@ GameObject:
   - component: {fileID: 4383338966039028}
   - component: {fileID: 198441253333576670}
   - component: {fileID: 199120453055608528}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Decal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9782,9 +9782,9 @@ GameObject:
   - component: {fileID: 33350502945847484}
   - component: {fileID: 23196471665287424}
   - component: {fileID: 135263177144982302}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: StoneImpacts
-  m_TagString: Bullet
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9797,10 +9797,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1341869769842038}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 1
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -30, y: 2, z: 7}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4294938251131082}
   m_Father: {fileID: 0}
@@ -9868,10 +9868,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 8384
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 7991
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -9890,7 +9890,7 @@ GameObject:
   - component: {fileID: 4582481828265024}
   - component: {fileID: 198209522987241120}
   - component: {fileID: 199265998883576332}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: ImpactDebris
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14573,7 +14573,7 @@ GameObject:
   - component: {fileID: 4718239148944406}
   - component: {fileID: 198056859948123932}
   - component: {fileID: 199518860956358596}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
