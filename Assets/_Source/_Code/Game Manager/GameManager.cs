@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour
     //public event Action LevelFailed;
     public event Action LevelCompleted;
 
+    [Header("Restart Scene")]
+    [SerializeField] private string sceneName;
+
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer  = false;
     [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = false;
@@ -68,6 +71,7 @@ public class GameManager : MonoBehaviour
     [Header("Pause Menu Buttons")]
     [SerializeField] Button resumeFromPauseMenuButton;
     [SerializeField] Button restartFromPauseMenuButton;
+    [SerializeField] Button tutorialPauseMenuButton;
     [SerializeField] Button settingsPauseMenuButton;
     [SerializeField] Button quitFromPauseMenuButton;
 
@@ -76,6 +80,11 @@ public class GameManager : MonoBehaviour
     [Header("Tutorial Screen Buttons")]
     [SerializeField] Button tutorialStartGame;
     [SerializeField] Button tutorialQuitGame;
+
+    [Space(5)]
+
+    [Header("Tutorial Screen Buttons")]
+    [SerializeField] private Button tutorialScreenReturnbutton;
 
     [Space(5)]
 
@@ -94,6 +103,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI fovText;
     [SerializeField] TextMeshProUGUI mouseXSensitivityText;
     [SerializeField] TextMeshProUGUI mouseYSensitivityText;
+    [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] private string levelObjective;
 
     [Space(5)]
 
@@ -134,18 +145,17 @@ public class GameManager : MonoBehaviour
 
         if (!skipTutorial)
         {
-            tutorialScreen.gameObject.SetActive(true);
-            tutorialStartGame.interactable = true;
-            tutorialQuitGame.interactable = true;
+            ShowTutorial();
+            DisableReturnButtonTutorialScreen();
             InputManager.Instance.DisableGameInput();
         }
         else
         {
-            tutorialScreen.gameObject.SetActive(false);
-            tutorialStartGame.interactable = false;
-            tutorialQuitGame.interactable = false;
+            HideTutorial();
             InputManager.Instance.EnableGameInput();
         }
+
+        UpdateObjectiveText();
     }
 
     #region Event Functions
@@ -208,8 +218,11 @@ public class GameManager : MonoBehaviour
     {
         #region Disable buttons
 
+        tutorialStartGame.gameObject.SetActive(false);
         tutorialStartGame.enabled = false;
         tutorialStartGame.interactable = false;
+
+        tutorialQuitGame.gameObject.SetActive(false);
         tutorialQuitGame.enabled = false;
         tutorialQuitGame.interactable = false;
 
@@ -219,6 +232,52 @@ public class GameManager : MonoBehaviour
         Cursor.visible = false;
         InputManager.Instance.OnEnable();
     }
+
+    private void ShowTutorial()
+    {
+        tutorialScreen.gameObject.SetActive(true);
+
+        tutorialStartGame.gameObject.SetActive(true);
+        tutorialStartGame.enabled = true;
+        tutorialStartGame.interactable = true;
+
+        tutorialQuitGame.gameObject.SetActive(true);
+        tutorialQuitGame.enabled = true;
+        tutorialQuitGame.interactable = true;
+
+        DisableReturnButtonTutorialScreen();
+    }
+
+    private void HideTutorial()
+    {
+        tutorialScreen.gameObject.SetActive(false);
+
+        tutorialStartGame.gameObject.SetActive(false);
+        tutorialStartGame.enabled = false;
+        tutorialStartGame.interactable = false;
+
+        tutorialQuitGame.gameObject.SetActive(false);
+        tutorialQuitGame.enabled = false;
+        tutorialQuitGame.interactable = false;
+    }
+
+    private void ShowTutorialScreenFromPauseMenu()
+    {
+        tutorialScreen.gameObject.SetActive(true);
+        tutorialScreenReturnbutton.gameObject.SetActive(true);
+
+        tutorialScreenReturnbutton.enabled = true;
+        tutorialScreenReturnbutton.interactable = true;
+        tutorialScreenReturnbutton.gameObject.SetActive(true);
+    }
+
+    private void HideTutorialScreenFromPauseMenu()
+    {
+        tutorialScreen.gameObject.SetActive(false);
+
+        DisableReturnButtonTutorialScreen();
+    }
+
 
     #endregion
 
@@ -238,6 +297,10 @@ public class GameManager : MonoBehaviour
         restartFromPauseMenuButton.interactable = true;
         restartFromPauseMenuButton.gameObject.SetActive(true);
 
+        tutorialPauseMenuButton.enabled = true;
+        tutorialPauseMenuButton.interactable = true;
+        tutorialPauseMenuButton.gameObject.SetActive(true);
+        
         settingsPauseMenuButton.enabled = true;
         settingsPauseMenuButton.interactable = true;
         settingsPauseMenuButton.gameObject.SetActive(true);
@@ -247,6 +310,7 @@ public class GameManager : MonoBehaviour
         quitFromPauseMenuButton.gameObject.SetActive(true);
 
         pauseTitleText.gameObject.SetActive(true);
+        objectiveText.gameObject.SetActive(true);
     }
 
     private void DisablePauseButtons()
@@ -259,6 +323,10 @@ public class GameManager : MonoBehaviour
         restartFromPauseMenuButton.interactable = false;
         restartFromPauseMenuButton.gameObject.SetActive(false);
 
+        tutorialPauseMenuButton.enabled = false;
+        tutorialPauseMenuButton.interactable = false;
+        tutorialPauseMenuButton.gameObject.SetActive(false);
+
         settingsPauseMenuButton.enabled = false;
         settingsPauseMenuButton.interactable = false;
         settingsPauseMenuButton.gameObject.SetActive(false);
@@ -268,6 +336,7 @@ public class GameManager : MonoBehaviour
         quitFromPauseMenuButton.gameObject.SetActive(false);
 
         pauseTitleText.gameObject.SetActive(false);
+        objectiveText.gameObject.SetActive(false);
     }
 
     private void EnableSettingsUi()
@@ -449,7 +518,7 @@ public class GameManager : MonoBehaviour
 
     public void OnRestartButtonPressed()
     {
-        RestartScene("Prototype_1_Level");
+        RestartScene(sceneName);
     }
 
     public void OnSettingsButtonPressed()
@@ -479,6 +548,32 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void OnTutorialButtonPressed()
+    {
+        DisablePauseButtons();
+        ShowTutorialScreenFromPauseMenu();
+    }
+
+    public void OnReturnFromPausedTutorialScreen()
+    {
+        EnablePauseButtons();
+        HideTutorialScreenFromPauseMenu();
+    }
+
+    public void EnableReturnButtonTutorialScreen()
+    {
+        tutorialScreenReturnbutton.enabled = true;
+        tutorialScreenReturnbutton.interactable = true;
+        tutorialScreenReturnbutton.gameObject.SetActive(true);
+    }
+
+    public void DisableReturnButtonTutorialScreen()
+    {
+        tutorialScreenReturnbutton.enabled = false;
+        tutorialScreenReturnbutton.interactable = false;
+        tutorialScreenReturnbutton.gameObject.SetActive(false);
+    }
+
     #endregion
 
     #region Enable and Disable Settings Page
@@ -506,6 +601,12 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+
+    private void UpdateObjectiveText()
+    {
+        objectiveText.text = "Objective:" + "\n" + levelObjective;
+    }
+
     #endregion
 
     #region Game Over Functions
@@ -517,7 +618,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartLevelFromGameOverScreen()
     {
-        RestartScene("Prototype_1_Level");
+        RestartScene(sceneName);
     }
 
     #endregion
