@@ -29,13 +29,18 @@ public class GameManager : MonoBehaviour
 
     //Event to start the main game
     public event Action OnStartGame;
-
+ 
     //Events for game over states
     //public event Action LevelFailed;
     public event Action LevelCompleted;
 
     [Header("Restart Scene")]
     [SerializeField] private string sceneName;
+
+    [Space(5)]
+
+    [Header("Level Objective")]
+    [SerializeField] private string levelObjective;
 
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer  = false;
@@ -104,7 +109,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI mouseXSensitivityText;
     [SerializeField] TextMeshProUGUI mouseYSensitivityText;
     [SerializeField] TextMeshProUGUI objectiveText;
-    [SerializeField] private string levelObjective;
 
     [Space(5)]
 
@@ -124,7 +128,7 @@ public class GameManager : MonoBehaviour
     [Header("Debugging and Testing")]
     [SerializeField] public bool toggleDebug = false;
     [SerializeField] public bool skipTutorial = false;
-
+    
     #endregion
 
     private void Awake()
