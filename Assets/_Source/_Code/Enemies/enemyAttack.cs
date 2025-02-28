@@ -1,12 +1,11 @@
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Rendering.UI;
+//using UnityEngine.AI;
 
 public class enemyAttack : MonoBehaviour
 {
     #region Variables
 
-    private NavMeshAgent meshAgent;
+    //private NavMeshAgent meshAgent;
     private Transform playerCharacter;
 
     [Header("Attack Variables")]
@@ -41,7 +40,7 @@ public class enemyAttack : MonoBehaviour
     private void Awake()
     {
         playerCharacter = GameObject.Find("Player").transform;
-        meshAgent = GetComponent<NavMeshAgent>();
+        //meshAgent = GetComponent<NavMeshAgent>();
     }
 
     void Start()
@@ -52,7 +51,6 @@ public class enemyAttack : MonoBehaviour
     private void Attacking()
     {
         //Prevent enemy from moving
-
         //meshAgent.SetDestination(transform.position);
 
         transform.LookAt(playerCharacter);

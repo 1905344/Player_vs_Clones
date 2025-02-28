@@ -62,7 +62,7 @@ AnimatorController:
   m_Name: EnemyAnimator
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Blend
+  - m_Name: Speed
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -149,7 +149,7 @@ AnimatorState:
   m_TimeParameterActive: 1
   m_Motion: {fileID: -8418446303247032272}
   m_Tag: 
-  m_SpeedParameter: Blend
+  m_SpeedParameter: Speed
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
-  m_TimeParameter: Blend
+  m_TimeParameter: Speed

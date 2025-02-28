@@ -13,15 +13,6 @@ public partial class RangeSensorAction : Action
 
     protected override Status OnUpdate()
     {
-        //var target = Range_Sensor.Value.GetNearestTarget("Player");
-        //if (target == null)
-        //{
-        //    return Status.Failure;
-        //}
-
-        //Target.Value = target.gameObject;
-        //return Status.Success;
-
         Target.Value = Range_Sensor.Value.UpdateSensor();
         return Target.Value == null ? Status.Failure : Status.Success;
     }

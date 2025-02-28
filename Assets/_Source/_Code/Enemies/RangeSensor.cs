@@ -11,11 +11,6 @@ public class RangeSensor : MonoBehaviour
     [SerializeField] private float detectionRadius = 10f;
     [SerializeField] private List<string> targetTags = new();
     [SerializeField] private LayerMask detectionMask;
-    private Vector3 detectionRadiusVector;
-
-    [Space(5)]
-
-    [SerializeField] private float detectionRangeLine = 10.0f;
     [SerializeField] private float detectionRangeHeight = 1.15f;
 
     readonly List<Transform> detectedObjects = new(10);
@@ -24,17 +19,17 @@ public class RangeSensor : MonoBehaviour
     [Space(10)]
 
     [Header("Debug: Show Gizmos")]
-    [SerializeField] private bool showDetectionRadius = false;
-    [SerializeField] private bool showOtherDetectionRadius = false;
+    [SerializeField] private bool showTransformDetectionRadius = false;
+    [SerializeField] private bool showGameObjectDetectionRadius = false;
     [SerializeField] private bool showLineOfSight = false;
 
     [Space(3)]
 
     [SerializeField] private float gizmosRadius = 1f;
-    [SerializeField] private Color32 radiusColour;
-    [SerializeField] private Color32 otherRadiusColour;
-    [SerializeField] private Color32 lineOfSightColourDetected;
-    [SerializeField] private Color32 lineOfSightColourUndetected;
+    [SerializeField] private Color32 transformRadiusColour;
+    [SerializeField] private Color32 gameObjectRadiusColour;
+    [SerializeField] private Color32 gameObjectDetectedColour;
+    [SerializeField] private Color32 gameObjectUndetectedColour;
 
     public GameObject DetectedTarget { get; set; }
 
@@ -155,18 +150,19 @@ public class RangeSensor : MonoBehaviour
 
         if (hit.collider != null && hit.collider.gameObject == target)
         {
-            return hit.collider.gameObject;
             #region Debug
 
             if (GameManager.Instance.toggleDebug)
             {
                 if (showLineOfSight && this.enabled)
                 {
-                    Debug.DrawLine(transform.position + Vector3.up * detectionRangeHeight, target.transform.position, lineOfSightColourDetected);
+                    Debug.DrawLine(transform.position + Vector3.up * detectionRangeHeight, target.transform.position, gameObjectDetectedColour);
                 }
             }
 
             #endregion
+
+            return hit.collider.gameObject;
         }
         else
         {
@@ -180,21 +176,21 @@ public class RangeSensor : MonoBehaviour
     {
         //Visualising the radius of the sphere collider
 
-        if (showDetectionRadius)
+        if (showTransformDetectionRadius)
         {
-            Gizmos.color = radiusColour;
+            Gizmos.color = transformRadiusColour;
             Gizmos.DrawWireSphere(transform.position, gizmosRadius);
         }
 
-        if (showOtherDetectionRadius)
+        if (showGameObjectDetectionRadius)
         {
-            Gizmos.color = DetectedTarget ? lineOfSightColourDetected : lineOfSightColourUndetected;
+            Gizmos.color = DetectedTarget ? gameObjectDetectedColour : gameObjectUndetectedColour;
             Gizmos.DrawWireSphere(transform.position, detectionRadius);
         }
 
         if (showLineOfSight)
         {
-            Gizmos.color = otherRadiusColour;
+            Gizmos.color = gameObjectRadiusColour;
             Gizmos.DrawWireSphere(transform.position + Vector3.up * detectionRangeHeight, 0.3f);
         }
     }

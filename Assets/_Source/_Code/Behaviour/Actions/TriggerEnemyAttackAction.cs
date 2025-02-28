@@ -10,10 +10,6 @@ public partial class TriggerEnemyAttackAction : Action
 {
     [SerializeReference] public BlackboardVariable<enemyAttack> Enemy_attack;
     [SerializeReference] public BlackboardVariable<bool> Bool;
-    //protected override Status OnStart()
-    //{
-    //    return Status.Running;
-    //}
 
     protected override Status OnUpdate()
     {
@@ -29,9 +25,5 @@ public partial class TriggerEnemyAttackAction : Action
             return Status.Success;
         }
     }
-
-    //protected override void OnEnd()
-    //{
-    //}
 }
 
