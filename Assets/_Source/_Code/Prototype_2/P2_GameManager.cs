@@ -36,6 +36,7 @@ public class P2_GameManager : MonoBehaviour
 
     //Event for switching between player characters
     public event Action<Guid> changePlayerCharacter;
+    public event Action<Guid> playerCharacterKilled;
 
     [Header("Restart Scene")]
     [SerializeField] private string sceneName;
@@ -209,6 +210,14 @@ public class P2_GameManager : MonoBehaviour
     }
 
     public void OnCharacterChanged(Guid characterID)
+    {
+        if (changePlayerCharacter != null)
+        {
+            changePlayerCharacter(characterID);
+        }
+    }
+
+    public void OnPlayerCharacterKilled(Guid characterID)
     {
         if (changePlayerCharacter != null)
         {

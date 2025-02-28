@@ -49,7 +49,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Fire"",
                     ""type"": ""Button"",
                     ""id"": ""39ac5fa2-4b43-4559-a357-cd7fbbcfed8b"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Tap,Press(behavior=2),Hold(duration=0.55)"",
                     ""initialStateCheck"": false
@@ -58,7 +58,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""d45878ae-4857-404d-a2cc-46bb75f5eea2"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -67,7 +67,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Reload"",
                     ""type"": ""Button"",
                     ""id"": ""872cf282-4b07-42ff-a7f5-e97944ce6a13"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -76,7 +76,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""5dc6aa80-b7a7-47ce-b565-3beddda83846"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Tap,Hold(duration=0.55)"",
                     ""initialStateCheck"": true
@@ -85,7 +85,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Pause Game"",
                     ""type"": ""Button"",
                     ""id"": ""41308c31-b8f0-4344-98ca-ef159e453012"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -94,7 +94,16 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Start Game"",
                     ""type"": ""Button"",
                     ""id"": ""c43750bf-6b94-4bc6-a925-dd072f411410"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Change Character"",
+                    ""type"": ""Button"",
+                    ""id"": ""7e981ea5-6b2e-470c-8555-2cf30d084d42"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -362,6 +371,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Start Game"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c9bee1b8-8987-4ac1-848e-a7e5b9624313"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Change Character"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -997,6 +1017,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_PauseGame = m_Player.FindAction("Pause Game", throwIfNotFound: true);
         m_Player_StartGame = m_Player.FindAction("Start Game", throwIfNotFound: true);
+        m_Player_ChangeCharacter = m_Player.FindAction("Change Character", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1086,6 +1107,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_PauseGame;
     private readonly InputAction m_Player_StartGame;
+    private readonly InputAction m_Player_ChangeCharacter;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -1098,6 +1120,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @PauseGame => m_Wrapper.m_Player_PauseGame;
         public InputAction @StartGame => m_Wrapper.m_Player_StartGame;
+        public InputAction @ChangeCharacter => m_Wrapper.m_Player_ChangeCharacter;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1131,6 +1154,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @StartGame.started += instance.OnStartGame;
             @StartGame.performed += instance.OnStartGame;
             @StartGame.canceled += instance.OnStartGame;
+            @ChangeCharacter.started += instance.OnChangeCharacter;
+            @ChangeCharacter.performed += instance.OnChangeCharacter;
+            @ChangeCharacter.canceled += instance.OnChangeCharacter;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1159,6 +1185,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @StartGame.started -= instance.OnStartGame;
             @StartGame.performed -= instance.OnStartGame;
             @StartGame.canceled -= instance.OnStartGame;
+            @ChangeCharacter.started -= instance.OnChangeCharacter;
+            @ChangeCharacter.performed -= instance.OnChangeCharacter;
+            @ChangeCharacter.canceled -= instance.OnChangeCharacter;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1365,6 +1394,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnPauseGame(InputAction.CallbackContext context);
         void OnStartGame(InputAction.CallbackContext context);
+        void OnChangeCharacter(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

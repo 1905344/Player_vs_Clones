@@ -132,6 +132,11 @@ public class P2_InputManager : MonoBehaviour
         return playerActions.Player.StartGame.triggered;
     }
 
+    public bool PlayerChangedCharacters()
+    {
+        return playerActions.Player.ChangeCharacter.triggered;
+    }
+
     public bool isPlayerSprintingThisFrame { get; private set; }
 
     public bool IsPlayerHoldingTheFireButton { get; private set; }

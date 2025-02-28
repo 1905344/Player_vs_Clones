@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class P2_PlayerManager : MonoBehaviour
 {
@@ -18,6 +17,9 @@ public class P2_PlayerManager : MonoBehaviour
         P2_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
         P2_GameManager.Instance.changePlayerCharacter -= OnCharacterChanged;
 
+        P2_GameManager.Instance.playerCharacterKilled += OnCharacterKilled;
+        P2_GameManager.Instance.playerCharacterKilled -= OnCharacterKilled;
+
         //Event for when a character is killed
         //P2_GameManager.Instance.characterKilled += OnCharacterKilled;
 
@@ -31,17 +33,29 @@ public class P2_PlayerManager : MonoBehaviour
 
     private void OnCharacterChanged(Guid characterID)
     {
-        foreach (GameObject character in playerCharacters)
+        for (int i = 0; i < playerCharacters.Count; i++)
         {
-            //if (character.GetGuid == characterID)
-            //{
-            //    //Change to this character
-            //}
-            //else
-            //{
-            //    return;
-            //}
+            foreach (GameObject character in playerCharacters)
+            {
+                var characterGuid = character.GetComponent<P2_PlayerCharacterBase>();
+
+                if (characterGuid.GetCharacterID() == characterID)
+                {
+                    playerCharacters[i].SetActive(true);
+
+                    if (characterGuid.GetCharacterID() != characterID)
+                    {
+                        character.SetActive(false);
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
+
+       
     }
 
     private void OnCharacterKilled(Guid characterID)
@@ -69,6 +83,9 @@ public class P2_PlayerManager : MonoBehaviour
 
     void Update()
     {
-        
+        if (P2_InputManager.Instance.PlayerChangedCharacters())
+        {
+            
+        }
     }
 }
