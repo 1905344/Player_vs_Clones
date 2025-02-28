@@ -1,25 +1,28 @@
 using System;
-using System.Collections.Generic;
 using Unity.Behavior;
 using UnityEngine;
 
 [Serializable, Unity.Properties.GeneratePropertyBag]
-[Condition(name: "Agents within range", story: "Any [agents] within [range]", category: "Conditions", id: "bca78fde39abd4c555c3c986e2b06812")]
+[Condition(name: "Agents within range", story: "Any [Other_Agent] near to [Agent]", category: "Conditions", id: "bca78fde39abd4c555c3c986e2b06812")]
 public partial class CallAgentsInRangeCondition : Condition
 {
-    [SerializeReference] public BlackboardVariable<List<GameObject>> Agents;
-    [SerializeReference] public BlackboardVariable<Vector3Int> Range;
-    
+    [SerializeReference] public BlackboardVariable<GameObject> Agent;
+    [SerializeReference] public BlackboardVariable<GameObject> Other_Agent;
+
+    private RangeSensor rangeSensor;
+
     public override bool IsTrue()
     {
-        return true;
+        var otherAgent = rangeSensor.GetNearestTarget(Other_Agent.Value.tag);
+
+        return otherAgent != null;
     }
 
-    public override void OnStart()
-    {
-    }
+    //public override void OnStart()
+    //{
+    //}
 
-    public override void OnEnd()
-    {
-    }
+    //public override void OnEnd()
+    //{
+    //}
 }

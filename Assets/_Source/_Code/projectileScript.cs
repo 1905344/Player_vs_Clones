@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent (typeof(SphereCollider))]
 public class projectileScript : MonoBehaviour
 {
     #region Variables
@@ -15,37 +16,50 @@ public class projectileScript : MonoBehaviour
 
     private void Awake()
     {
+        #region Debug
+
         if (GameManager.Instance.toggleDebug)
         {
             Debug.Log("Projectile " + projectileID + " instantiated.");
         }
 
+        #endregion
+
         projectileCollider = GetComponent<SphereCollider>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        #region Debug
+        GameObject collidedObject = collision.collider.gameObject;
 
-        if (GameManager.Instance.toggleDebug)
-        {
-            Debug.Log("Projectile hit: " + other.gameObject.tag.ToString());
-        }
-
-        #endregion
-
-        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag("Environment"))
+        if (collidedObject.CompareTag("Wall") || collidedObject.CompareTag("Ground") || collidedObject.CompareTag("Environment"))
         {
             DestroyProjectile();
+
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Projectile hit: " + collidedObject.tag.ToString());
+            }
+
+            #endregion
         }
-        else if (other.gameObject.CompareTag("Player"))
+        else if (collidedObject.CompareTag("Player"))
         {
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                Debug.Log("Projectile hit: " + collidedObject.tag.ToString());
+            }
+
+            #endregion
+
             //Using events
             GameManager.Instance.OnPlayerHit(damage);
 
             DestroyProjectile();
-            //Using colliders
-            //collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
         }
     }
 
