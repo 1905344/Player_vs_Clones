@@ -1,15 +1,22 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(SphereCollider))]
 public class RangeSensor : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] public float detectionRadius = 10f;
-    [SerializeField] public List<string> targetTags = new();
+    [Header("Detection Settings")]
+    [SerializeField] private float detectionRadius = 10f;
+    [SerializeField] private List<string> targetTags = new();
+    [SerializeField] private LayerMask detectionMask;
+    private Vector3 detectionRadiusVector;
+
+    [Space(5)]
+
+    [SerializeField] private float detectionRangeLine = 10.0f;
+    [SerializeField] private float detectionRangeHeight = 1.15f;
 
     readonly List<Transform> detectedObjects = new(10);
     private SphereCollider _sphereCollider;
@@ -17,12 +24,19 @@ public class RangeSensor : MonoBehaviour
     [Space(10)]
 
     [Header("Debug: Show Gizmos")]
-    [SerializeField] private bool showGizmos;
-    
+    [SerializeField] private bool showDetectionRadius = false;
+    [SerializeField] private bool showOtherDetectionRadius = false;
+    [SerializeField] private bool showLineOfSight = false;
+
     [Space(3)]
 
     [SerializeField] private float gizmosRadius = 1f;
     [SerializeField] private Color32 radiusColour;
+    [SerializeField] private Color32 otherRadiusColour;
+    [SerializeField] private Color32 lineOfSightColourDetected;
+    [SerializeField] private Color32 lineOfSightColourUndetected;
+
+    public GameObject DetectedTarget { get; set; }
 
     #endregion
 
@@ -74,6 +88,7 @@ public class RangeSensor : MonoBehaviour
 
     public Transform GetNearestTarget(string tag)
     {
+        //Calculate distance between this.transform and target.transform, then return with the nearest
         if (detectedObjects.Count == 0)
         {
             return null;
@@ -101,17 +116,86 @@ public class RangeSensor : MonoBehaviour
         return nearestTarget;
     }
 
+    public GameObject UpdateSensor()
+    {
+        //Sphere collider check
+        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRadius, detectionMask);
 
-    #region Debug: Showing Gizmos
+        if (colliders.Length > 0)
+        {
+            DetectedTarget = colliders[0].gameObject;
+        }
+        else
+        {
+            DetectedTarget = null;
+        }
+
+        return DetectedTarget;
+    }
+
+    public GameObject OnDetectionPerformed(GameObject target)
+    {
+        Vector3 originPoint = transform.position + Vector3.up * detectionRangeHeight;
+
+        RaycastHit hit;
+        Vector3 directionToTarget = target.transform.position - originPoint;
+        float maxDistance = Vector3.Distance(target.transform.position, originPoint);
+        Physics.Raycast(originPoint, directionToTarget.normalized ,out hit, maxDistance * 2, detectionMask);
+
+        Debug.Log("RangeSensor: " + target.transform.position);
+        Debug.DrawLine(originPoint, target.transform.position);
+
+        //Debug.Log("RangeSensor: " + hit.collider);
+        //Debug.Log("RangeSensor: " + target);
+
+        if (hit.collider != null)
+        {
+            Debug.Log($"Raycast hit. {hit.transform.tag}");
+        }
+
+        if (hit.collider != null && hit.collider.gameObject == target)
+        {
+            return hit.collider.gameObject;
+            #region Debug
+
+            if (GameManager.Instance.toggleDebug)
+            {
+                if (showLineOfSight && this.enabled)
+                {
+                    Debug.DrawLine(transform.position + Vector3.up * detectionRangeHeight, target.transform.position, lineOfSightColourDetected);
+                }
+            }
+
+            #endregion
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    #region Debug: Show Gizmos
 
     private void OnDrawGizmosSelected()
     {
         //Visualising the radius of the sphere collider
 
-        if (showGizmos)
+        if (showDetectionRadius)
         {
             Gizmos.color = radiusColour;
             Gizmos.DrawWireSphere(transform.position, gizmosRadius);
+        }
+
+        if (showOtherDetectionRadius)
+        {
+            Gizmos.color = DetectedTarget ? lineOfSightColourDetected : lineOfSightColourUndetected;
+            Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        }
+
+        if (showLineOfSight)
+        {
+            Gizmos.color = otherRadiusColour;
+            Gizmos.DrawWireSphere(transform.position + Vector3.up * detectionRangeHeight, 0.3f);
         }
     }
 

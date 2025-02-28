@@ -11,18 +11,29 @@ public partial class AgentAlertedAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Agent;
     [SerializeReference] public BlackboardVariable<GameObject> Enemy;
 
+    private RangeSensor rangeSensor;
+
     protected override Status OnStart()
     {
+        rangeSensor = Agent.Value.GetComponent<RangeSensor>();
         return Status.Running;
     }
 
     protected override Status OnUpdate()
     {
+        var target = rangeSensor.GetNearestTarget("Player").gameObject;
+
+        if (target == null)
+        {
+            return Status.Failure;
+        }
+
+        Enemy.Value = target.gameObject;
         return Status.Success;
     }
 
-    protected override void OnEnd()
-    {
-    }
+    //protected override void OnEnd()
+    //{
+    //}
 }
 

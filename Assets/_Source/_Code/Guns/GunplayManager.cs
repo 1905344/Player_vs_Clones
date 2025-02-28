@@ -256,7 +256,7 @@ public class GunplayManager : MonoBehaviour
             if (_raycastHit.collider.CompareTag("Enemy"))
             {
                 enemyGuid = Guid.Empty;
-                enemyGuid = _raycastHit.collider.GetComponentInParent<enemyAiController>().enemyID;
+                enemyGuid = _raycastHit.collider.GetComponentInParent<enemyHealth>().enemyID;
 
                 #region Debug
 
