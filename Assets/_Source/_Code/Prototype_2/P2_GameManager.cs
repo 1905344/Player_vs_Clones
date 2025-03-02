@@ -23,7 +23,7 @@ public class P2_GameManager : MonoBehaviour
     }
 
     //Events for the asymmetrical gameplay
-    public event Action<int> PlayerHit;
+    public event Action<Guid, int> PlayerHit;
     public event Action PlayerKilled;
     public event Action<Guid, int> EnemyHit;
 
@@ -35,7 +35,7 @@ public class P2_GameManager : MonoBehaviour
     public event Action LevelCompleted;
 
     //Event for switching between player characters
-    public event Action<Guid> changePlayerCharacter;
+    public event Action changePlayerCharacter;
     public event Action<Guid> playerCharacterKilled;
 
     [Header("Restart Scene")]
@@ -93,7 +93,7 @@ public class P2_GameManager : MonoBehaviour
     [Space(5)]
 
     [Header("Tutorial Screen Buttons")]
-    [SerializeField] private Button tutorialScreenReturnbutton;
+    [SerializeField] private Button tutorialScreenReturnButton;
 
     [Space(5)]
 
@@ -107,8 +107,6 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField] Slider mouseYSensitivitySlider;
 
     [Space(5)]
-    //[SerializeField] TMP_InputField mouseXSensitivtyTextInput;
-    //[SerializeField] TMP_InputField mouseYSensitivtyTextInput;
     [SerializeField] TextMeshProUGUI fovText;
     [SerializeField] TextMeshProUGUI mouseXSensitivityText;
     [SerializeField] TextMeshProUGUI mouseYSensitivityText;
@@ -130,7 +128,7 @@ public class P2_GameManager : MonoBehaviour
     [Space(10)]
 
     [Header("Debugging and Testing")]
-    [SerializeField] public bool toggleDebug = false;
+    [SerializeField] public bool enableDebug = false;
     [SerializeField] public bool skipTutorial = false;
 
     #endregion
@@ -155,12 +153,12 @@ public class P2_GameManager : MonoBehaviour
         {
             ShowTutorial();
             DisableReturnButtonTutorialScreen();
-            InputManager.Instance.DisableGameInput();
+            P2_InputManager.Instance.DisableGameInput();
         }
         else
         {
             HideTutorial();
-            InputManager.Instance.EnableGameInput();
+            P2_InputManager.Instance.EnableGameInput();
         }
 
         UpdateObjectiveText();
@@ -176,11 +174,11 @@ public class P2_GameManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerHit(int damage)
+    public void OnPlayerHit(Guid characterID, int damage)
     {
         if (PlayerHit != null)
         {
-            PlayerHit(damage);
+            PlayerHit(characterID,damage);
         }
     }
 
@@ -209,19 +207,19 @@ public class P2_GameManager : MonoBehaviour
         }
     }
 
-    public void OnCharacterChanged(Guid characterID)
+    public void OnCharacterChanged()
     {
         if (changePlayerCharacter != null)
         {
-            changePlayerCharacter(characterID);
+            changePlayerCharacter();
         }
     }
 
     public void OnPlayerCharacterKilled(Guid characterID)
     {
-        if (changePlayerCharacter != null)
+        if (playerCharacterKilled != null)
         {
-            changePlayerCharacter(characterID);
+            playerCharacterKilled(characterID);
         }
     }
 
@@ -245,7 +243,7 @@ public class P2_GameManager : MonoBehaviour
 
         tutorialScreen.gameObject.SetActive(false);
         Cursor.visible = false;
-        InputManager.Instance.OnEnable();
+        P2_InputManager.Instance.OnEnable();
     }
 
     private void ShowTutorial()
@@ -279,11 +277,11 @@ public class P2_GameManager : MonoBehaviour
     private void ShowTutorialScreenFromPauseMenu()
     {
         tutorialScreen.gameObject.SetActive(true);
-        tutorialScreenReturnbutton.gameObject.SetActive(true);
+        tutorialScreenReturnButton.gameObject.SetActive(true);
 
-        tutorialScreenReturnbutton.enabled = true;
-        tutorialScreenReturnbutton.interactable = true;
-        tutorialScreenReturnbutton.gameObject.SetActive(true);
+        tutorialScreenReturnButton.enabled = true;
+        tutorialScreenReturnButton.interactable = true;
+        tutorialScreenReturnButton.gameObject.SetActive(true);
     }
 
     private void HideTutorialScreenFromPauseMenu()
@@ -441,7 +439,7 @@ public class P2_GameManager : MonoBehaviour
 
     public void OnResume()
     {
-        if (!InputManager.Instance.pauseGame)
+        if (!P2_InputManager.Instance.pauseGame)
         {
             return;
         }
@@ -449,7 +447,7 @@ public class P2_GameManager : MonoBehaviour
         {
             #region Debug
 
-            if (toggleDebug)
+            if (enableDebug)
             {
                 Debug.Log("Resuming the game.");
             }
@@ -461,7 +459,7 @@ public class P2_GameManager : MonoBehaviour
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            InputManager.Instance.OnResumeUIButtonPressed();
+            P2_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
 
@@ -522,16 +520,16 @@ public class P2_GameManager : MonoBehaviour
 
     public void EnableReturnButtonTutorialScreen()
     {
-        tutorialScreenReturnbutton.enabled = true;
-        tutorialScreenReturnbutton.interactable = true;
-        tutorialScreenReturnbutton.gameObject.SetActive(true);
+        tutorialScreenReturnButton.enabled = true;
+        tutorialScreenReturnButton.interactable = true;
+        tutorialScreenReturnButton.gameObject.SetActive(true);
     }
 
     public void DisableReturnButtonTutorialScreen()
     {
-        tutorialScreenReturnbutton.enabled = false;
-        tutorialScreenReturnbutton.interactable = false;
-        tutorialScreenReturnbutton.gameObject.SetActive(false);
+        tutorialScreenReturnButton.enabled = false;
+        tutorialScreenReturnButton.interactable = false;
+        tutorialScreenReturnButton.gameObject.SetActive(false);
     }
 
     #endregion

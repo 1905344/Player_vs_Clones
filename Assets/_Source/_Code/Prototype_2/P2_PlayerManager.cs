@@ -1,61 +1,100 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class P2_PlayerManager : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] private List<GameObject> playerCharacters = new List<GameObject>();
-    private List<string> playerCharacterIDs = new List<string>();
+    private static P2_PlayerManager instance;
 
-    #endregion
-
-    void Start()
+    public static P2_PlayerManager Instance
     {
-        P2_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
-        P2_GameManager.Instance.changePlayerCharacter -= OnCharacterChanged;
-
-        P2_GameManager.Instance.playerCharacterKilled += OnCharacterKilled;
-        P2_GameManager.Instance.playerCharacterKilled -= OnCharacterKilled;
-
-        //Event for when a character is killed
-        //P2_GameManager.Instance.characterKilled += OnCharacterKilled;
-
-        foreach (GameObject character in playerCharacters)
+        get
         {
-            //Get the guid of each character and add it to a list
-
-            //playerCharacterIDs.Add(character.GetGuid());
+            return instance;
         }
     }
 
-    private void OnCharacterChanged(Guid characterID)
+    [SerializeField] private List<GameObject> playerCharacters = new List<GameObject>();
+    [SerializeField] private GameObject currentlyActiveCharacter;
+    [SerializeField] private GameObject currentlyActiveGun;
+    private Guid currentCharacterID;
+    [SerializeField] private int currentIndexPos = 0;
+    [SerializeField] private string currentIDString = string.Empty;
+
+    private bool continueCharacterChange = false;
+
+    public int GetCurrentCharacter()
     {
-        for (int i = 0; i < playerCharacters.Count; i++)
-        {
-            foreach (GameObject character in playerCharacters)
-            {
-                var characterGuid = character.GetComponent<P2_PlayerCharacterBase>();
+        return currentIndexPos;
+    }
 
-                if (characterGuid.GetCharacterID() == characterID)
-                {
-                    playerCharacters[i].SetActive(true);
+    public GameObject GetCurrentlyActivePlayer()
+    {
+        return currentlyActiveCharacter;
+    }
 
-                    if (characterGuid.GetCharacterID() != characterID)
-                    {
-                        character.SetActive(false);
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-        }
+    public string GetCurrentIDString()
+    {
+        return currentIDString;
+    }
 
-       
+    #endregion
+
+    void Awake()
+    {
+        P2_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
+
+        P2_GameManager.Instance.playerCharacterKilled += OnCharacterKilled;
+        //P2_GameManager.Instance.playerCharacterKilled -= OnCharacterKilled;
+
+        currentIndexPos = 0;
+    }
+
+    private void Start()
+    {
+        currentlyActiveCharacter = playerCharacters[0].gameObject;
+        currentCharacterID = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterID();
+        currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
+        currentlyActiveGun = playerCharacters[0].GetComponentInChildren<P2_GunplayManager>().gameObject;
+
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
+        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
+
+        currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
+    }
+
+    private void OnCharacterChanged()
+    {
+        //Disable the active character
+        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
+
+        //Disable the gun attached to the active character
+        currentlyActiveGun.GetComponent<P2_GunplayManager>().DisableGun();
+
+        //Increment the integer for the current index position.
+        currentIndexPos++;
+
+        //Check that the integer for the current index position is not greater
+        //than the number of items within the list.
+        currentIndexPos %= playerCharacters.Count;
+
+        //Set the currentlyActiveCharacter game object variable to the next
+        //character game object in the list.
+        currentlyActiveCharacter = playerCharacters[currentIndexPos];
+        currentlyActiveGun = playerCharacters[currentIndexPos].GetComponentInChildren<P2_GunplayManager>().gameObject;
+
+        //Enabling various different components attached to the character
+        //and calling functions to update the GUI
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
+        currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
+
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
+        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
+        currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
     }
 
     private void OnCharacterKilled(Guid characterID)
@@ -63,29 +102,47 @@ public class P2_PlayerManager : MonoBehaviour
         //Check if the last character has been killed
         if (playerCharacters.Count == 0)
         {
-            GameManager.Instance.OnPlayerKilled();
+            P2_GameManager.Instance.OnPlayerKilled();
             return;
         }
 
-        foreach (GameObject character in playerCharacters)
+        if (characterID == null)
         {
-            //if (character.GetGuid == characterID)
-            //{
-            //    //Remove character from the array
-                playerCharacters.Remove(character);
-            //}
-            //else
-            //{
-            //    return;
-            //}
+            Debug.Log($"Character killed received no characterID: {characterID}");
+            return;
+        }
+
+        if (currentCharacterID == characterID)
+        {
+            RemoveCharacter(currentIndexPos);
+            
+            currentCharacterID = Guid.Empty;
+            currentIDString = string.Empty;
+            OnCharacterChanged();
+        }
+        else
+        {
+            for (int i = 0; i < playerCharacters.Count; i++)
+            {
+                Guid characterGuid = playerCharacters[i].GetComponent<P2_PlayerCharacterBase>().GetCharacterID();
+
+                if (characterGuid == characterID)
+                {
+                    GameObject character = playerCharacters[i].gameObject;
+                    playerCharacters.Remove(character);
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
     }
 
-    void Update()
+    private void RemoveCharacter(int indexPosition)
     {
-        if (P2_InputManager.Instance.PlayerChangedCharacters())
-        {
-            
-        }
+        GameObject character = playerCharacters[indexPosition];
+        playerCharacters.Remove(character);
+        Destroy(character);
     }
 }

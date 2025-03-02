@@ -1427,10 +1427,10 @@ MonoBehaviour:
           m_Value1: 16144222283311196303
         Name: Waypoints
         m_Value:
-        - {fileID: 782238899}
-        - {fileID: 190109265}
-        - {fileID: 1116607558}
-        - {fileID: 1034741917}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
     - rid: 962654849558380879
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
         ns: Unity.Behavior, asm: Unity.Behavior}
@@ -3442,37 +3442,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 218695596}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &190109265
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 190109266}
-  m_Layer: 0
-  m_Name: Test_WayPoint_2
-  m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: e0c98eeb352de49cf8020dd3eacf47d4, type: 3}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &190109266
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190109265}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.11, y: 0, z: 6.4500017}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1460984402}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &192367015
 GameObject:
@@ -17534,10 +17503,10 @@ MonoBehaviour:
           m_Value1: 16144222283311196303
         Name: Waypoints
         m_Value:
-        - {fileID: 782238899}
-        - {fileID: 190109265}
-        - {fileID: 1116607558}
-        - {fileID: 1034741917}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
     - rid: 962654849558380879
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
         ns: Unity.Behavior, asm: Unity.Behavior}
@@ -31044,37 +31013,6 @@ Transform:
   - {fileID: 798797477}
   m_Father: {fileID: 218695596}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &782238899
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 782238900}
-  m_Layer: 0
-  m_Name: Test_WayPoint_1
-  m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: e0c98eeb352de49cf8020dd3eacf47d4, type: 3}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &782238900
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782238899}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.3999996, y: 0, z: -25.63}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1460984402}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &798797476
 GameObject:
   m_ObjectHideFlags: 0
@@ -43812,37 +43750,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &1034741917
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1034741918}
-  m_Layer: 0
-  m_Name: Test_WayPoint_4
-  m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: e0c98eeb352de49cf8020dd3eacf47d4, type: 3}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1034741918
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1034741917}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.489998, y: 2.54, z: 6.4399986}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1460984402}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1047555665
 GameObject:
   m_ObjectHideFlags: 0
@@ -45444,37 +45351,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!1 &1116607558
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1116607559}
-  m_Layer: 0
-  m_Name: Test_WayPoint_3
-  m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: e0c98eeb352de49cf8020dd3eacf47d4, type: 3}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1116607559
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1116607558}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 52.520004, y: 0, z: -26.63}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1460984402}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1125257114
 Mesh:
   m_ObjectHideFlags: 0
@@ -52222,41 +52098,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
---- !u!1 &1460984401
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1460984402}
-  m_Layer: 0
-  m_Name: EnemyWalkPoints
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1460984402
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460984401}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.96, y: 4.48, z: 3.771}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 782238900}
-  - {fileID: 190109266}
-  - {fileID: 1116607559}
-  - {fileID: 1034741918}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1471208271
 GameObject:
   m_ObjectHideFlags: 0
@@ -55999,10 +55840,10 @@ MonoBehaviour:
           m_Value1: 16144222283311196303
         Name: Waypoints
         m_Value:
-        - {fileID: 782238899}
-        - {fileID: 190109265}
-        - {fileID: 1116607558}
-        - {fileID: 1034741917}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
     - rid: 962654849558380879
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
         ns: Unity.Behavior, asm: Unity.Behavior}
@@ -65258,10 +65099,10 @@ MonoBehaviour:
           m_Value1: 16144222283311196303
         Name: Waypoints
         m_Value:
-        - {fileID: 782238899}
-        - {fileID: 190109265}
-        - {fileID: 1116607558}
-        - {fileID: 1034741917}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
     - rid: 962654849558380879
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
         ns: Unity.Behavior, asm: Unity.Behavior}
@@ -67879,22 +67720,22 @@ PrefabInstance:
         type: 3}
       propertyPath: 'managedReferences[962654846156275727].m_Value.Array.data[0]'
       value: 
-      objectReference: {fileID: 782238899}
+      objectReference: {fileID: 0}
     - target: {fileID: 6689048002888153220, guid: e74b95fe5d3b16d4b83cdd6138209a01,
         type: 3}
       propertyPath: 'managedReferences[962654846156275727].m_Value.Array.data[1]'
       value: 
-      objectReference: {fileID: 190109265}
+      objectReference: {fileID: 0}
     - target: {fileID: 6689048002888153220, guid: e74b95fe5d3b16d4b83cdd6138209a01,
         type: 3}
       propertyPath: 'managedReferences[962654846156275727].m_Value.Array.data[2]'
       value: 
-      objectReference: {fileID: 1116607558}
+      objectReference: {fileID: 0}
     - target: {fileID: 6689048002888153220, guid: e74b95fe5d3b16d4b83cdd6138209a01,
         type: 3}
       propertyPath: 'managedReferences[962654846156275727].m_Value.Array.data[3]'
       value: 
-      objectReference: {fileID: 1034741917}
+      objectReference: {fileID: 0}
     - target: {fileID: 7181272964000805535, guid: e74b95fe5d3b16d4b83cdd6138209a01,
         type: 3}
       propertyPath: m_Mesh
@@ -70219,7 +70060,6 @@ SceneRoots:
   - {fileID: 472020639}
   - {fileID: 1178349294}
   - {fileID: 2823273620764394724}
-  - {fileID: 1460984402}
   - {fileID: 1931197001}
   - {fileID: 1107842413}
   - {fileID: 443466267}

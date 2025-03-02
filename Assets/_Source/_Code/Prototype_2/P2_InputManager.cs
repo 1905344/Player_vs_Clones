@@ -1,8 +1,10 @@
 using Cinemachine;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 using UnityEngine.UI;
 
 public class P2_InputManager : MonoBehaviour
@@ -19,7 +21,7 @@ public class P2_InputManager : MonoBehaviour
         }
     }
 
-    public static PlayerControls playerActions;
+    public static P2_PlayerControls playerInputActions;
     public static event Action<InputActionMap> changeActionMap;
 
     public bool isGamepad = false;
@@ -63,7 +65,10 @@ public class P2_InputManager : MonoBehaviour
     [Space(15)]
 
     [Header("Cinemachine Virtual Camera Reference")]
-    [SerializeField] CinemachineVirtualCamera vCam;
+    [SerializeField] private CinemachineVirtualCamera vCam;
+    [SerializeField] private List<CinemachineVirtualCamera> vCameras = new List<CinemachineVirtualCamera>();
+    [SerializeField] private int currentVCam = 0;
+    [SerializeField] private string getCurrentVCamString = string.Empty;
 
     [Space(10)]
 
@@ -99,17 +104,17 @@ public class P2_InputManager : MonoBehaviour
 
     public bool PlayerJumped()
     {
-        return playerActions.Player.Jump.triggered;
+        return playerInputActions.Player.Jump.triggered;
     }
 
     public Vector2 GetPlayerMovement()
     {
-        return playerActions.Player.Move.ReadValue<Vector2>();
+        return playerInputActions.Player.Move.ReadValue<Vector2>();
     }
 
     public Vector2 GetMouseDelta()
     {
-        return playerActions.Player.MouseLook.ReadValue<Vector2>();
+        return playerInputActions.Player.MouseLook.ReadValue<Vector2>();
     }
 
     public float GetMouseHorizontalSensitivity()
@@ -124,17 +129,17 @@ public class P2_InputManager : MonoBehaviour
 
     public bool PlayerPressedReload()
     {
-        return playerActions.Player.Reload.triggered;
+        return playerInputActions.Player.Reload.triggered;
     }
 
     public bool PlayerStartedMainGame()
     {
-        return playerActions.Player.StartGame.triggered;
+        return playerInputActions.Player.StartGame.triggered;
     }
 
     public bool PlayerChangedCharacters()
     {
-        return playerActions.Player.ChangeCharacter.triggered;
+        return playerInputActions.Player.ChangeCharacter.triggered;
     }
 
     public bool isPlayerSprintingThisFrame { get; private set; }
@@ -161,36 +166,46 @@ public class P2_InputManager : MonoBehaviour
             _instance = this;
         }
 
-        playerActions = new PlayerControls();
+        playerInputActions = new P2_PlayerControls();
 
         //Sprinting
-        playerActions.Player.Sprint.performed += SprintThisFrame;
-        playerActions.Player.Sprint.canceled += StopSprintingThisFrame;
+        playerInputActions.Player.Sprint.performed += SprintThisFrame;
+        playerInputActions.Player.Sprint.canceled += StopSprintingThisFrame;
 
         //Shooting/Pressing the fire button
-        playerActions.Player.Fire.started += FiringGunThisFrame;
-        playerActions.Player.Fire.performed += StopFiringGunThisFrame;
+        playerInputActions.Player.Fire.started += FiringGunThisFrame;
+        playerInputActions.Player.Fire.performed += StopFiringGunThisFrame;
 
         //Pause and Resume Game
-        playerActions.Player.PauseGame.performed += OnPause;
+        playerInputActions.Player.PauseGame.performed += OnPause;
+        playerInputActions.Player.PauseGame.performed -= OnResume;
 
-        playerActions.Player.PauseGame.performed -= OnResume;
+        playerInputActions.UI.PauseGame.performed += OnResume;
+        playerInputActions.UI.PauseGame.performed -= OnResume;
 
-        playerActions.UI.PauseGame.performed += OnResume;
-        playerActions.UI.PauseGame.performed -= OnResume;
+        //Change characters
+        playerInputActions.Player.ChangeCharacter.started += OnChangeCharacter;
+        playerInputActions.Player.ChangeCharacter.canceled -= OnChangeCharacter;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        //Event for when the player has been killed
-        GameManager.Instance.PlayerKilled += OnPlayerDeath;
-
         mouseXSensText.maxVisibleCharacters = 4;
         mouseYSensText.maxVisibleCharacters = 4;
+
+        vCam = vCameras[0];
+        getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
     }
 
     private void Start()
     {
+        //Event for when the player has been killed
+        P2_GameManager.Instance.PlayerKilled += OnPlayerDeath;
+        P2_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
+
+
+        P2_GameManager.Instance.playerCharacterKilled += RemoveCamera;
+
         SetToggleStates();
         SetMouseSensSliders();
         SetCameraFOVSlider();
@@ -198,12 +213,11 @@ public class P2_InputManager : MonoBehaviour
         ApplyMouseXSens();
         ApplyMouseYSens();
 
-        vCam.SetFocalLength(_FOV);
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("InputManager: The starting action map is: " + _currentControlScheme);
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
@@ -216,22 +230,22 @@ public class P2_InputManager : MonoBehaviour
 
     public void OnEnable()
     {
-        ToggleActionMap(playerActions.Player);
-        playerActions.Player.Enable();
+        ToggleActionMap(playerInputActions.Player);
+        playerInputActions.Player.Enable();
     }
 
     public void OnDisable()
     {
-        ToggleActionMap(playerActions.UI);
-        playerActions.Player.Disable();
-        playerActions.UI.Enable();
+        ToggleActionMap(playerInputActions.UI);
+        playerInputActions.Player.Disable();
+        playerInputActions.UI.Enable();
     }
 
     public void EnableGameInput()
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("Input Manager: game input enabled.");
         }
@@ -246,25 +260,26 @@ public class P2_InputManager : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
-        playerActions.UI.Disable();
-        ToggleActionMap(playerActions.Player);
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+        playerInputActions.UI.Disable();
+        ToggleActionMap(playerInputActions.Player);
     }
 
     public void DisableGameInput()
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("Input Manager: game input disabled.");
         }
 
         #endregion
 
-        vCam.SetCameraPOV(0, 0, mouseAcceleration, invertMouseY);
-        playerActions.Player.Disable();
-        ToggleActionMap(playerActions.UI);
+        SetCamera(0, 0, _FOV);
+        
+        playerInputActions.Player.Disable();
+        ToggleActionMap(playerInputActions.UI);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }
@@ -316,7 +331,7 @@ public class P2_InputManager : MonoBehaviour
             IsPlayerTappingTheFireButton = true;
             IsPlayerHoldingTheFireButton = false;
 
-            if (!pauseGame && GameManager.Instance.toggleDebug)
+            if (!pauseGame && P2_GameManager.Instance.enableDebug)
             {
                 Debug.Log("Player is tapping the fire gun input key.");
             }
@@ -326,7 +341,7 @@ public class P2_InputManager : MonoBehaviour
             IsPlayerHoldingTheFireButton = true;
             IsPlayerTappingTheFireButton = false;
 
-            if (!pauseGame && GameManager.Instance.toggleDebug)
+            if (!pauseGame && P2_GameManager.Instance.enableDebug)
             {
                 Debug.Log("Player is holding the fire gun input key.");
             }
@@ -340,6 +355,20 @@ public class P2_InputManager : MonoBehaviour
     }
 
     #endregion
+
+    private void OnChangeCharacter(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            P2_GameManager.Instance.OnCharacterChanged();
+            Debug.Log($"Player pressed change character input key.");
+            UpdateCamera();
+        }
+        else if (context.canceled)
+        {
+            return;
+        }
+    }
 
     #endregion
 
@@ -362,16 +391,16 @@ public class P2_InputManager : MonoBehaviour
             return;
         }
 
-        playerActions.Disable();
+        playerInputActions.Disable();
         changeActionMap?.Invoke(actionMap);
         actionMap.Enable();
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
-        {
-            Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
-        }
+        //if (P2_GameManager.Instance.enableDebug)
+        //{
+        //    Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
+        //}
 
         #endregion
     }
@@ -394,7 +423,7 @@ public class P2_InputManager : MonoBehaviour
         else
         {
             DisableGameInput();
-            GameManager.Instance.OnPause();
+            P2_GameManager.Instance.OnPause();
             pauseGame = true;
         }
     }
@@ -416,7 +445,7 @@ public class P2_InputManager : MonoBehaviour
             SetMouseSensSliders();
             SetCameraFOVSlider();
 
-            GameManager.Instance.DisablePauseUI();
+            P2_GameManager.Instance.DisablePauseUI();
             pauseGame = false;
             EnableGameInput();
         }
@@ -449,9 +478,69 @@ public class P2_InputManager : MonoBehaviour
     private void OnPlayerDeath()
     {
         isPlayerDead = true;
-        ToggleActionMap(playerActions.UI);
+        ToggleActionMap(playerInputActions.UI);
         DisableGameInput();
     }
+
+    #region Camera
+
+    private void UpdateCamera()
+    {
+        if (currentVCam >= (vCameras.Count - 1))
+        {
+            currentVCam = 0;
+        }
+        else
+        {
+            currentVCam++;
+        }
+
+        for (int i = 0;  i < vCameras.Count; i++) 
+        {
+            if (vCameras[i].gameObject.activeInHierarchy && currentVCam >= vCameras.Count)
+            {
+                currentVCam = 0;
+                getCurrentVCamString = string.Empty;
+                vCam = vCameras[0];
+            }
+
+            if (i == currentVCam)
+            {
+                string checkGuid = vCameras[i].GetComponent<P2_CameraID>().GetCameraID();
+
+                if (checkGuid == getCurrentVCamString)
+                {
+                    getCurrentVCamString = checkGuid;
+                }
+
+                vCam = vCameras[i];
+            }
+        }
+
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+    }
+
+    private void SetCamera(float mouseX, float mouseY, float setFOV)
+    {
+        vCam.SetCameraPOV(mouseX, mouseY, mouseAcceleration, invertMouseY);
+        vCam.SetFocalLength(setFOV);
+    }
+
+    public void RemoveCamera(Guid guid)
+    {
+        for (int i = 0; i < vCameras.Count; i++)
+        {
+            string cameraID = vCameras[i].GetComponent<P2_CameraID>().GetCameraID();
+            CinemachineVirtualCamera removeCamera = vCameras[i];
+
+            if (guid.ToString() == cameraID)
+            {
+                vCameras.Remove(removeCamera);
+            }
+        }
+    }
+
+    #endregion
 
     #region Settings Functions
 
@@ -480,7 +569,7 @@ public class P2_InputManager : MonoBehaviour
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("Input Manager: Mouse horizontal sensitivity has been changed to: " + mouseHorizontalSensitivity.ToString());
         }
@@ -495,7 +584,7 @@ public class P2_InputManager : MonoBehaviour
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("Input Manager: Mouse verical sensitivity has been changed to: " + mouseVerticalSensitivity.ToString());
         }
@@ -520,7 +609,7 @@ public class P2_InputManager : MonoBehaviour
 
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             if (invertMouseYToggle.isOn)
             {
@@ -547,7 +636,8 @@ public class P2_InputManager : MonoBehaviour
         if (updateFOV)
         {
             cameraFOVText.text = _FOV.ToString();
-            vCam.SetFocalLength(_FOV);
+            //vCam.SetFocalLength(_FOV);
+            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
             updateFOV = false;
 
@@ -593,7 +683,7 @@ public class P2_InputManager : MonoBehaviour
 
         #region Debugging
 
-        //if (GameManager.Instance.toggleDebug)
+        //if (P2_GameManager.Instance.enableDebug)
         //{
         //    Debug.Log("Input Manager: isPlayerSprintingThisFrame boolean is: " + isPlayerSprintingThisFrame);
         //}

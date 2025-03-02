@@ -1,90 +1,90 @@
 using System;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
+using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
+using System.Linq;
 
 public class P2_CameraManager : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] private GameObject[] cameras;
-    [SerializeField] private GameObject[] cameraIDs;
+    private static P2_CameraManager instance;
+
+    public static P2_CameraManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    [SerializeField] private List<GameObject> cameras = new List<GameObject>();
+    [SerializeField] private int currentActiveCamera = 0;
+    [SerializeField] private string currentCameraID = string.Empty;
 
     private bool changeCamera = false;
 
-    Guid currentGuid = Guid.Empty;
+    public int getCurrentActiveCamera()
+    {
+        return currentActiveCamera;
+    }
 
     #endregion
 
-    void Start()
+    void Awake()
     {
         P2_GameManager.Instance.changePlayerCharacter += OnCameraChanged;
-        P2_GameManager.Instance.changePlayerCharacter -= OnCameraChanged;
+        //P2_GameManager.Instance.changePlayerCharacter -= OnCameraChanged;
 
+        P2_GameManager.Instance.playerCharacterKilled += RemoveCamera;
+        //P2_GameManager.Instance.playerCharacterKilled -= RemoveCamera;
+
+        currentCameraID = cameras[0].GetComponent<P2_CameraID>().GetCameraID();
     }
 
-    private void OnCameraChanged(Guid cameraID)
+    private void OnCameraChanged()
     {
-        for (int i = 0; i < cameras.Length; i++)
+        cameras[currentActiveCamera].gameObject.SetActive(false);
+        currentCameraID = string.Empty;
+
+        if (currentActiveCamera >= (cameras.Count - 1))
         {
-            Guid checkGuid = cameraIDs[i].GetComponent<P2_CameraID>().GetCameraID();
-
-            if (checkGuid == cameraID)
-            {
-                //Change to the camera
-                cameras[i].SetActive(true);
-                changeCamera = true;
-
-                currentGuid = checkGuid;
-
-                //foreach (GameObject camera in cameras)
-                //{
-                //    if (camera.activeInHierarchy && checkGuid != cameraID)
-                //    {
-                //        camera.SetActive(false);
-                //    }
-                //}
-            }
-            else
-            {
-                return;
-            }
+            currentActiveCamera = 0;
+        }
+        else
+        {
+            currentActiveCamera++;
         }
 
-        
+        for (int i = 0; i < cameras.Count; i++)
+        {
+            //if (cameras[i].gameObject.activeInHierarchy)
+            //{
+            //    //cameras[currentActiveCamera].gameObject.SetActive(false);
+            //    //currentCameraID = string.Empty;
+
+            //    i++;
+            //}
+            
+            if (i == currentActiveCamera)
+            {
+                string checkGuid = cameras[i].GetComponent<P2_CameraID>().GetCameraID();
+
+                cameras[i].gameObject.SetActive(true);
+                currentCameraID = checkGuid;
+            }
+        }
     }
 
-    void Update()
+    private void RemoveCamera(Guid cameraGuid)
     {
-        //Apply camera change in update
-        //May not be needed
-        if (changeCamera)
+        if (cameraGuid == null)
         {
-            for (int i = 0; i < cameras.Length; i++)
-            {
-                Guid checkGuid = cameraIDs[i].GetComponent<P2_CameraID>().cameraID;
-
-                foreach (GameObject camera in cameras)
-                {
-                    if (!camera.activeInHierarchy && checkGuid == currentGuid)
-                    {
-                        camera.SetActive(true);
-
-                        if (camera.activeInHierarchy && checkGuid != currentGuid)
-                        {
-                            camera.SetActive(false);
-                        }
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-            }
-
-            currentGuid = Guid.Empty;
-            changeCamera = false;
+            Debug.Log($"RemoveCamera received no guid: {cameraGuid}");
+            return;
         }
+
+        GameObject camera = cameras[currentActiveCamera].gameObject;
+        cameras.Remove(camera);
     }
 }

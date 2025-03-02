@@ -1,34 +1,22 @@
 using System;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class P2_CameraID : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] public Guid cameraID;
+    public string cameraID;
 
-    public Guid GetCameraID()
+    public string GetCameraID()
     {
         return cameraID;
     }
 
     #endregion
 
-    void Start()
+    public void SetCameraID(string getID)
     {
-        
-    }
-
-    public void SetCameraID(Guid guid)
-    {
-        cameraID = guid;
-
+        cameraID = getID;
         Debug.Log($"cameraID = {cameraID}");
-    }
-
-    void Update()
-    {
-        
     }
 }
