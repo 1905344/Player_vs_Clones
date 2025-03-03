@@ -35,13 +35,9 @@ public class P2_enemyAttack : MonoBehaviour
 
     #endregion
 
-    private void Awake()
+    private void Start()
     {
         playerCharacter = P2_PlayerManager.Instance.GetCurrentlyActivePlayer().transform;
-    }
-
-    void Start()
-    {
         P2_GameManager.Instance.PlayerKilled += StopAttacking;
     }
 
@@ -88,8 +84,8 @@ public class P2_enemyAttack : MonoBehaviour
 
     void Update()
     {
-        Debug.Log($"Is Attacking{isAttacking}");
-        Debug.Log($"Stop Shooting{stopShooting}");
+        //Debug.Log($"Is Attacking{isAttacking}");
+        //Debug.Log($"Stop Shooting{stopShooting}");
 
         if (isAttacking)
         {

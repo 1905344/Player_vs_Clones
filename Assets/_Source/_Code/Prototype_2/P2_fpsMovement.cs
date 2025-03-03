@@ -17,8 +17,8 @@ public class P2_fpsMovement : MonoBehaviour
     [Header("Movement Variables")]
     [SerializeField] private Vector2 playerMovement;
     [SerializeField] private Vector3 characterMove;
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float sprintSpeed;
+    [SerializeField] public float moveSpeed;
+    [SerializeField] public float sprintSpeed;
     [SerializeField] private float movementSpeed;
     private float directionX;
     private float directionZ;
@@ -46,9 +46,9 @@ public class P2_fpsMovement : MonoBehaviour
     [SerializeField] private bool canJump;
     [SerializeField] private bool isJumping;
     [SerializeField] private bool isSprinting;
-
+    
     private string playerIDString;
-
+    
     #endregion
 
     private void Awake()
@@ -145,14 +145,16 @@ public class P2_fpsMovement : MonoBehaviour
         if (!disablePlayerMovement)
         {
             playerMovement = P2_InputManager.Instance.GetPlayerMovement();
+
             characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
+
+            //Sprinting
+            isSprinting = P2_InputManager.Instance.isPlayerSprintingThisFrame;
+            //playerMovement = P2_InputManager.Instance.GetPlayerMovement();
+            //characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
             characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
             characterMove.y = 0f;
-
-            //Sprinting
-
-            isSprinting = P2_InputManager.Instance.isPlayerSprintingThisFrame;
 
             if (isSprinting)
             {

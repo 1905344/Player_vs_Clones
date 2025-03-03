@@ -7983,7 +7983,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 2826
+  m_VersionIndex: 2829
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8385,8 +8385,8 @@ GameObject:
   - component: {fileID: 3427117234153888404}
   - component: {fileID: 4413813156276666703}
   - component: {fileID: 8577709167625079109}
-  - component: {fileID: 2850414368279560707}
-  - component: {fileID: 3277868475715833160}
+  - component: {fileID: 1620269555559267825}
+  - component: {fileID: 1249834692516511608}
   m_Layer: 8
   m_Name: P2_Enemy_Basic
   m_TagString: Enemy
@@ -8666,7 +8666,7 @@ MonoBehaviour:
           m_Value0: 3768798061069281495
           m_Value1: 2932486319052868536
         Name: Agent Enemy Attack
-        m_Value: {fileID: 3277868475715833160}
+        m_Value: {fileID: 0}
 --- !u!114 &8577709167625079109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8702,7 +8702,7 @@ MonoBehaviour:
   gameObjectUndetectedColour:
     serializedVersion: 2
     rgba: 4278190335
---- !u!114 &2850414368279560707
+--- !u!114 &1620269555559267825
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8711,27 +8711,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8561733962346435951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fec9caca3329334bafd9d2fd1aafb3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 100
---- !u!114 &3277868475715833160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8561733962346435951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d56da377700fa04391751ea232ec5c9, type: 3}
+  m_Script: {fileID: 11500000, guid: fdfc98dab4329b64ba124616f809d528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   timeBetweenAttacks: 3.3
   hasAttackedAlready: 0
   attackTimer: 0
   stopShooting: 0
-  projectile: {fileID: 1867186218399889277, guid: 03b2eb805f7c20b4683d018868bb0d9e,
+  projectile: {fileID: 4790382396757966766, guid: 222188f8dfe44ba438b22bcf71bdca05,
     type: 3}
   bulletsFired: 0
   bulletDamage: 25
@@ -8739,6 +8726,19 @@ MonoBehaviour:
   lostSightOfPlayerSFX: {fileID: 0}
   enemyInjuredSFX: {fileID: 0}
   enemyDeathSFX: {fileID: 0}
+--- !u!114 &1249834692516511608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8561733962346435951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8fdc7041928ce94fa3cef095337661a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
 --- !u!1 &8572810437000773513
 GameObject:
   m_ObjectHideFlags: 0
