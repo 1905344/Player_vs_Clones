@@ -14,6 +14,13 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     [SerializeField] private string characterIDString;
     [SerializeField] private CinemachineVirtualCamera characterCam;
     [SerializeField] private P2_CameraID cameraID;
+    [SerializeField] public string characterName;
+
+    [Header("Pushing Objects")]
+    [SerializeField] private LayerMask pushLayerMask;
+    [SerializeField] public bool canPush;
+    [SerializeField, Range(0.5f, 5f)] private float pushStrength = 1.1f;
+    [SerializeField] private float pushHeightRestriction = -0.3f;
 
     [Header("U.I. Elements")]
     [SerializeField] private TextMeshProUGUI healthText;
@@ -32,6 +39,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     [SerializeField] private bool isAlive;
 
     [SerializeField] public bool isCharacterActive = false;
+    [SerializeField] private bool characterGunEnabled;
 
     private static Guid GenerateID()
     {
@@ -46,6 +54,11 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     public string GetCharacterIDString()
     {
         return characterIDString;
+    }
+
+    public bool CharacterGunStatus()
+    {
+        return characterGunEnabled = gunScript.gameObject.activeSelf;
     }
 
     #endregion
@@ -75,6 +88,8 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         healthText.color = healthTextColour;
         updateHealthTextColour = true;
     }
+
+    #region Game Functions
 
     private void OnCharacterHit(Guid characterID, int damageAmount)
     {
@@ -147,6 +162,52 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         P2_GameManager.Instance.OnPlayerCharacterKilled(getGuid);
         Destroy(gameObject);
     }
+
+    #endregion
+
+    #region Pushing Functions
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (canPush)
+        {
+            OnRigidbodyPush(hit);
+        }
+    }
+
+    private void OnRigidbodyPush(ControllerColliderHit hit)
+    {
+        //Check if rigidbody has kinematic enabled or rigidbody is
+        //not equal to null
+        Rigidbody rb = hit.collider.attachedRigidbody;
+        
+        if (rb == null || rb.isKinematic)
+        {
+            return;
+        }
+
+        //Check the layermasks are correct
+        var rbLayerMask = 1 << rb.gameObject.layer;
+        if ((rbLayerMask & pushLayerMask.value) == 0)
+        {
+            return;
+        }
+
+        //Check to make sure there's no objects below the character
+        if (hit.moveDirection.y < pushHeightRestriction) 
+        {
+            return;
+        }
+
+        //Calculate the push direction from the move direction, 
+        //appling horizontal motion only
+        Vector3 pushDirection = new Vector3(hit.moveDirection.x, 0.0f, hit.moveDirection.z);
+
+        //Apply the push force, taking strength into account
+        rb.AddForce(pushDirection * pushStrength, ForceMode.Impulse);
+    }
+
+    #endregion
 
     void Update()
     {

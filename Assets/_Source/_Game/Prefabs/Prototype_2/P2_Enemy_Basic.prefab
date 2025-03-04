@@ -7983,7 +7983,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 2829
+  m_VersionIndex: 2832
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8384,7 +8384,7 @@ GameObject:
   - component: {fileID: 4296680581618443461}
   - component: {fileID: 3427117234153888404}
   - component: {fileID: 4413813156276666703}
-  - component: {fileID: 8577709167625079109}
+  - component: {fileID: 8601740280168173850}
   - component: {fileID: 1620269555559267825}
   - component: {fileID: 1249834692516511608}
   m_Layer: 8
@@ -8393,7 +8393,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &737308637690026905
 Transform:
   m_ObjectHideFlags: 0
@@ -8523,7 +8523,7 @@ MonoBehaviour:
   - rid: 962654849558380879
   - rid: 962654914690417034
   - rid: 962654914690417043
-  - rid: 962654936298685246
+  - rid: 974930466173879162
   - rid: 962654936298685248
   - rid: 962654936298685249
   - rid: 962654937165070968
@@ -8586,15 +8586,6 @@ MonoBehaviour:
           m_Value1: 5928917178051464179
         Name: Animator
         m_Value: {fileID: 5973613506242075403}
-    - rid: 962654936298685246
-      type: {class: 'BlackboardVariable`1[[RangeSensor, Assembly-CSharp]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 13036870930161566957
-          m_Value1: 717032650182634405
-        Name: Agent Range Sensor
-        m_Value: {fileID: 8577709167625079109}
     - rid: 962654936298685248
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
         asm: Unity.Behavior}
@@ -8667,7 +8658,16 @@ MonoBehaviour:
           m_Value1: 2932486319052868536
         Name: Agent Enemy Attack
         m_Value: {fileID: 0}
---- !u!114 &8577709167625079109
+    - rid: 974930466173879162
+      type: {class: 'BlackboardVariable`1[[P2_RangeSensor, Assembly-CSharp]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 5329623404877443075
+          m_Value1: 12179755905394738529
+        Name: Agent Range Sensor
+        m_Value: {fileID: 8601740280168173850}
+--- !u!114 &8601740280168173850
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8676,7 +8676,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8561733962346435951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 713cc5994ec2f23488421396a91ffb79, type: 3}
+  m_Script: {fileID: 11500000, guid: e99ec79987c4c784d89d3cb688b96b1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 8
@@ -8684,11 +8684,11 @@ MonoBehaviour:
   - Player
   detectionMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 18432
   detectionRangeHeight: 1.15
   showTransformDetectionRadius: 0
-  showGameObjectDetectionRadius: 1
-  showLineOfSight: 1
+  showGameObjectDetectionRadius: 0
+  showLineOfSight: 0
   gizmosRadius: 8
   transformRadiusColour:
     serializedVersion: 2

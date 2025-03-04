@@ -37,7 +37,7 @@ public class P2_enemyAttack : MonoBehaviour
 
     private void Start()
     {
-        playerCharacter = P2_PlayerManager.Instance.GetCurrentlyActivePlayer().transform;
+        //playerCharacter = P2_PlayerManager.Instance.GetCurrentlyActivePlayer().transform;
         P2_GameManager.Instance.PlayerKilled += StopAttacking;
     }
 
@@ -90,6 +90,7 @@ public class P2_enemyAttack : MonoBehaviour
         if (isAttacking)
         {
             stopShooting = false;
+            playerCharacter = P2_PlayerManager.Instance.GetCurrentlyActivePlayer().transform;
             Attacking();
         }
         else

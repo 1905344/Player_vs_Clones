@@ -163,15 +163,15 @@ MonoBehaviour:
   - rid: 962654849558380879
   - rid: 962654914690417034
   - rid: 962654914690417043
-  - rid: 962654936298685246
   - rid: 962654936298685248
   - rid: 962654936298685249
   - rid: 962654937165070968
   - rid: 962654937165070969
-  - rid: 962654941375627685
+  - rid: 974930467652632729
   - rid: 962654941375628048
   - rid: 962654941375628051
   - rid: 962654944518209739
+  - rid: 974930467652632730
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
@@ -226,15 +226,6 @@ MonoBehaviour:
           m_Value1: 5928917178051464179
         Name: Animator
         m_Value: {fileID: 1667250284482711245}
-    - rid: 962654936298685246
-      type: {class: 'BlackboardVariable`1[[RangeSensor, Assembly-CSharp]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 13036870930161566957
-          m_Value1: 717032650182634405
-        Name: Agent Range Sensor
-        m_Value: {fileID: 2584102563678778480}
     - rid: 962654936298685248
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
         asm: Unity.Behavior}
@@ -271,15 +262,6 @@ MonoBehaviour:
           m_Value1: 5669784284488491827
         Name: Attack Distance
         m_Value: 8
-    - rid: 962654941375627685
-      type: {class: 'BlackboardVariable`1[[enemyAttack, Assembly-CSharp]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 3768798061069281495
-          m_Value1: 2932486319052868536
-        Name: Agent Enemy Attack
-        m_Value: {fileID: 4302491249505299340}
     - rid: 962654941375628048
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
         asm: Unity.Behavior}
@@ -307,6 +289,24 @@ MonoBehaviour:
           m_Value1: 2107436214643711291
         Name: Navigation Distance
         m_Value: 8
+    - rid: 974930467652632729
+      type: {class: 'BlackboardVariable`1[[RangeSensor, Assembly-CSharp]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 13036870930161566957
+          m_Value1: 717032650182634405
+        Name: Agent Range Sensor
+        m_Value: {fileID: 2584102563678778480}
+    - rid: 974930467652632730
+      type: {class: 'BlackboardVariable`1[[enemyAttack, Assembly-CSharp]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 16894649764634565875
+          m_Value1: 13120155999831423188
+        Name: Enemy Attack
+        m_Value: {fileID: 4302491249505299340}
 --- !u!135 &8152914732678614134
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -353,16 +353,16 @@ MonoBehaviour:
   gizmosRadius: 8
   transformRadiusColour:
     serializedVersion: 2
-    rgba: 0
+    rgba: 4278235135
   gameObjectRadiusColour:
     serializedVersion: 2
-    rgba: 0
+    rgba: 4294639871
   gameObjectDetectedColour:
     serializedVersion: 2
-    rgba: 0
+    rgba: 4278255375
   gameObjectUndetectedColour:
     serializedVersion: 2
-    rgba: 0
+    rgba: 4278190335
 --- !u!114 &9046582865691861204
 MonoBehaviour:
   m_ObjectHideFlags: 0

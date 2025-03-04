@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SphereCollider))]
-public class RangeSensor : MonoBehaviour
+public class P2_RangeSensor : MonoBehaviour
 {
     #region Variables
 
@@ -135,7 +134,7 @@ public class RangeSensor : MonoBehaviour
         RaycastHit hit;
         Vector3 directionToTarget = target.transform.position - originPoint;
         float maxDistance = Vector3.Distance(target.transform.position, originPoint);
-        Physics.Raycast(originPoint, directionToTarget.normalized ,out hit, maxDistance * 2, detectionMask);
+        Physics.Raycast(originPoint, directionToTarget.normalized, out hit, maxDistance * 2, detectionMask);
 
         //Debug.Log("RangeSensor: " + target.transform.position);
         //Debug.DrawLine(originPoint, target.transform.position);
@@ -152,7 +151,7 @@ public class RangeSensor : MonoBehaviour
         {
             #region Debug
 
-            if (GameManager.Instance.toggleDebug)
+            if (P2_GameManager.Instance.enableDebug)
             {
                 if (showLineOfSight && this.enabled)
                 {
