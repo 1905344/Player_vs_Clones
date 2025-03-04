@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
     [Space(5)]
 
     [Header("Tutorial Screen Buttons")]
-    [SerializeField] private Button tutorialScreenReturnbutton;
+    [SerializeField] private Button tutorialScreenReturnButton;
 
     [Space(5)]
 
@@ -268,11 +268,11 @@ public class GameManager : MonoBehaviour
     private void ShowTutorialScreenFromPauseMenu()
     {
         tutorialScreen.gameObject.SetActive(true);
-        tutorialScreenReturnbutton.gameObject.SetActive(true);
+        tutorialScreenReturnButton.gameObject.SetActive(true);
 
-        tutorialScreenReturnbutton.enabled = true;
-        tutorialScreenReturnbutton.interactable = true;
-        tutorialScreenReturnbutton.gameObject.SetActive(true);
+        tutorialScreenReturnButton.enabled = true;
+        tutorialScreenReturnButton.interactable = true;
+        tutorialScreenReturnButton.gameObject.SetActive(true);
     }
 
     private void HideTutorialScreenFromPauseMenu()
@@ -566,16 +566,16 @@ public class GameManager : MonoBehaviour
 
     public void EnableReturnButtonTutorialScreen()
     {
-        tutorialScreenReturnbutton.enabled = true;
-        tutorialScreenReturnbutton.interactable = true;
-        tutorialScreenReturnbutton.gameObject.SetActive(true);
+        tutorialScreenReturnButton.enabled = true;
+        tutorialScreenReturnButton.interactable = true;
+        tutorialScreenReturnButton.gameObject.SetActive(true);
     }
 
     public void DisableReturnButtonTutorialScreen()
     {
-        tutorialScreenReturnbutton.enabled = false;
-        tutorialScreenReturnbutton.interactable = false;
-        tutorialScreenReturnbutton.gameObject.SetActive(false);
+        tutorialScreenReturnButton.enabled = false;
+        tutorialScreenReturnButton.interactable = false;
+        tutorialScreenReturnButton.gameObject.SetActive(false);
     }
 
     #endregion

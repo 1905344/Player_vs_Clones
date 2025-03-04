@@ -204,8 +204,7 @@ public class InputManager : MonoBehaviour
         ApplyMouseXSens();
         ApplyMouseYSens();
 
-        vCam.SetFocalLength(_FOV);
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
         /*if (isTestingTwoCharactersAtOnce)
         {
@@ -269,7 +268,7 @@ public class InputManager : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
         playerActions.UI.Disable();
         ToggleActionMap(playerActions.Player);
     }
@@ -290,7 +289,7 @@ public class InputManager : MonoBehaviour
 
         #endregion
 
-        vCam.SetCameraPOV(0, 0, mouseAcceleration, invertMouseY);
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
         playerActions.Player.Disable();
         ToggleActionMap(playerActions.UI);
         Cursor.visible = true;
@@ -570,14 +569,19 @@ public class InputManager : MonoBehaviour
 
     #endregion
 
+    private void SetCamera(float mouseX, float mouseY, float setFOV)
+    {
+        vCam.SetCameraPOV(mouseX, mouseY, mouseAcceleration, invertMouseY);
+        vCam.SetFocalLength(setFOV);
+    }
+
     private void Update()
     {
         #region Update the first person camera (Cinemachine virtual camera) FOV (Field Of View)
 
         if (updateFOV)
         {
-            cameraFOVText.text = _FOV.ToString();
-            vCam.SetFocalLength(_FOV);
+            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
             /*if (isTestingTwoCharactersAtOnce)
             {
@@ -589,7 +593,7 @@ public class InputManager : MonoBehaviour
 
                 #endregion
             }*/
-            
+
             updateFOV = false;
 
             #region Debug

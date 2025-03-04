@@ -6,6 +6,7 @@ public class playerGameCharacter : MonoBehaviour
     #region Variables
 
     [SerializeField] private int health;
+    private int maxHealth;
     [SerializeField] private bool isAlive;
 
     [Space(10)]
@@ -17,6 +18,10 @@ public class playerGameCharacter : MonoBehaviour
     [Header("U.I. Elements")]
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Color32 healthTextColour;
+    [SerializeField] private Color32 maxHealthColour;
+    [SerializeField] private Color32 highHealthColour;
+    [SerializeField] private Color32 middleHealthColour;
+    [SerializeField] private Color32 lowHealthColour;
     private bool updateHealthTextColour;
     private bool updateHealthText = false;
 
@@ -33,7 +38,8 @@ public class playerGameCharacter : MonoBehaviour
         GameManager.Instance.PlayerHit += OnPlayerHit;
 
         healthText.text = health.ToString() + "/100";
-        healthText.color = healthTextColour;
+        healthText.color = maxHealthColour;
+        maxHealth = health;
         updateHealthTextColour = true;
     }
 
@@ -87,25 +93,27 @@ public class playerGameCharacter : MonoBehaviour
 
     private void UpdateHealth()
     {
-        updateHealthText = true;
+        int currentHealth = (int)((double) health / (double)maxHealth * 100);
 
         #region UpdateHealthText Colour
 
-        if (health < 70 && health >= 51)
+        if (currentHealth < 70 && currentHealth >= 51)
         {
             healthTextColour = new Color(255, 205, 0, 255);
             updateHealthTextColour = true;
         }
-        else if (health < 50 && health > 25)
+        else if (currentHealth < 50 && currentHealth > 25)
         {
             healthTextColour = new Color(255, 155, 0, 255);
             updateHealthTextColour = true;
         }
-        else if (health < 25)
+        else if (currentHealth < 25)
         {
             healthTextColour = Color.red;
             updateHealthTextColour = true;
         }
+
+        updateHealthText = true;
 
         #endregion
     }

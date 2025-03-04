@@ -235,7 +235,7 @@ public class GunplayManager : MonoBehaviour
 
         if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
         {
-            #region Debugging
+            #region Debug
 
             if (GameManager.Instance.toggleDebug)
             {
@@ -333,8 +333,6 @@ public class GunplayManager : MonoBehaviour
 
             #endregion
         }
-
-
 
         #endregion
 
@@ -484,6 +482,11 @@ public class GunplayManager : MonoBehaviour
         {
             bulletsRemainingText.text = "Reloading...";
             GameManager.Instance.HideReloadPrompt();
+
+            if (GameManager.Instance.enableReloadPromptTextAsTimer)
+            {
+                GameManager.Instance.HideReloadPrompt();
+            }
         }
         else
         {
@@ -504,6 +507,10 @@ public class GunplayManager : MonoBehaviour
                 }
 
                 #endregion
+            }
+            else
+            {
+                GameManager.Instance.HideReloadPrompt();
             }
         }
 
