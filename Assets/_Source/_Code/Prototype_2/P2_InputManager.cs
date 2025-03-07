@@ -445,6 +445,7 @@ public class P2_InputManager : MonoBehaviour
             //SetToggleStates();
             SetMouseSensSliders();
             SetCameraFOVSlider();
+            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
             P2_GameManager.Instance.DisablePauseUI();
             pauseGame = false;
@@ -468,6 +469,7 @@ public class P2_InputManager : MonoBehaviour
             //SetToggleStates();
             SetMouseSensSliders();
             SetCameraFOVSlider();
+            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
             pauseGame = false;
             EnableGameInput();
@@ -637,8 +639,8 @@ public class P2_InputManager : MonoBehaviour
         if (updateFOV)
         {
             cameraFOVText.text = _FOV.ToString();
-            //vCam.SetFocalLength(_FOV);
-            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+            vCam.SetFocalLength(_FOV);
+            //SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
             updateFOV = false;
 
