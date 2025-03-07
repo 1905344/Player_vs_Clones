@@ -107,6 +107,15 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hacking"",
+                    ""type"": ""Button"",
+                    ""id"": ""73c4f8e6-f06e-4fec-b2bc-171811768e01"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -382,6 +391,17 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Change Character"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dcd53244-a279-42a5-b3fe-1984fe8a69ff"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Hacking"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1018,6 +1038,7 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
         m_Player_PauseGame = m_Player.FindAction("Pause Game", throwIfNotFound: true);
         m_Player_StartGame = m_Player.FindAction("Start Game", throwIfNotFound: true);
         m_Player_ChangeCharacter = m_Player.FindAction("Change Character", throwIfNotFound: true);
+        m_Player_Hacking = m_Player.FindAction("Hacking", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1108,6 +1129,7 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_PauseGame;
     private readonly InputAction m_Player_StartGame;
     private readonly InputAction m_Player_ChangeCharacter;
+    private readonly InputAction m_Player_Hacking;
     public struct PlayerActions
     {
         private @P2_PlayerControls m_Wrapper;
@@ -1121,6 +1143,7 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @PauseGame => m_Wrapper.m_Player_PauseGame;
         public InputAction @StartGame => m_Wrapper.m_Player_StartGame;
         public InputAction @ChangeCharacter => m_Wrapper.m_Player_ChangeCharacter;
+        public InputAction @Hacking => m_Wrapper.m_Player_Hacking;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1157,6 +1180,9 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
             @ChangeCharacter.started += instance.OnChangeCharacter;
             @ChangeCharacter.performed += instance.OnChangeCharacter;
             @ChangeCharacter.canceled += instance.OnChangeCharacter;
+            @Hacking.started += instance.OnHacking;
+            @Hacking.performed += instance.OnHacking;
+            @Hacking.canceled += instance.OnHacking;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1188,6 +1214,9 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
             @ChangeCharacter.started -= instance.OnChangeCharacter;
             @ChangeCharacter.performed -= instance.OnChangeCharacter;
             @ChangeCharacter.canceled -= instance.OnChangeCharacter;
+            @Hacking.started -= instance.OnHacking;
+            @Hacking.performed -= instance.OnHacking;
+            @Hacking.canceled -= instance.OnHacking;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1395,6 +1424,7 @@ public partial class @P2_PlayerControls: IInputActionCollection2, IDisposable
         void OnPauseGame(InputAction.CallbackContext context);
         void OnStartGame(InputAction.CallbackContext context);
         void OnChangeCharacter(InputAction.CallbackContext context);
+        void OnHacking(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

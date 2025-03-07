@@ -1,7 +1,6 @@
 using Cinemachine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -142,6 +141,11 @@ public class P2_InputManager : MonoBehaviour
         return playerInputActions.Player.ChangeCharacter.triggered;
     }
 
+    public bool PlayerPressedHackButton()
+    {
+        return playerInputActions.Player.Hacking.triggered;
+    }
+
     public bool isPlayerSprintingThisFrame { get; private set; }
 
     public bool IsPlayerHoldingTheFireButton { get; private set; }
@@ -149,9 +153,7 @@ public class P2_InputManager : MonoBehaviour
 
     public bool pauseGame = false;
 
-    //[Space(10)]
-
-    //[SerializeField] private bool isTestingTwoCharactersAtOnce = false;
+    public bool canChangeCharacter = true;
 
     #endregion
 
@@ -202,8 +204,7 @@ public class P2_InputManager : MonoBehaviour
         //Event for when the player has been killed
         P2_GameManager.Instance.PlayerKilled += OnPlayerDeath;
         P2_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
-
-
+        
         P2_GameManager.Instance.playerCharacterKilled += RemoveCamera;
 
         SetToggleStates();
@@ -358,13 +359,13 @@ public class P2_InputManager : MonoBehaviour
 
     private void OnChangeCharacter(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && canChangeCharacter)
         {
             P2_GameManager.Instance.OnCharacterChanged();
             Debug.Log($"Player pressed change character input key.");
             UpdateCamera();
         }
-        else if (context.canceled)
+        else if (context.canceled || !canChangeCharacter)
         {
             return;
         }
@@ -526,7 +527,7 @@ public class P2_InputManager : MonoBehaviour
         vCam.SetFocalLength(setFOV);
     }
 
-    public void RemoveCamera(Guid guid)
+    public void RemoveCamera(string guid)
     {
         for (int i = 0; i < vCameras.Count; i++)
         {

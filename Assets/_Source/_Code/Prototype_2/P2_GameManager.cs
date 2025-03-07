@@ -23,7 +23,7 @@ public class P2_GameManager : MonoBehaviour
     }
 
     //Events for the asymmetrical gameplay
-    public event Action<Guid, int> PlayerHit;
+    public event Action<string, int> PlayerHit;
     public event Action PlayerKilled;
     public event Action<Guid, int> EnemyHit;
 
@@ -36,7 +36,7 @@ public class P2_GameManager : MonoBehaviour
 
     //Event for switching between player characters
     public event Action changePlayerCharacter;
-    public event Action<Guid> playerCharacterKilled;
+    public event Action<string> playerCharacterKilled;
 
     [Header("Restart Scene")]
     [SerializeField] private string sceneName;
@@ -45,6 +45,8 @@ public class P2_GameManager : MonoBehaviour
 
     [Header("Level Objective")]
     [SerializeField] private string levelObjective;
+    [SerializeField] private string secondLevelObjective;
+    [SerializeField] private P2_PlayerDetector heistPlayerDetector;
 
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer = false;
@@ -57,6 +59,8 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField, Tooltip("The frequency of the tweening of the alpha value for the reload prompt text colour")] private float reloadPromptTextAlphaTime;
     private float promptTimer;
     private bool toggleReloadPromptText = false;
+
+    private bool isOneCharacterDead = false;
 
     [Space(20)]
 
@@ -174,7 +178,7 @@ public class P2_GameManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerHit(Guid characterID, int damage)
+    public void OnPlayerHit(string characterID, int damage)
     {
         if (PlayerHit != null)
         {
@@ -215,10 +219,11 @@ public class P2_GameManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerCharacterKilled(Guid characterID)
+    public void OnPlayerCharacterKilled(string characterID)
     {
         if (playerCharacterKilled != null)
         {
+            isOneCharacterDead = true;
             playerCharacterKilled(characterID);
         }
     }
@@ -559,14 +564,8 @@ public class P2_GameManager : MonoBehaviour
 
     #endregion
 
-
-    private void UpdateObjectiveText()
-    {
-        objectiveText.text = "Objective:" + "\n" + levelObjective;
-    }
-
     #endregion
-
+    
     #region Game Over Functions
 
     public void OnGameOverReturnToMainMenu()
@@ -619,6 +618,18 @@ public class P2_GameManager : MonoBehaviour
 
         reloadPromptText.gameObject.SetActive(false);
         reloadPromptText.alpha = 0.5f;
+    }
+
+    private void UpdateObjectiveText()
+    {
+        objectiveText.text = "Objective:" + "\n" + levelObjective;
+
+        if (isOneCharacterDead)
+        {
+            heistPlayerDetector.gameObject.SetActive(false);
+            objectiveText.text = $"(Optional) Objective: + \n {levelObjective} \n {secondLevelObjective}";
+        }
+
     }
 
     #endregion

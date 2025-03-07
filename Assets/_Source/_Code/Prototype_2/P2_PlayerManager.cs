@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class P2_PlayerManager : MonoBehaviour
@@ -27,17 +28,6 @@ public class P2_PlayerManager : MonoBehaviour
     [SerializeField] private int currentIndexPos = 0;
     [SerializeField] private string currentIDString = string.Empty;
 
-    [Space(10)]
-
-    //[Header("Payload Variables")]
-    //[SerializeField] private GameObject heistPayload;
-    //[SerializeField] private float distanceFromHeistPayload;
-    
-    [Space(10)]
-
-    [SerializeField] private GameObject screenDistortionWithText;
-    [SerializeField] private GameObject distanceWarningText;
-
     public int GetCurrentCharacter()
     {
         return currentIndexPos;
@@ -45,7 +35,7 @@ public class P2_PlayerManager : MonoBehaviour
 
     public GameObject GetCurrentlyActivePlayer()
     {
-        return currentlyActiveCharacter;
+        return playerCharacters[currentIndexPos].gameObject;
     }
 
     public string GetCurrentIDString()
@@ -58,10 +48,8 @@ public class P2_PlayerManager : MonoBehaviour
     void Awake()
     {
         P2_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
-
         P2_GameManager.Instance.playerCharacterKilled += OnCharacterKilled;
-        //P2_GameManager.Instance.playerCharacterKilled -= OnCharacterKilled;
-
+        
         currentIndexPos = 0;
     }
 
@@ -75,14 +63,18 @@ public class P2_PlayerManager : MonoBehaviour
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
-
+        //currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().otherHealthBar.gameObject.SetActive(false);
         currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
     }
+
+    #region Character Functions
 
     private void OnCharacterChanged()
     {
         //Disable the active character
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
+
+        //currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().otherHealthBar.gameObject.SetActive(true);
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
 
         //Disable the gun attached to the active character
@@ -111,10 +103,11 @@ public class P2_PlayerManager : MonoBehaviour
         currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
 
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
+        //currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().otherHealthBar.gameObject.SetActive(false);
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
     }
 
-    private void OnCharacterKilled(Guid characterID)
+    private void OnCharacterKilled(string characterID)
     {
         //Check if the last character has been killed
         if (playerCharacters.Count == 0)
@@ -129,135 +122,42 @@ public class P2_PlayerManager : MonoBehaviour
             return;
         }
 
-        if (currentCharacterID == characterID)
+        if (currentCharacterID.ToString() == characterID)
         {
-            RemoveCharacter(currentIndexPos);
+            //Disable the active character
+            currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
+
+            currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
             
+            //Disable the gun attached to the active character
+            if (playerCharacters[currentIndexPos].GetComponent<P2_PlayerCharacterBase>().CharacterGunStatus())
+            {
+                //Disable the gun attached to the active character
+                currentlyActiveGun.GetComponent<P2_GunplayManager>().DisableGun();
+            }
+
             currentCharacterID = Guid.Empty;
             currentIDString = string.Empty;
-            OnCharacterChanged();
-        }
-        else
-        {
-            for (int i = 0; i < playerCharacters.Count; i++)
-            {
-                Guid characterGuid = playerCharacters[i].GetComponent<P2_PlayerCharacterBase>().GetCharacterID();
 
-                if (characterGuid == characterID)
-                {
-                    GameObject character = playerCharacters[i].gameObject;
-                    playerCharacters.Remove(character);
-                }
-                else
-                {
-                    return;
-                }
+            RemoveCharacter();
+        }
+
+        for (int i = 0; i < playerCharacters.Count; i++)
+        {
+            string characterGuid = playerCharacters[i].GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
+
+            if (characterGuid == characterID)
+            {
+                GameObject character = playerCharacters[i].gameObject;
+                playerCharacters.Remove(character);
             }
         }
     }
 
-    private void RemoveCharacter(int indexPosition)
+    private void RemoveCharacter()
     {
-        GameObject character = playerCharacters[indexPosition];
-        playerCharacters.Remove(character);
-        Destroy(character);
+        playerCharacters.RemoveAt(currentIndexPos);
     }
 
-    private void Update()
-    {
-        //Vector3 currentHeistPosition = heistPayload.transform.position + Vector3.up * 1.5f;
-
-        //float distance = Vector3.Distance(currentHeistPosition, currentlyActiveCharacter.transform.position);
-
-        //Debug.DrawLine(currentHeistPosition, currentlyActiveCharacter.transform.position, Color.magenta);
-
-        //float distanceIncreasing = distanceFromHeistPayload - distance;
-        //Debug.Log($"distanceIncreasing = {distanceIncreasing}");
-
-        //float defaultPlayerMoveSpeed = currentlyActiveCharacter.GetComponent<P2_fpsMovement>().moveSpeed;
-        //float defaultPlayerSprintSpeed = currentlyActiveCharacter.GetComponent<P2_fpsMovement>().sprintSpeed;
-        //float slowPlayerMoveSpeed = currentlyActiveCharacter.GetComponent<P2_fpsMovement>().moveSpeed / 4;
-
-        //if (distance < distanceFromHeistPayload)
-        //{
-        //    screenDistortionWithText.gameObject.SetActive(false);
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().sprintSpeed = defaultPlayerSprintSpeed;
-        //}
-        //else
-        //{
-        //    if (distanceIncreasing > 0)
-        //    {
-        //        slowPlayerMoveSpeed -= Time.deltaTime;
-
-        //        if (slowPlayerMoveSpeed < 0)
-        //        {
-        //            slowPlayerMoveSpeed = 1f;
-        //        }
-        //    }
-
-        //    screenDistortionWithText.gameObject.SetActive(true);
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
-        //}
-
-        //foreach (GameObject character in playerCharacters)
-        //{
-        //    if (character != currentlyActiveCharacter)
-        //    {
-        //        if (heistPayloadRangeSensor.UpdateSensor() == character)
-        //        {
-        //            //Character out of range
-        //            //Enable some text element to let the player know which character(s) are out of range.
-        //            //OR stop the character from pushing
-
-        //            distanceWarningText.SetActive(true);
-        //        }
-        //        else
-        //        {
-        //            distanceWarningText.SetActive(false);
-        //        }
-        //    }
-        //    else 
-        //    {
-        //        if (heistPayloadRangeSensor.UpdateSensor() == currentlyActiveCharacter && heistPayloadRangeSensor.UpdateSensor() != null)
-        //        {
-        //            //float otherPlayerDistance = Vector3.Distance(currentHeistPosition, character.transform.position);
-
-        //            if (heistPayloadRangeSensor.OnDetectionPerformed(currentlyActiveCharacter) && heistPayloadRangeSensor.OnDetectionPerformed(currentlyActiveCharacter) != null 
-        //                && !heistPayloadRangeSensor.OnDetectionPerformed(character) && heistPayloadRangeSensor.OnDetectionPerformed(character) != null)
-        //            {
-        //                distanceWarningText.SetActive(true);
-        //            }
-        //            else
-        //            {
-        //                distanceWarningText.SetActive(false);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //if (!heistPayloadRangeSensor.OnDetectionPerformed(currentlyActiveCharacter) && heistPayloadRangeSensor.OnDetectionPerformed(currentlyActiveCharacter) != null)
-        //{
-        //    screenDistortionWithText.gameObject.SetActive(false);
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().sprintSpeed = defaultPlayerSprintSpeed;
-        //}
-        //else if (heistPayloadRangeSensor.OnDetectionPerformed(currentlyActiveCharacter) && heistPayloadRangeSensor.OnDetectionPerformed(currentlyActiveCharacter) != null)
-        //{
-        //    if (distanceIncreasing > 0)
-        //    {
-        //        slowPlayerMoveSpeed -= Time.deltaTime;
-
-        //        if (slowPlayerMoveSpeed < 0)
-        //        {
-        //            slowPlayerMoveSpeed = 1f;
-        //        }
-        //    }
-
-        //    screenDistortionWithText.gameObject.SetActive(true);
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
-        //    currentlyActiveCharacter.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
-        //}
-    }
+    #endregion
 }

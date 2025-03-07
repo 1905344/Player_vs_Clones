@@ -1,7 +1,9 @@
 using Cinemachine;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using UnityEngine.ProBuilder.MeshOperations;
 
 public class P2_PlayerCharacterBase : MonoBehaviour
 {
@@ -24,13 +26,19 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
     [Header("U.I. Elements")]
     [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private Color32 healthTextColour;
-    [SerializeField] private Color32 maxHealthColour;
-    [SerializeField] private Color32 upperMiddleHealthColour;
-    [SerializeField] private Color32 middleHealthColour;
-    [SerializeField] private Color32 lowHealthColour;
-    private bool updateHealthTextColour;
-    private bool updateHealthText = false;
+    [SerializeField] private P2_Healthbar hudHealthBar;
+    [SerializeField] public P2_Healthbar otherHealthBar;
+
+    //[Space(5)]
+
+    //[SerializeField] private Color32 healthTextColour;
+    //[SerializeField] private Color32 maxHealthColour;
+    //[SerializeField] private Color32 upperMiddleHealthColour;
+    //[SerializeField] private Color32 middleHealthColour;
+    //[SerializeField] private Color32 lowHealthColour;
+    //private bool updateHealthTextColour;
+    //private bool updateHealthText = false;
+    private bool updateHealth = false;
 
     [Space(10)]
 
@@ -40,6 +48,8 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
     [SerializeField] public bool isCharacterActive = false;
     [SerializeField] private bool characterGunEnabled;
+
+    public bool canHack = false;
 
     private static Guid GenerateID()
     {
@@ -70,10 +80,12 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
         moveScript = GetComponent<P2_fpsMovement>();
         characterCam = GetComponent<CinemachineVirtualCamera>();
-        
+
         isAlive = true;
-        healthTextColour = maxHealthColour;
+        //healthTextColour = maxHealthColour;
         currentHealth = maxHealth;
+
+        otherHealthBar.gameObject.SetActive(!isCharacterActive);
     }
 
     void Start()
@@ -85,13 +97,15 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         //P2_GameManager.Instance.PlayerHit -= OnCharacterHit;
 
         healthText.text = currentHealth.ToString() + "/" + maxHealth;
-        healthText.color = healthTextColour;
-        updateHealthTextColour = true;
+        hudHealthBar.SetMaxHealth(maxHealth);
+
+        //healthText.color = healthTextColour;
+        //updateHealthTextColour = true;
     }
 
     #region Game Functions
 
-    private void OnCharacterHit(Guid characterID, int damageAmount)
+    private void OnCharacterHit(string characterID, int damageAmount)
     {
         #region Debug
 
@@ -103,7 +117,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
         #endregion
 
-        if (!isAlive)
+        if (!isAlive || characterID != characterIDString)
         {
             return;
         }
@@ -125,42 +139,22 @@ public class P2_PlayerCharacterBase : MonoBehaviour
             return;
         }
 
-        healthText.text = currentHealth.ToString() + "/" + maxHealth;
-        healthText.color = healthTextColour;
-        updateHealthText = true;
-
-        #region UpdateHealthText Colour
-
-        int getHealth = (int)((double)currentHealth / (double)maxHealth * 100);
-
-        if (getHealth < 70 && getHealth >= 51)
-        {
-            healthTextColour = upperMiddleHealthColour;
-            updateHealthTextColour = true;
-        }
-        else if (getHealth < 50 && getHealth > 25)
-        {
-            healthTextColour = middleHealthColour;
-            updateHealthTextColour = true;
-        }
-        else if (getHealth < 25)
-        {
-            healthTextColour = lowHealthColour;
-            updateHealthTextColour = true;
-        }
-
-        #endregion
+        updateHealth = true;
     }
 
-    private void OnCharacterDeath(Guid getGuid)
+    private void OnCharacterDeath(string getGuid)
     {
-        if (getGuid != characterID || getGuid == null)
+        if (getGuid != characterIDString || getGuid == null)
         {
             return;
         }
 
         P2_GameManager.Instance.OnPlayerCharacterKilled(getGuid);
-        Destroy(gameObject);
+        P2_GameManager.Instance.OnCharacterChanged();
+
+        isAlive = false;
+        gameObject.SetActive(false);
+        //Destroy(characterCam);
     }
 
     #endregion
@@ -180,7 +174,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         //Check if rigidbody has kinematic enabled or rigidbody is
         //not equal to null
         Rigidbody rb = hit.collider.attachedRigidbody;
-        
+
         if (rb == null || rb.isKinematic)
         {
             return;
@@ -194,7 +188,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         }
 
         //Check to make sure there's no objects below the character
-        if (hit.moveDirection.y < pushHeightRestriction) 
+        if (hit.moveDirection.y < pushHeightRestriction)
         {
             return;
         }
@@ -213,22 +207,22 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     {
         if (isCharacterActive)
         {
-            healthText.text = currentHealth.ToString() + "/" + maxHealth;
+            hudHealthBar.SetMaxHealth(maxHealth);
+            hudHealthBar.SetCurrentHealth(currentHealth);
 
-            if (updateHealthText)
+            if (updateHealth)
             {
-                if (updateHealthTextColour)
-                {
-                    healthText.color = healthTextColour;
-                    updateHealthTextColour = false;
-                    updateHealthTextColour = false;
-                }
+                hudHealthBar.SetMaxHealth(maxHealth);
+                hudHealthBar.SetCurrentHealth(currentHealth);
             }
         }
         else
         {
-            updateHealthText = false;
-            return;
+            updateHealth = false;
         }
+
+        otherHealthBar.gameObject.SetActive(!isCharacterActive);
+        otherHealthBar.SetMaxHealth(maxHealth);
+        otherHealthBar.SetCurrentHealth(currentHealth);
     }
 }

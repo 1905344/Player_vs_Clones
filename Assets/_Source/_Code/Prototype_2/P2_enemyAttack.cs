@@ -4,7 +4,7 @@ public class P2_enemyAttack : MonoBehaviour
 {
     #region Variables
 
-    private Transform playerCharacter;
+    //private Transform playerCharacter;
 
     [Header("Attack Variables")]
     [SerializeField] public float timeBetweenAttacks;
@@ -26,6 +26,7 @@ public class P2_enemyAttack : MonoBehaviour
     [SerializeField] private AudioClip enemyInjuredSFX;
     [SerializeField] private AudioClip enemyDeathSFX;
 
+    public GameObject targetPlayer { get; set; }
     public bool isAttacking { get; set; } = false;
 
     public bool GetAtackStatus()
@@ -37,7 +38,6 @@ public class P2_enemyAttack : MonoBehaviour
 
     private void Start()
     {
-        //playerCharacter = P2_PlayerManager.Instance.GetCurrentlyActivePlayer().transform;
         P2_GameManager.Instance.PlayerKilled += StopAttacking;
     }
 
@@ -46,7 +46,10 @@ public class P2_enemyAttack : MonoBehaviour
         //Prevent enemy from moving
         //meshAgent.SetDestination(transform.position);
 
-        transform.LookAt(playerCharacter);
+        if (targetPlayer.transform != null)
+        {
+            transform.LookAt(targetPlayer.transform);
+        }
 
         Debug.Log($"hasAttackedAlready {hasAttackedAlready}");
 
@@ -57,8 +60,8 @@ public class P2_enemyAttack : MonoBehaviour
             //Attacking code - currently this is a placeholder
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 
-            rb.gameObject.GetComponent<projectileScript>().projectileID = bulletsFired;
-            rb.gameObject.GetComponent<projectileScript>().damage = bulletDamage;
+            rb.gameObject.GetComponent<P2_ProjectileScript>().projectileID = bulletsFired;
+            rb.gameObject.GetComponent<P2_ProjectileScript>().damage = bulletDamage;
 
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 2f, ForceMode.Impulse);
@@ -90,7 +93,6 @@ public class P2_enemyAttack : MonoBehaviour
         if (isAttacking)
         {
             stopShooting = false;
-            playerCharacter = P2_PlayerManager.Instance.GetCurrentlyActivePlayer().transform;
             Attacking();
         }
         else

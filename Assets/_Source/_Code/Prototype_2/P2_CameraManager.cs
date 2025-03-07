@@ -18,11 +18,9 @@ public class P2_CameraManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private List<GameObject> cameras = new List<GameObject>();
+    [SerializeField] private List<GameObject> cameras = new (3);
     [SerializeField] private int currentActiveCamera = 0;
     [SerializeField] private string currentCameraID = string.Empty;
-
-    private bool changeCamera = false;
 
     public int getCurrentActiveCamera()
     {
@@ -44,17 +42,14 @@ public class P2_CameraManager : MonoBehaviour
 
     private void OnCameraChanged()
     {
-        cameras[currentActiveCamera].gameObject.SetActive(false);
+        if (cameras[currentActiveCamera].gameObject != null)
+        {
+            cameras[currentActiveCamera].gameObject.SetActive(false);
+        }
+        
         currentCameraID = string.Empty;
-
-        if (currentActiveCamera >= (cameras.Count - 1))
-        {
-            currentActiveCamera = 0;
-        }
-        else
-        {
-            currentActiveCamera++;
-        }
+        currentActiveCamera++;
+        currentActiveCamera %= cameras.Count;
 
         for (int i = 0; i < cameras.Count; i++)
         {
@@ -76,15 +71,14 @@ public class P2_CameraManager : MonoBehaviour
         }
     }
 
-    private void RemoveCamera(Guid cameraGuid)
+    private void RemoveCamera(string cameraGuid)
     {
-        if (cameraGuid == null)
+        if (cameraGuid == null || cameraGuid != currentCameraID)
         {
             Debug.Log($"RemoveCamera received no guid: {cameraGuid}");
             return;
         }
 
-        GameObject camera = cameras[currentActiveCamera].gameObject;
-        cameras.Remove(camera);
+        cameras.Remove(cameras[currentActiveCamera].gameObject);
     }
 }

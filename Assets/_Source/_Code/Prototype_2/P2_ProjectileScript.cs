@@ -57,9 +57,16 @@ public class P2_ProjectileScript : MonoBehaviour
 
             #endregion
 
-            Guid playerID = collidedObject.GetComponent<P2_PlayerCharacterBase>().GetCharacterID();
-            //Using events
-            P2_GameManager.Instance.OnPlayerHit(playerID, damage);
+            P2_PlayerCharacterBase playerScript = null;
+            string playerID;
+
+            if (collidedObject.TryGetComponent<P2_PlayerCharacterBase>(out playerScript))
+            {
+                playerID = playerScript.GetCharacterIDString();
+                
+                //Using events
+                P2_GameManager.Instance.OnPlayerHit(playerID, damage);
+            }
 
             DestroyProjectile();
         }
