@@ -52,6 +52,18 @@ public class P2_HackableDoor : MonoBehaviour
         progressBar.maxValue = hackingTime;
     }
 
+    private void Start()
+    {
+        #region Debugging
+
+        if (alreadyHacked && P2_GameManager.Instance.enableDebug)
+        {
+            door.gameObject.SetActive(false);
+        }
+
+        #endregion
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         P2_PlayerCharacterBase playerCharacterBase = null;

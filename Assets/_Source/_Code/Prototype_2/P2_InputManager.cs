@@ -170,9 +170,6 @@ public class P2_InputManager : MonoBehaviour
 
         playerInputActions = new P2_PlayerControls();
 
-        //When the game starts
-        P2_GameManager.Instance.OnStartGame += OnEnable;
-
         //Sprinting
         playerInputActions.Player.Sprint.performed += SprintThisFrame;
         playerInputActions.Player.Sprint.canceled += StopSprintingThisFrame;
@@ -197,9 +194,6 @@ public class P2_InputManager : MonoBehaviour
 
         mouseXSensText.maxVisibleCharacters = 4;
         mouseYSensText.maxVisibleCharacters = 4;
-
-        vCam = vCameras[0];
-        getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
     }
 
     private void Start()
@@ -209,6 +203,12 @@ public class P2_InputManager : MonoBehaviour
         P2_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
         
         P2_GameManager.Instance.playerCharacterKilled += RemoveCamera;
+
+        //When the game starts
+        P2_GameManager.Instance.OnStartGame += OnEnable;
+
+        vCam = vCameras[0];
+        getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
 
         SetToggleStates();
         SetMouseSensSliders();
@@ -236,6 +236,16 @@ public class P2_InputManager : MonoBehaviour
     {
         ToggleActionMap(playerInputActions.Player);
         playerInputActions.Player.Enable();
+        updateFOV = true;
+
+        SetToggleStates();
+        SetMouseSensSliders();
+        SetCameraFOVSlider();
+
+        ApplyMouseXSens();
+        ApplyMouseYSens();
+
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
 
     public void OnDisable()

@@ -210,7 +210,6 @@ public class P2_GameManager : MonoBehaviour
         if (OnStartGame != null)
         {
             OnStartGame();
-            OnStartGameFromTutorial();
         }
     }
 
@@ -251,6 +250,8 @@ public class P2_GameManager : MonoBehaviour
 
         tutorialScreen.gameObject.SetActive(false);
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.None;
+        OnStartMainGame();
         //P2_InputManager.Instance.OnEnable();
     }
 
@@ -630,6 +631,7 @@ public class P2_GameManager : MonoBehaviour
     private void RestartScene(string name)
     {
         SceneManager.LoadSceneAsync(name);
+        Time.timeScale = 1.0f;
     }
 
     private void LoadMainMenu()
@@ -674,7 +676,6 @@ public class P2_GameManager : MonoBehaviour
             heistPlayerDetector.gameObject.SetActive(false);
             objectiveText.text = $"(Optional) Objective: + \n {levelObjective} \n {secondLevelObjective}";
         }
-
     }
 
     #endregion
