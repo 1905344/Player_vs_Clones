@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using TMPro;
 using UnityEngine;
 
@@ -22,13 +21,16 @@ public class P2_GunplayManager : MonoBehaviour
     [SerializeField] private LayerMask isGround;
     [SerializeField] private LayerMask isWall;
     [SerializeField] private LayerMask isEnvironment;
+    [SerializeField] private LayerMask isPushable;
 
     [Space(10)]
 
     [Header("Visual Feedback References")]
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHoleDecal;
-    [SerializeField] private TextMeshProUGUI bulletsRemainingText;
+    [SerializeField] private P2_AmmoHudBar ammoHudBar;
+    [SerializeField] private TextMeshProUGUI reloadingText;
+    private bool updateHUD = false;
     //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
@@ -137,7 +139,9 @@ public class P2_GunplayManager : MonoBehaviour
         bulletsRemaining = magazineClipSize;
         canShoot = true;
 
-        bulletsRemainingText.gameObject.SetActive(true);
+        ammoHudBar.gameObject.SetActive(true);
+        ammoHudBar.SetMaxAmmo(magazineClipSize);
+        ammoHudBar.SetCurrentAmmo(bulletsRemaining);
         updateGunPosition = true;
     }
 
@@ -158,15 +162,16 @@ public class P2_GunplayManager : MonoBehaviour
             rightHand.gameObject.SetActive(true);
         }
 
-        bulletsRemainingText.gameObject.SetActive(true);
-        bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
+        ammoHudBar.gameObject.SetActive(true);
+        ammoHudBar.SetMaxAmmo(magazineClipSize);
+        ammoHudBar.SetCurrentAmmo(bulletsRemaining);
     }
 
     public void DisableGun()
     {
         isActiveGun = false;
         canShoot = false;
-        bulletsRemainingText.gameObject.SetActive(false);
+        ammoHudBar.gameObject.SetActive(false);
 
         Debug.Log("P2_GunplayManager: Disabling the gun!");
     }
@@ -338,6 +343,21 @@ public class P2_GunplayManager : MonoBehaviour
 
             #endregion
         }
+        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isPushable))
+        {
+            bulletHoleDecalSpawnLocation = _raycastHit.point;
+
+            spawnBulletDecal = true;
+
+            #region Debug
+
+            if (P2_GameManager.Instance.enableDebug)
+            {
+                Debug.Log("P2_GunplayManager: Hit the heist object. Spawning a bullet decal.");
+            }
+
+            #endregion
+        }
 
         #endregion
 
@@ -372,6 +392,7 @@ public class P2_GunplayManager : MonoBehaviour
 
         #endregion
 
+        updateHUD = true;
         bulletsRemaining--;
         bulletsFired++;
 
@@ -492,13 +513,24 @@ public class P2_GunplayManager : MonoBehaviour
 
             #endregion
 
+            #region Update Ammo HUD 
+
+            if (updateHUD)
+            {
+                ammoHudBar.SetCurrentAmmo(bulletsRemaining);
+                updateHUD = false;
+            }
+
+            #endregion
+
             #region Reloading
 
             if (isReloading)
             {
                 reloadingTimer += Time.deltaTime;
 
-                bulletsRemainingText.text = "Reloading...";
+                reloadingText.gameObject.SetActive(true);
+                reloadingText.text = "Reloading";
 
                 if (P2_GameManager.Instance.enableReloadPromptTextAsTimer)
                 {
@@ -507,7 +539,8 @@ public class P2_GunplayManager : MonoBehaviour
             }
             else
             {
-                bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
+                reloadingText.gameObject.SetActive(false);
+                ammoHudBar.SetCurrentAmmo(bulletsRemaining);
             }
 
             if (isShooting && !isReloading && bulletsRemaining == 0 && canShoot)

@@ -1,9 +1,6 @@
 using Cinemachine;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.ProBuilder.MeshOperations;
 
 public class P2_PlayerCharacterBase : MonoBehaviour
 {
@@ -25,19 +22,8 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     [SerializeField] private float pushHeightRestriction = -0.3f;
 
     [Header("U.I. Elements")]
-    [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private P2_Healthbar hudHealthBar;
     [SerializeField] public P2_Healthbar otherHealthBar;
-
-    //[Space(5)]
-
-    //[SerializeField] private Color32 healthTextColour;
-    //[SerializeField] private Color32 maxHealthColour;
-    //[SerializeField] private Color32 upperMiddleHealthColour;
-    //[SerializeField] private Color32 middleHealthColour;
-    //[SerializeField] private Color32 lowHealthColour;
-    //private bool updateHealthTextColour;
-    //private bool updateHealthText = false;
     private bool updateHealth = false;
 
     [Space(10)]
@@ -82,7 +68,6 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         characterCam = GetComponent<CinemachineVirtualCamera>();
 
         isAlive = true;
-        //healthTextColour = maxHealthColour;
         currentHealth = maxHealth;
 
         otherHealthBar.gameObject.SetActive(!isCharacterActive);
@@ -92,15 +77,9 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     {
         cameraID.SetCameraID(characterIDString);
         moveScript.SetIDString(characterIDString);
-
-        P2_GameManager.Instance.PlayerHit += OnCharacterHit;
-        //P2_GameManager.Instance.PlayerHit -= OnCharacterHit;
-
-        healthText.text = currentHealth.ToString() + "/" + maxHealth;
         hudHealthBar.SetMaxHealth(maxHealth);
 
-        //healthText.color = healthTextColour;
-        //updateHealthTextColour = true;
+        P2_GameManager.Instance.PlayerHit += OnCharacterHit;
     }
 
     #region Game Functions
@@ -154,7 +133,6 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
         isAlive = false;
         gameObject.SetActive(false);
-        //Destroy(characterCam);
     }
 
     #endregion

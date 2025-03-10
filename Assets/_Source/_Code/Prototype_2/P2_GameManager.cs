@@ -66,18 +66,24 @@ public class P2_GameManager : MonoBehaviour
 
     [Header("U.I. Elements")]
     [SerializeField] TextMeshProUGUI reloadPromptText;
+    [SerializeField] TextMeshProUGUI pauseTitleText;
 
     [Space(5)]
 
+    [Header("Screen References")]
     [SerializeField] Transform tutorialScreen;
     [SerializeField] Transform pauseScreen;
+    [SerializeField] Transform controlsScreen;
     [SerializeField] Transform settingsScreen;
     //[SerializeField] Transform quitPromptScreen;
     [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI pauseTitleText;
+    [Header("Tutorial Screen Buttons")]
+    [SerializeField] Button tutorialStartGame;
+    [SerializeField] Button tutorialQuitGame;
+    [SerializeField] Button tutorialScreenReturnButton;
 
     [Space(5)]
 
@@ -85,19 +91,10 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField] Button resumeFromPauseMenuButton;
     [SerializeField] Button restartFromPauseMenuButton;
     [SerializeField] Button tutorialPauseMenuButton;
+    [SerializeField] Button controlsPauseMenuButton;
     [SerializeField] Button settingsPauseMenuButton;
     [SerializeField] Button quitFromPauseMenuButton;
 
-    [Space(5)]
-
-    [Header("Tutorial Screen Buttons")]
-    [SerializeField] Button tutorialStartGame;
-    [SerializeField] Button tutorialQuitGame;
-
-    [Space(5)]
-
-    [Header("Tutorial Screen Buttons")]
-    [SerializeField] private Button tutorialScreenReturnButton;
 
     [Space(5)]
 
@@ -111,6 +108,7 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField] Slider mouseYSensitivitySlider;
 
     [Space(5)]
+
     [SerializeField] TextMeshProUGUI fovText;
     [SerializeField] TextMeshProUGUI mouseXSensitivityText;
     [SerializeField] TextMeshProUGUI mouseYSensitivityText;
@@ -121,6 +119,11 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField] Toggle invertMouseY;
     [SerializeField] Toggle mouseAcceleration;
     [SerializeField] Toggle promptForReloadToggle;
+
+    [Space(5)]
+
+    [Header("Controls Screen")]
+    [SerializeField] Button returnFromControlsPageButton;
 
     [Space(5)]
 
@@ -319,6 +322,10 @@ public class P2_GameManager : MonoBehaviour
         tutorialPauseMenuButton.interactable = true;
         tutorialPauseMenuButton.gameObject.SetActive(true);
 
+        controlsPauseMenuButton.enabled = true;
+        controlsPauseMenuButton.interactable = true;
+        controlsPauseMenuButton.gameObject.SetActive(true);
+
         settingsPauseMenuButton.enabled = true;
         settingsPauseMenuButton.interactable = true;
         settingsPauseMenuButton.gameObject.SetActive(true);
@@ -344,6 +351,10 @@ public class P2_GameManager : MonoBehaviour
         tutorialPauseMenuButton.enabled = false;
         tutorialPauseMenuButton.interactable = false;
         tutorialPauseMenuButton.gameObject.SetActive(false);
+
+        controlsPauseMenuButton.enabled = false;
+        controlsPauseMenuButton.interactable = false;
+        controlsPauseMenuButton.gameObject.SetActive(false);
 
         settingsPauseMenuButton.enabled = false;
         settingsPauseMenuButton.interactable = false;
@@ -564,8 +575,42 @@ public class P2_GameManager : MonoBehaviour
 
     #endregion
 
+    #region Controls Page Functions
+
+    private void EnableControlsPage()
+    {
+        returnFromControlsPageButton.interactable = true;
+        returnFromControlsPageButton.enabled = true;
+        returnFromControlsPageButton.gameObject.SetActive(true);
+
+        controlsScreen.gameObject.SetActive(true);
+    }
+
+    private void DisableControlsPage()
+    {
+        returnFromControlsPageButton.interactable = false;
+        returnFromControlsPageButton.enabled = false;
+        returnFromControlsPageButton.gameObject.SetActive(false);
+
+        controlsScreen.gameObject.SetActive(false);
+    }
+
+    public void OnControlsButtonPressed() 
+    {
+        EnableControlsPage();
+        DisablePauseButtons();
+    }
+
+    public void OnControlsPageReturnButtonPressed()
+    {
+        DisableControlsPage();
+        EnablePauseButtons();
+    }
+
     #endregion
-    
+
+    #endregion
+
     #region Game Over Functions
 
     public void OnGameOverReturnToMainMenu()

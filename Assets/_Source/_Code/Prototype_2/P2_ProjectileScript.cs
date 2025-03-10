@@ -33,7 +33,7 @@ public class P2_ProjectileScript : MonoBehaviour
     {
         GameObject collidedObject = collision.collider.gameObject;
 
-        if (collidedObject.CompareTag("Wall") || collidedObject.CompareTag("Ground") || collidedObject.CompareTag("Environment"))
+        if (collidedObject.CompareTag("Wall") || collidedObject.CompareTag("Ground") || collidedObject.CompareTag("Environment") || collidedObject.CompareTag("Pushable"))
         {
             DestroyProjectile();
 
@@ -46,7 +46,7 @@ public class P2_ProjectileScript : MonoBehaviour
 
             #endregion
         }
-        else if (collidedObject.CompareTag("Player"))
+        else if (collidedObject.CompareTag("Player") || collidedObject.CompareTag("PlayerOther"))
         {
             #region Debug
 

@@ -65,6 +65,8 @@ public class P2_fpsMovement : MonoBehaviour
         //P2_GameManager.Instance.OnStartGame += EnablePlayerMovement;
         P2_GameManager.Instance.PlayerKilled += DisablePlayerMovement;
 
+        P2_GameManager.Instance.changePlayerCharacter += ResetRotation;
+
         if (disablePlayerMovement)
         {
             DisablePlayerMovement();
@@ -96,24 +98,9 @@ public class P2_fpsMovement : MonoBehaviour
         playerIDString = idString;
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    private void ResetRotation()
     {
-        //Push a smaller object
-        /*if (hit.moveDirection.y < -0.3)
-        {
-            return;
-        }
-
-        Vector3 pushDireciton = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
-        characterRigidBody.linearVelocity = pushDireciton * collisionPushStrength;*/
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        /*if (other.tag == "")
-        {
-            //Do something
-        }*/
+        characterBodyObject.transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 
     private void Update()

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Threading;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(BoxCollider))]
 public class P2_HackableDoor : MonoBehaviour
@@ -22,7 +23,8 @@ public class P2_HackableDoor : MonoBehaviour
     [Header("U.I.")]
     [SerializeField] private GameObject hackingScreen;
     [SerializeField] private TextMeshProUGUI hackScreenText;
-    [SerializeField] private TextMeshProUGUI doorText;
+    [SerializeField] private TextMeshProUGUI frontText;
+    [SerializeField] private TextMeshProUGUI backText;
 
     [Space(5)]
 
@@ -44,7 +46,10 @@ public class P2_HackableDoor : MonoBehaviour
 
     private void Awake()
     {
-        doorText.text = defaultText;
+        frontText.text = defaultText;
+        backText.text = defaultText;
+
+        progressBar.maxValue = hackingTime;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -57,12 +62,14 @@ public class P2_HackableDoor : MonoBehaviour
             {
                 characterMoveScript = other.gameObject.GetComponent<P2_fpsMovement>();
 
-                doorText.text = promptText;
+                frontText.text = promptText;
+                backText.text = promptText;
                 canHack = true;
             }
             else
             {
-                doorText.text = defaultText;
+                frontText.text = defaultText;
+                backText.text = defaultText;
                 canHack = false;
                 return;
             }
@@ -76,9 +83,45 @@ public class P2_HackableDoor : MonoBehaviour
         {
             if (!alreadyHacked)
             {
-                doorText.text = defaultText;
+                frontText.text = defaultText;
+                backText.text = defaultText;
             }
         }
+    }
+
+    private void OnHacking()
+    {
+        hackingScreen.gameObject.SetActive(true);
+        characterMoveScript.DisablePlayerMovement();
+
+        progressBar.value = hackingTimer;
+        progressBarFill.color = fillGradient.Evaluate(progressBar.normalizedValue);
+    }
+
+    private void StopHacking()
+    {
+        isHacking = false;
+        hackingTimer = 0f;
+        hackingScreen.gameObject.SetActive(false);
+
+        frontText.text = defaultText;
+        backText.text = defaultText;
+
+        characterMoveScript.EnablePlayerMovement();
+    }
+
+    private void FinishedHacking()
+    {
+        characterMoveScript.EnablePlayerMovement();
+        hackingScreen.gameObject.SetActive(false);
+        frontText.gameObject.SetActive(false);
+        backText.gameObject.SetActive(false);
+        door.gameObject.SetActive(false);
+
+        hackingTimer = 0f;
+        isHacking = false;
+        alreadyHacked = true;
+        canHack = false;
     }
 
     private void Update()
@@ -96,40 +139,19 @@ public class P2_HackableDoor : MonoBehaviour
             }
             else if ((P2_InputManager.Instance.PlayerPressedHackButton() || P2_InputManager.Instance.PlayerChangedCharacters()) && isHacking)
             {
-                isHacking = false;
-                hackingTimer = 0f;
-
-                hackingScreen.gameObject.SetActive(false);
-                doorText.text = defaultText;
-
-                characterMoveScript.EnablePlayerMovement();
+                StopHacking();
             }
 
             if (isHacking)
             {
                 hackingTimer += Time.deltaTime;
 
-                hackingScreen.gameObject.SetActive(true);
-                characterMoveScript.DisablePlayerMovement();
-
-                float progress = Mathf.Clamp(hackingTimer, 0f, hackingTime);
-                progressBar.value = progress;
-                progressBarFill.color = fillGradient.Evaluate(progressBar.normalizedValue);
+                OnHacking();
             }
 
             if (hackingTimer >= hackingTime)
             {
-                characterMoveScript.EnablePlayerMovement();
-                hackingScreen.gameObject.SetActive(false);
-                doorText.gameObject.SetActive(false);
-                door.gameObject.SetActive(false);
-
-                alreadyHacked = true;
-
-
-                hackingTimer = 0f;
-                isHacking = false;
-                canHack = false;
+                FinishedHacking();
             }
         }
     }

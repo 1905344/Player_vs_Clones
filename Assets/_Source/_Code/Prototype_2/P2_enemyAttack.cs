@@ -43,9 +43,6 @@ public class P2_enemyAttack : MonoBehaviour
 
     private void Attacking()
     {
-        //Prevent enemy from moving
-        //meshAgent.SetDestination(transform.position);
-
         if (targetPlayer.transform != null)
         {
             transform.LookAt(targetPlayer.transform);
@@ -57,7 +54,6 @@ public class P2_enemyAttack : MonoBehaviour
         {
             bulletsFired++;
 
-            //Attacking code - currently this is a placeholder
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 
             rb.gameObject.GetComponent<P2_ProjectileScript>().projectileID = bulletsFired;
@@ -79,8 +75,6 @@ public class P2_enemyAttack : MonoBehaviour
     {
         stopShooting = true;
         hasAttackedAlready = true;
-        //timeBetweenAttacks = 9999f;
-
         isAttacking = false;
     }
 

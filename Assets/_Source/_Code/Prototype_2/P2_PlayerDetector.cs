@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,11 +8,11 @@ public class P2_PlayerDetector : MonoBehaviour
     #region Variables
 
     [Header("Detection Settings")]
-    [SerializeField] private float detectionRadius = 10f;
+    [SerializeField] private float detectionRadius;
     [SerializeField] private List<GameObject> playerCharacters = new(3);
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private float detectionHeight = 2f;
-    private SphereCollider _sphereCollider;
+    [SerializeField] private SphereCollider _sphereCollider;
 
     [Space(5)]
 
@@ -38,22 +39,20 @@ public class P2_PlayerDetector : MonoBehaviour
 
     [SerializeField] private List<GameObject> playersInRange = new(3);
     [SerializeField] private List<GameObject> playersOutOfRange = new(3);
-    
+
     #endregion
+
+    private void Awake()
+    {
+        _sphereCollider.radius = detectionRadius;
+        gizmosRadius = detectionRadius;
+    }
 
     private void Start()
     {
         P2_GameManager.Instance.changePlayerCharacter += UpdateActiveCharacter;
-        //P2_GameManager.Instance.changePlayerCharacter -= UpdateActiveCharacter;
-
         P2_GameManager.Instance.playerCharacterKilled += RemoveCharacter;
-        //P2_GameManager.Instance.playerCharacterKilled -= RemoveCharacter;
 
-        _sphereCollider = GetComponent<SphereCollider>();
-        _sphereCollider.isTrigger = true;
-        _sphereCollider.radius = detectionRadius;
-
-        gizmosRadius = _sphereCollider.radius;
         activePlayer = playerCharacters[0];
     }
 
@@ -114,11 +113,37 @@ public class P2_PlayerDetector : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        P2_PlayerCharacterBase playerCharacterBase = null;
+    #region OnTriggerEnter and OnTriggerExit
 
-        if (other.gameObject.TryGetComponent<P2_PlayerCharacterBase>(out playerCharacterBase))
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    P2_PlayerCharacterBase playerCharacterBaseScript = null;
+
+    //    if (other.gameObject.TryGetComponent<P2_PlayerCharacterBase>(out playerCharacterBaseScript))
+    //    {
+    //        if (!playersInRange.Contains(other.gameObject))
+    //        {
+    //            playersInRange.Add(other.gameObject);
+    //        }
+
+    //        if (playersOutOfRange.Contains(other.gameObject))
+    //        {
+    //            playersOutOfRange.Remove(other.gameObject);
+    //        }
+
+    //        if (playersOutOfRange.Count == 0)
+    //        {
+    //            warningScreen.gameObject.SetActive(false);
+    //        }
+
+    //        //Allow the player from switching characters
+    //        P2_InputManager.Instance.canChangeCharacter = true;
+    //    }
+    //}
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
             if (!playersInRange.Contains(other.gameObject))
             {
@@ -146,7 +171,7 @@ public class P2_PlayerDetector : MonoBehaviour
 
         if (other.gameObject.TryGetComponent<P2_PlayerCharacterBase>(out playerCharacterBase))
         {
-            if (!playersOutOfRange.Contains(other.gameObject)) 
+            if (!playersOutOfRange.Contains(other.gameObject))
             {
                 playersOutOfRange.Add(other.gameObject);
             }
@@ -166,6 +191,8 @@ public class P2_PlayerDetector : MonoBehaviour
         }
     }
 
+    #endregion
+
     private void Update()
     {
         #region Debug
@@ -173,62 +200,63 @@ public class P2_PlayerDetector : MonoBehaviour
         //Debug.Log($"Players in range: {playersInRange.Count}");
         //Debug.Log($"Players out of range: {playersOutOfRange.Count}");
 
-        if (P2_GameManager.Instance.enableDebug)
-        {
-            _sphereCollider.radius = detectionRadius;
-        }
+        //if (P2_GameManager.Instance.enableDebug)
+        //{
+        //    _sphereCollider.radius = detectionRadius;
+        //}
 
         #endregion
 
         #region Apply Changes to the Active Player
-        //Vector3 originPoint = transform.position + Vector3.up * detectionHeight;
-        //float maxDistance = Vector3.Distance(activePlayer.transform.position, originPoint);
-        //float distanceIncreasing = detectionRadius - maxDistance;
 
-        //float defaultPlayerMoveSpeed = 12f;
-        //float defaultPlayerSprintSpeed = 28f;
-        //float slowPlayerMoveSpeed = activePlayer.GetComponent<P2_fpsMovement>().moveSpeed / 4;
+        Vector3 originPoint = transform.position + Vector3.up * detectionHeight;
+        float maxDistance = Vector3.Distance(activePlayer.transform.position, originPoint);
+        float distanceIncreasing = detectionRadius - maxDistance;
+
+        float defaultPlayerMoveSpeed = 12f;
+        float defaultPlayerSprintSpeed = 28f;
+        float slowPlayerMoveSpeed = 8f;
 
         //Apply changes to the active player only
         if (playersInRange.Contains(activePlayer.gameObject))
         {
-            float defaultPlayerMoveSpeed = 12f;
-            float defaultPlayerSprintSpeed = 28f;
+            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "M")
+            {
+                activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = true;
+            }
 
             activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
             activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = defaultPlayerSprintSpeed;
         }
         else
         {
-            Vector3 originPoint = transform.position + Vector3.up * detectionHeight;
-            float maxDistance = Vector3.Distance(activePlayer.transform.position, originPoint);
-            float distanceIncreasing = detectionRadius - maxDistance;
-            float slowPlayerMoveSpeed = activePlayer.GetComponent<P2_fpsMovement>().moveSpeed / 4;
-
-            float standardMoveSpeed = 12f;
-
-            if (distanceIncreasing > 0)
+            if (distanceIncreasing < 0)
             {
                 slowPlayerMoveSpeed -= Time.deltaTime;
 
-                if (slowPlayerMoveSpeed <= 5f)
+                if (slowPlayerMoveSpeed <= 2f)
                 {
-                    slowPlayerMoveSpeed = 4.5f;
+                    slowPlayerMoveSpeed = 2.15f;
                 }
             }
             else
             {
                 slowPlayerMoveSpeed += Time.deltaTime;
 
-                if (slowPlayerMoveSpeed >= standardMoveSpeed)
+                if (slowPlayerMoveSpeed >= defaultPlayerMoveSpeed)
                 {
                     slowPlayerMoveSpeed = 0f;
-                    activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = standardMoveSpeed;
+                    activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
                 }
             }
 
             activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
             activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
+
+            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "M")
+            {
+                activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = false;
+            }
         }
 
         #endregion
@@ -245,16 +273,10 @@ public class P2_PlayerDetector : MonoBehaviour
 
         foreach (GameObject character in playersOutOfRange)
         {
-            float slowerPlayerMoveSpeed = activePlayer.GetComponent<P2_fpsMovement>().moveSpeed / 4;
-
             //Apply changes to all characters out of range
             P2_PlayerCharacterBase playerScript = character.GetComponent<P2_PlayerCharacterBase>();
 
             warningText.text += $"Player {playerScript.characterName} out of range.\n";
-            
-            //playerScript.canPush = false;
-            activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowerPlayerMoveSpeed;
-            activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
         }
 
         #endregion
