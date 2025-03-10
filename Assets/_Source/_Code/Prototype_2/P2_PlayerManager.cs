@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class P2_PlayerManager : MonoBehaviour
@@ -47,6 +46,7 @@ public class P2_PlayerManager : MonoBehaviour
 
     void Awake()
     {
+        P2_GameManager.Instance.OnStartGame += GameStarted;
         P2_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
         P2_GameManager.Instance.playerCharacterKilled += OnCharacterKilled;
         
@@ -63,7 +63,20 @@ public class P2_PlayerManager : MonoBehaviour
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
-        //currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().otherHealthBar.gameObject.SetActive(false);
+        currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
+    }
+
+    //This function could be removed.
+    private void GameStarted()
+    {
+        currentlyActiveCharacter = playerCharacters[0].gameObject;
+        currentCharacterID = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterID();
+        currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
+        currentlyActiveGun = playerCharacters[0].GetComponentInChildren<P2_GunplayManager>().gameObject;
+
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
+        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
+        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
         currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
     }
 

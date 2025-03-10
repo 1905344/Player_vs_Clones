@@ -7,8 +7,7 @@ using UnityEngine.UI;
 
 public class P2_GameManager : MonoBehaviour
 {
-    //This script will check the relevant player behaviours to then 
-    //set the states for the finite state machine / A.I.
+    //This script manages all of the gameplay events and U.I. functions
 
     #region Variables
 
@@ -211,6 +210,7 @@ public class P2_GameManager : MonoBehaviour
         if (OnStartGame != null)
         {
             OnStartGame();
+            OnStartGameFromTutorial();
         }
     }
 
@@ -251,7 +251,7 @@ public class P2_GameManager : MonoBehaviour
 
         tutorialScreen.gameObject.SetActive(false);
         Cursor.visible = false;
-        P2_InputManager.Instance.OnEnable();
+        //P2_InputManager.Instance.OnEnable();
     }
 
     private void ShowTutorial()

@@ -32,10 +32,7 @@ public class P2_CameraManager : MonoBehaviour
     void Awake()
     {
         P2_GameManager.Instance.changePlayerCharacter += OnCameraChanged;
-        //P2_GameManager.Instance.changePlayerCharacter -= OnCameraChanged;
-
         P2_GameManager.Instance.playerCharacterKilled += RemoveCamera;
-        //P2_GameManager.Instance.playerCharacterKilled -= RemoveCamera;
 
         currentCameraID = cameras[0].GetComponent<P2_CameraID>().GetCameraID();
     }
@@ -53,14 +50,6 @@ public class P2_CameraManager : MonoBehaviour
 
         for (int i = 0; i < cameras.Count; i++)
         {
-            //if (cameras[i].gameObject.activeInHierarchy)
-            //{
-            //    //cameras[currentActiveCamera].gameObject.SetActive(false);
-            //    //currentCameraID = string.Empty;
-
-            //    i++;
-            //}
-            
             if (i == currentActiveCamera)
             {
                 string checkGuid = cameras[i].GetComponent<P2_CameraID>().GetCameraID();

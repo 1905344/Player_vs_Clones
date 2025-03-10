@@ -170,6 +170,9 @@ public class P2_InputManager : MonoBehaviour
 
         playerInputActions = new P2_PlayerControls();
 
+        //When the game starts
+        P2_GameManager.Instance.OnStartGame += OnEnable;
+
         //Sprinting
         playerInputActions.Player.Sprint.performed += SprintThisFrame;
         playerInputActions.Player.Sprint.canceled += StopSprintingThisFrame;
