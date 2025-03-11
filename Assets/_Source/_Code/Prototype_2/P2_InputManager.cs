@@ -237,15 +237,6 @@ public class P2_InputManager : MonoBehaviour
         ToggleActionMap(playerInputActions.Player);
         playerInputActions.Player.Enable();
         updateFOV = true;
-
-        SetToggleStates();
-        SetMouseSensSliders();
-        SetCameraFOVSlider();
-
-        ApplyMouseXSens();
-        ApplyMouseYSens();
-
-        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
 
     public void OnDisable()

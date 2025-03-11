@@ -10,8 +10,9 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     private Guid characterID;
     [SerializeField] private P2_fpsMovement moveScript;
     [SerializeField] private P2_GunplayManager gunScript;
-    [SerializeField] private string characterIDString;
+    [SerializeField] private GameObject playerCanvas;
     [SerializeField] private CinemachineVirtualCamera characterCam;
+    [SerializeField] private string characterIDString;
     [SerializeField] private P2_CameraID cameraID;
     [SerializeField] public string characterName;
 
@@ -63,9 +64,6 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     {
         characterID = GenerateID();
         characterIDString = characterID.ToString();
-
-        moveScript = GetComponent<P2_fpsMovement>();
-        characterCam = GetComponent<CinemachineVirtualCamera>();
 
         isAlive = true;
         currentHealth = maxHealth;
@@ -199,6 +197,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
             updateHealth = false;
         }
 
+        playerCanvas.SetActive(!isCharacterActive);
         otherHealthBar.gameObject.SetActive(!isCharacterActive);
         otherHealthBar.SetMaxHealth(maxHealth);
         otherHealthBar.SetCurrentHealth(currentHealth);

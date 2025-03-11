@@ -54,11 +54,13 @@ public class P2_HackableDoor : MonoBehaviour
 
     private void Start()
     {
-        #region Debugging
+        #region Debug
 
         if (alreadyHacked && P2_GameManager.Instance.enableDebug)
         {
             door.gameObject.SetActive(false);
+            frontText.gameObject.SetActive(false);
+            backText.gameObject.SetActive(false);
         }
 
         #endregion
@@ -147,7 +149,7 @@ public class P2_HackableDoor : MonoBehaviour
                 hackScreenText.text = duringHackingText;
                 isHacking = true;
 
-                characterMoveScript.DisablePlayerMovement();
+                //characterMoveScript.DisablePlayerMovement();
             }
             else if ((P2_InputManager.Instance.PlayerPressedHackButton() || P2_InputManager.Instance.PlayerChangedCharacters()) && isHacking)
             {

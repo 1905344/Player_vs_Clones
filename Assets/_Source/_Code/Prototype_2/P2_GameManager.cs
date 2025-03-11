@@ -673,7 +673,7 @@ public class P2_GameManager : MonoBehaviour
 
         if (isOneCharacterDead)
         {
-            heistPlayerDetector.gameObject.SetActive(false);
+            heistPlayerDetector.detectionRadius = 999f;
             objectiveText.text = $"(Optional) Objective: + \n {levelObjective} \n {secondLevelObjective}";
         }
     }

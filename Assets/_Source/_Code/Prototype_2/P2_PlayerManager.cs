@@ -158,19 +158,19 @@ public class P2_PlayerManager : MonoBehaviour
         playerCharacters.RemoveAt(currentIndexPos);
     }
 
-    private void Update()
-    {
-        for (int i = 0; i < playerCharacters.Count; i++)
-        {
-            if (i != currentIndexPos)
-            {
-                foreach (GameObject character in playerCharacters)
-                {
-                    character.transform.LookAt(playerCharacters[currentIndexPos].transform);
-                }
-            }
-        }
-    }
+    //private void Update()
+    //{
+    //    for (int i = 0; i < playerCharacters.Count; i++)
+    //    {
+    //        if (i != currentIndexPos)
+    //        {
+    //            foreach (GameObject character in playerCharacters)
+    //            {
+    //                character.transform.LookAt(playerCharacters[currentIndexPos].transform);
+    //            }
+    //        }
+    //    }
+    //}
 
     #endregion
 }

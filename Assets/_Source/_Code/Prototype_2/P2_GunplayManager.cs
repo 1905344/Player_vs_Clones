@@ -266,7 +266,7 @@ public class P2_GunplayManager : MonoBehaviour
             if (_raycastHit.collider.CompareTag("Enemy"))
             {
                 enemyGuid = Guid.Empty;
-                enemyGuid = _raycastHit.collider.GetComponentInParent<enemyHealth>().enemyID;
+                enemyGuid = _raycastHit.collider.GetComponentInParent<P2_enemyHealth>().enemyID;
 
                 #region Debug
 

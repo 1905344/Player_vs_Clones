@@ -8,7 +8,7 @@ public class P2_PlayerDetector : MonoBehaviour
     #region Variables
 
     [Header("Detection Settings")]
-    [SerializeField] private float detectionRadius;
+    [SerializeField] public float detectionRadius;
     [SerializeField] private List<GameObject> playerCharacters = new(3);
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private float detectionHeight = 2f;
@@ -113,33 +113,7 @@ public class P2_PlayerDetector : MonoBehaviour
         }
     }
 
-    #region OnTriggerEnter and OnTriggerExit
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    P2_PlayerCharacterBase playerCharacterBaseScript = null;
-
-    //    if (other.gameObject.TryGetComponent<P2_PlayerCharacterBase>(out playerCharacterBaseScript))
-    //    {
-    //        if (!playersInRange.Contains(other.gameObject))
-    //        {
-    //            playersInRange.Add(other.gameObject);
-    //        }
-
-    //        if (playersOutOfRange.Contains(other.gameObject))
-    //        {
-    //            playersOutOfRange.Remove(other.gameObject);
-    //        }
-
-    //        if (playersOutOfRange.Count == 0)
-    //        {
-    //            warningScreen.gameObject.SetActive(false);
-    //        }
-
-    //        //Allow the player from switching characters
-    //        P2_InputManager.Instance.canChangeCharacter = true;
-    //    }
-    //}
+    #region OnTriggerStay and OnTriggerExit
 
     private void OnTriggerStay(Collider other)
     {
@@ -187,7 +161,7 @@ public class P2_PlayerDetector : MonoBehaviour
             }
 
             //Prevent the player from switching characters
-            P2_InputManager.Instance.canChangeCharacter = false;
+            //P2_InputManager.Instance.canChangeCharacter = false;
         }
     }
 
@@ -277,6 +251,9 @@ public class P2_PlayerDetector : MonoBehaviour
             P2_PlayerCharacterBase playerScript = character.GetComponent<P2_PlayerCharacterBase>();
 
             warningText.text += $"Player {playerScript.characterName} out of range.\n";
+
+            //Prevent the player from switching characters
+            P2_InputManager.Instance.canChangeCharacter = false;
         }
 
         #endregion

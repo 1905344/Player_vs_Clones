@@ -29,7 +29,6 @@ public class P2_fpsMovement : MonoBehaviour
     [SerializeField] private float jumpHeight;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float timeToJumpApex;
-
     private Vector3 playerVelocity;
 
     [Space(15)]
@@ -53,15 +52,12 @@ public class P2_fpsMovement : MonoBehaviour
 
     private void Awake()
     {
-        charController = GetComponent<CharacterController>();
         characterBodyTransform = characterBodyObject.transform;
-        characterCollider = GetComponent<CapsuleCollider>();
-        characterRigidBody = GetComponent<Rigidbody>();
+        cameraTransform = Camera.main.transform;
     }
 
     private void Start()
     {
-        cameraTransform = Camera.main.transform;
         //P2_GameManager.Instance.OnStartGame += EnablePlayerMovement;
         P2_GameManager.Instance.PlayerKilled += DisablePlayerMovement;
 
@@ -107,10 +103,10 @@ public class P2_fpsMovement : MonoBehaviour
     {
         #region Disable Jumping
 
-        if (disablePlayerJumping)
-        {
-            jumpHeight = 0;
-        }
+        //if (disablePlayerJumping)
+        //{
+        //    jumpHeight = 0;
+        //}
 
         #endregion
 
@@ -137,8 +133,6 @@ public class P2_fpsMovement : MonoBehaviour
 
             //Sprinting
             isSprinting = P2_InputManager.Instance.isPlayerSprintingThisFrame;
-            //playerMovement = P2_InputManager.Instance.GetPlayerMovement();
-            //characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
             characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
             characterMove.y = 0f;
@@ -146,12 +140,10 @@ public class P2_fpsMovement : MonoBehaviour
             if (isSprinting)
             {
                 movementSpeed = sprintSpeed;
-                //Debug.Log("Character is sprinting!");
             }
             else
             {
                 movementSpeed = moveSpeed;
-                //Debug.Log("Character is not sprinting!");
             }
 
             charController.Move(characterMove * movementSpeed * Time.deltaTime);
@@ -165,20 +157,22 @@ public class P2_fpsMovement : MonoBehaviour
 
         #region Player Jumping
 
-        if (P2_InputManager.Instance.PlayerJumped() && onGround && canJump)
+        if (!disablePlayerJumping)
         {
-            //Debug.Log("Jumping!");
-            canJump = false;
-            isJumping = true;
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * playerGravity);
-        }
-        else if (onGround && playerVelocity.y <= 0.01f)
-        {
-            isJumping = false;
-            canJump = true;
-        }
+            if (P2_InputManager.Instance.PlayerJumped() && onGround && canJump)
+            {
+                canJump = false;
+                isJumping = true;
+                playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * playerGravity);
+            }
+            else if (onGround && playerVelocity.y <= 0.01f)
+            {
+                isJumping = false;
+                canJump = true;
+            }
 
-        playerVelocity.y += playerGravity * Time.deltaTime;
+            playerVelocity.y += playerGravity * Time.deltaTime;
+        }
 
         #endregion
     }

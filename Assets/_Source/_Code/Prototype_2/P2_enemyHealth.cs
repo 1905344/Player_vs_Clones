@@ -43,7 +43,7 @@ public class P2_enemyHealth : MonoBehaviour
 
         health -= damage;
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("Enemy " + enemyID + " has been hit." + health + " health remaining.");
         }
@@ -58,7 +58,7 @@ public class P2_enemyHealth : MonoBehaviour
     {
         //SoundManager.instance.PlaySFX(enemyDeathSFX);
 
-        if (GameManager.Instance.toggleDebug)
+        if (P2_GameManager.Instance.enableDebug)
         {
             Debug.Log("Enemy " + enemyID + " destroyed.");
         }
