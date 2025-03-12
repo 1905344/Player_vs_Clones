@@ -6,7 +6,9 @@ public class P2_enemyHealth : MonoBehaviour
     #region Variables
 
     [Header("Health Variables")]
-    [SerializeField] private float health = 100f;
+    [SerializeField] private int health = 100;
+    private int maxHealth;
+    [SerializeField] private P2_Healthbar healthBar;
 
 
     [Space(10)]
@@ -25,11 +27,13 @@ public class P2_enemyHealth : MonoBehaviour
     private void Awake()
     {
         enemyID = GenerateGuid();
+        maxHealth = health;
     }
 
     void Start()
     {
         P2_GameManager.Instance.EnemyHit += TakeDamage;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     public void TakeDamage(Guid id, int damage)
@@ -52,6 +56,8 @@ public class P2_enemyHealth : MonoBehaviour
         {
             Invoke(nameof(DestroyThisEnemy), 0.5f);
         }
+
+        healthBar.SetCurrentHealth(health);
     }
 
     private void DestroyThisEnemy()

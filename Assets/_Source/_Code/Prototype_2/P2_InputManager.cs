@@ -189,9 +189,6 @@ public class P2_InputManager : MonoBehaviour
         playerInputActions.Player.ChangeCharacter.started += OnChangeCharacter;
         playerInputActions.Player.ChangeCharacter.canceled -= OnChangeCharacter;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         mouseXSensText.maxVisibleCharacters = 4;
         mouseYSensText.maxVisibleCharacters = 4;
     }
@@ -206,9 +203,10 @@ public class P2_InputManager : MonoBehaviour
 
         //When the game starts
         P2_GameManager.Instance.OnStartGame += OnEnable;
+        P2_GameManager.Instance.LevelCompleted += OnDisable;
 
-        vCam = vCameras[0];
-        getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
+        //vCam = vCameras[0];
+        //getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
 
         SetToggleStates();
         SetMouseSensSliders();
@@ -217,7 +215,7 @@ public class P2_InputManager : MonoBehaviour
         ApplyMouseXSens();
         ApplyMouseYSens();
 
-        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+        //SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
         #region Debug
 
@@ -237,6 +235,14 @@ public class P2_InputManager : MonoBehaviour
         ToggleActionMap(playerInputActions.Player);
         playerInputActions.Player.Enable();
         updateFOV = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        vCam = vCameras[0];
+        getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
+
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
 
     public void OnDisable()
@@ -244,6 +250,9 @@ public class P2_InputManager : MonoBehaviour
         ToggleActionMap(playerInputActions.UI);
         playerInputActions.Player.Disable();
         playerInputActions.UI.Enable();
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void EnableGameInput()

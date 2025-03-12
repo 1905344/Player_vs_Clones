@@ -130,6 +130,8 @@ public class P2_GameManager : MonoBehaviour
     //[SerializeField] Button returnToPauseScreen;
     //[SerializeField] Button quitToMainMenuButton;
     [SerializeField] Button quitGameFromGameOverScreenButton;
+    [SerializeField] TextMeshProUGUI gameOverText;
+    [SerializeField] TextMeshProUGUI levelCompletedText;
 
     [Space(10)]
 
@@ -163,6 +165,8 @@ public class P2_GameManager : MonoBehaviour
         }
         else
         {
+            Time.timeScale = 0f;
+
             HideTutorial();
             P2_InputManager.Instance.EnableGameInput();
         }
@@ -177,6 +181,11 @@ public class P2_GameManager : MonoBehaviour
         if (LevelCompleted != null)
         {
             LevelCompleted();
+
+            Time.timeScale = 0f;
+            gameOverScreen.gameObject.SetActive(true);
+            gameOverText.gameObject.SetActive(false);
+            levelCompletedText.gameObject.SetActive(true);
         }
     }
 
@@ -210,6 +219,7 @@ public class P2_GameManager : MonoBehaviour
         if (OnStartGame != null)
         {
             OnStartGame();
+            Time.timeScale = 1.0f;
         }
     }
 

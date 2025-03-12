@@ -5,14 +5,9 @@ public class P2_Escape_Door : MonoBehaviour
 {
     #region Variables
 
-    private BoxCollider exitDoorCollider;
+    [SerializeField] private BoxCollider exitDoorCollider;
 
     #endregion
-
-    private void Awake()
-    {
-        exitDoorCollider = GetComponent<BoxCollider>();
-    }
 
     private void OnTriggerEnter(Collider other)
     {

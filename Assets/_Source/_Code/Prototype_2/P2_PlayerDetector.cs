@@ -250,7 +250,7 @@ public class P2_PlayerDetector : MonoBehaviour
             //Apply changes to all characters out of range
             P2_PlayerCharacterBase playerScript = character.GetComponent<P2_PlayerCharacterBase>();
 
-            warningText.text += $"Player {playerScript.characterName} out of range.\n";
+            warningText.text += $"Player {playerScript.characterName} out of range of the gold cube.\n";
 
             //Prevent the player from switching characters
             P2_InputManager.Instance.canChangeCharacter = false;

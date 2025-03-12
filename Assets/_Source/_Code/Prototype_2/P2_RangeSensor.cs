@@ -8,11 +8,8 @@ public class P2_RangeSensor : MonoBehaviour
 
     [Header("Detection Settings")]
     [SerializeField] private float detectionRadius = 10f;
-    [SerializeField] private List<string> targetTags = new();
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private float detectionRangeHeight = 1.15f;
-
-    readonly List<Transform> detectedObjects = new(10);
     private SphereCollider _sphereCollider;
 
     [Space(10)]
@@ -39,75 +36,7 @@ public class P2_RangeSensor : MonoBehaviour
         _sphereCollider = GetComponent<SphereCollider>();
         _sphereCollider.isTrigger = true;
         _sphereCollider.radius = detectionRadius;
-
         gizmosRadius = _sphereCollider.radius;
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRadius);
-
-        foreach (var c in colliders)
-        {
-            ProcessTrigger(c, transform => detectedObjects.Add(transform));
-        }
-    }
-
-    #region OnTriggerEnter and OnTriggerExit
-
-    private void OnTriggerEnter(Collider other)
-    {
-        ProcessTrigger(other, transform => detectedObjects.Add(transform));
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        ProcessTrigger(other, transform => detectedObjects.Remove(transform));
-    }
-
-    #endregion
-
-    private void ProcessTrigger(Collider other, Action<Transform> action)
-    {
-        if (other.CompareTag("Untagged"))
-        {
-            return;
-        }
-
-        foreach (string t in targetTags)
-        {
-            if (other.CompareTag(t))
-            {
-                action(other.transform);
-            }
-        }
-    }
-
-    public Transform GetNearestTarget(string tag)
-    {
-        //Calculate distance between this.transform and target.transform, then return with the nearest
-        if (detectedObjects.Count == 0)
-        {
-            return null;
-        }
-
-        Transform nearestTarget = null;
-        float nearestDistanceSquare = Mathf.Infinity;
-        Vector3 currentPosition = transform.position;
-
-        foreach (Transform potentialTarget in detectedObjects)
-        {
-            if (potentialTarget.CompareTag(tag))
-            {
-                Vector3 directionToNearestTarget = potentialTarget.position - currentPosition;
-                float directionSquareToTarget = directionToNearestTarget.sqrMagnitude;
-
-                if (directionSquareToTarget < nearestDistanceSquare)
-                {
-                    nearestDistanceSquare = directionSquareToTarget;
-                    nearestTarget = potentialTarget;
-                }
-            }
-        }
-
-        return nearestTarget;
     }
 
     public GameObject UpdateSensor()
@@ -115,14 +44,25 @@ public class P2_RangeSensor : MonoBehaviour
         //Sphere collider check
         Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRadius, detectionMask);
 
-        if (colliders.Length > 0)
+        DetectedTarget = null;
+
+        foreach (Collider collider in colliders)
         {
-            DetectedTarget = colliders[0].gameObject;
+            if (collider.gameObject.CompareTag("Player"))
+            {
+                DetectedTarget = collider.gameObject;
+                break;
+            }
         }
-        else
-        {
-            DetectedTarget = null;
-        }
+
+        //if (colliders.Length > 0)
+        //{
+        //    DetectedTarget = colliders[0].gameObject;
+        //}
+        //else
+        //{
+        //    DetectedTarget = null;
+        //}
 
         return DetectedTarget;
     }
@@ -147,7 +87,7 @@ public class P2_RangeSensor : MonoBehaviour
             Debug.Log($"Raycast hit. {hit.transform.tag}");
         }
 
-        if (hit.collider != null && hit.collider.gameObject == target)
+        if (hit.collider != null && hit.collider.gameObject == target && hit.collider.gameObject.CompareTag("Player"))
         {
             #region Debug
 
