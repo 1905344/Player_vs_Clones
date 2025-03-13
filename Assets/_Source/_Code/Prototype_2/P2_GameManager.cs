@@ -45,7 +45,6 @@ public class P2_GameManager : MonoBehaviour
     [Header("Level Objective")]
     [SerializeField] private string levelObjective;
     [SerializeField] private string secondLevelObjective;
-    [SerializeField] private P2_PlayerDetector heistPlayerDetector;
 
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer = false;
@@ -58,7 +57,6 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField, Tooltip("The frequency of the tweening of the alpha value for the reload prompt text colour")] private float reloadPromptTextAlphaTime;
     private float promptTimer;
     private bool toggleReloadPromptText = false;
-
     private bool isOneCharacterDead = false;
 
     [Space(20)]
@@ -165,7 +163,7 @@ public class P2_GameManager : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 0f;
+            //Time.timeScale = 0f;
 
             HideTutorial();
             P2_InputManager.Instance.EnableGameInput();
@@ -683,7 +681,6 @@ public class P2_GameManager : MonoBehaviour
 
         if (isOneCharacterDead)
         {
-            heistPlayerDetector.detectionRadius = 999f;
             objectiveText.text = $"(Optional) Objective: + \n {levelObjective} \n {secondLevelObjective}";
         }
     }

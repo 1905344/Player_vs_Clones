@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -87,6 +86,13 @@ public class P2_PlayerDetector : MonoBehaviour
 
     private void RemoveCharacter(string id)
     {
+        if (warningScreen.activeInHierarchy)
+        {
+            warningScreen.SetActive(false);
+        }
+
+        this.enabled = false;
+
         for (int i = 0; i < playerCharacters.Count; i++)
         {
             string characterID = playerCharacters[i].gameObject.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();

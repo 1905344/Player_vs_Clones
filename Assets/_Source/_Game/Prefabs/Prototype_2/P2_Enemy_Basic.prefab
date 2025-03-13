@@ -8965,8 +8965,8 @@ NavMeshAgent:
   m_GameObject: {fileID: 8561733962346435951}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1
-  m_Speed: 15
+  m_Radius: 0.5
+  m_Speed: 25
   m_Acceleration: 17
   avoidancePriority: 70
   m_AngularSpeed: 120
@@ -8976,7 +8976,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0.88
-  m_WalkableMask: 1
+  m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!54 &4296680581618443461
 Rigidbody:
@@ -9217,8 +9217,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 26752
   detectionRangeHeight: 1.5
-  showTransformDetectionRadius: 0
-  showGameObjectDetectionRadius: 0
+  showTransformDetectionRadius: 1
+  showGameObjectDetectionRadius: 1
   showLineOfSight: 0
   gizmosRadius: 15
   transformRadiusColour:
@@ -9245,7 +9245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdfc98dab4329b64ba124616f809d528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBetweenAttacks: 1.5
+  timeBetweenAttacks: 2
   hasAttackedAlready: 0
   attackTimer: 0
   stopShooting: 0

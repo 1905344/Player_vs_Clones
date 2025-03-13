@@ -12,10 +12,6 @@ public partial class P2RangeSensorAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Target;
     protected override Status OnUpdate()
     {
-        //Target.Value = P2_Range_Sensor.Value.UpdateSensor();
-        //GameObject checkTarget = Player_Manager.Value.GetCurrentlyActivePlayer();
-        //return Target.Value == checkTarget ? Status.Failure : Status.Success;
-
         Target.Value = P2_Range_Sensor.Value.UpdateSensor();
         return Target.Value == null ? Status.Failure : Status.Success;
     }
