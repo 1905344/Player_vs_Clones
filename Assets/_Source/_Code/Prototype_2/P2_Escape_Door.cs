@@ -19,7 +19,7 @@ public class P2_Escape_Door : MonoBehaviour
     {
         if (isCubeRequired)
         {
-            if (other.CompareTag("Pushable"))
+            if (other.gameObject.name == "Heist Object Trigger")
             {
                 P2_GameManager.Instance.OnLevelCompleted();
             }
