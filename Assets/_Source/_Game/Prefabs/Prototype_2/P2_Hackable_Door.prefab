@@ -1356,6 +1356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   door: {fileID: 4232780364800611310}
+  doorCollider: {fileID: 1456902842974152841}
   isHacking: 0
   canHack: 0
   alreadyHacked: 0

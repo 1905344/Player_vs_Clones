@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class P2_RangeSensor : MonoBehaviour
@@ -7,7 +5,7 @@ public class P2_RangeSensor : MonoBehaviour
     #region Variables
 
     [Header("Detection Settings")]
-    [SerializeField] private float detectionRadius = 10f;
+    [SerializeField] private float detectionRadius;
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private float detectionRangeHeight = 1.15f;
     private SphereCollider _sphereCollider;
@@ -28,6 +26,8 @@ public class P2_RangeSensor : MonoBehaviour
     [SerializeField] private Color32 gameObjectUndetectedColour;
 
     public GameObject DetectedTarget { get; set; }
+
+    [SerializeField] private bool detectionDebug = false;
 
     #endregion
 
@@ -82,7 +82,7 @@ public class P2_RangeSensor : MonoBehaviour
         //Debug.Log("RangeSensor: " + hit.collider);
         //Debug.Log("RangeSensor: " + target);
 
-        if (hit.collider != null)
+        if (hit.collider != null && P2_GameManager.Instance.enableDebug && detectionDebug)
         {
             Debug.Log($"Raycast hit. {hit.transform.tag}");
         }
@@ -135,4 +135,16 @@ public class P2_RangeSensor : MonoBehaviour
     }
 
     #endregion
+
+    private void Update()
+    {
+        #region Debug
+
+        if (P2_GameManager.Instance.enableDebug)
+        {
+            _sphereCollider.radius = detectionRadius;
+        }
+
+        #endregion
+    }
 }

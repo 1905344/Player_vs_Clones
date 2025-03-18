@@ -11,6 +11,7 @@ public class P2_HackableDoor : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private GameObject door;
+    [SerializeField] private BoxCollider doorCollider;
 
     [Space(5)]
 
@@ -48,7 +49,6 @@ public class P2_HackableDoor : MonoBehaviour
     {
         frontText.text = defaultText;
         backText.text = defaultText;
-
         progressBar.maxValue = hackingTime;
     }
 
@@ -131,6 +131,7 @@ public class P2_HackableDoor : MonoBehaviour
         frontText.gameObject.SetActive(false);
         backText.gameObject.SetActive(false);
         door.gameObject.SetActive(false);
+        doorCollider.enabled = false;
 
         hackingTimer = 0f;
         isHacking = false;

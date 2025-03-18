@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class P2_PlayerManager : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class P2_PlayerManager : MonoBehaviour
         }
     }
 
+    [SerializeField] private Camera mainCamera;
+
+    [Space(5)]
+
     [Header("Active Players and Guns")]
     [SerializeField] private List<GameObject> playerCharacters = new List<GameObject>();
     [SerializeField] private GameObject currentlyActiveCharacter;
@@ -26,6 +31,9 @@ public class P2_PlayerManager : MonoBehaviour
 
     [SerializeField] private int currentIndexPos = 0;
     [SerializeField] private string currentIDString = string.Empty;
+
+    [Space(5)]
+    [SerializeField] private TextMeshProUGUI currentPlayerCharacterText;
 
     public int GetCurrentCharacter()
     {
@@ -72,8 +80,6 @@ public class P2_PlayerManager : MonoBehaviour
     {
         //Disable the active character
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
-
-        //currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().otherHealthBar.gameObject.SetActive(true);
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
 
         //Disable the gun attached to the active character
@@ -102,7 +108,6 @@ public class P2_PlayerManager : MonoBehaviour
         currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
 
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
-        //currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().otherHealthBar.gameObject.SetActive(false);
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
     }
 
@@ -158,19 +163,23 @@ public class P2_PlayerManager : MonoBehaviour
         playerCharacters.RemoveAt(currentIndexPos);
     }
 
-    //private void Update()
-    //{
-    //    for (int i = 0; i < playerCharacters.Count; i++)
-    //    {
-    //        if (i != currentIndexPos)
-    //        {
-    //            foreach (GameObject character in playerCharacters)
-    //            {
-    //                character.transform.LookAt(playerCharacters[currentIndexPos].transform);
-    //            }
-    //        }
-    //    }
-    //}
-
     #endregion
+
+    private void Update()
+    {
+        currentPlayerCharacterText.text = $"Current character: \n {currentlyActiveCharacter.GetComponentInChildren<P2_PlayerCharacterBase>().characterName}";
+        
+        //foreach (GameObject character in playerCharacters)
+        //{
+        //    if (character != currentlyActiveCharacter)
+        //    {
+        //        Canvas characterCanvas = character.GetComponentInChildren<Canvas>();
+
+        //        foreach (GameObject child in characterCanvas.GetComponentsInChildren<GameObject>())
+        //        {
+        //            child.transform.LookAt(mainCamera.transform);
+        //        }
+        //    }
+        //}
+    }
 }

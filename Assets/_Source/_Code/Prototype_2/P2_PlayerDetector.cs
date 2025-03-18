@@ -7,7 +7,9 @@ public class P2_PlayerDetector : MonoBehaviour
     #region Variables
 
     [Header("Detection Settings")]
+    [SerializeField] private float radius;
     [SerializeField] public float detectionRadius;
+    [SerializeField] public float extendedDetectionRadius;
     [SerializeField] private List<GameObject> playerCharacters = new(3);
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private float detectionHeight = 2f;
@@ -43,8 +45,9 @@ public class P2_PlayerDetector : MonoBehaviour
 
     private void Awake()
     {
-        _sphereCollider.radius = detectionRadius;
-        gizmosRadius = detectionRadius;
+        radius = detectionRadius;
+        _sphereCollider.radius = radius;
+        gizmosRadius = radius;
     }
 
     private void Start()
@@ -64,7 +67,7 @@ public class P2_PlayerDetector : MonoBehaviour
         if (showDetectionRadius)
         {
             Gizmos.color = activePlayer ? detectedColour : undetectedColour;
-            Gizmos.DrawWireSphere(transform.position, detectionRadius);
+            Gizmos.DrawWireSphere(transform.position, radius);
         }
 
         if (showLineOfSight)
@@ -180,10 +183,32 @@ public class P2_PlayerDetector : MonoBehaviour
         //Debug.Log($"Players in range: {playersInRange.Count}");
         //Debug.Log($"Players out of range: {playersOutOfRange.Count}");
 
-        //if (P2_GameManager.Instance.enableDebug)
-        //{
-        //    _sphereCollider.radius = detectionRadius;
-        //}
+        if (P2_GameManager.Instance.enableDebug)
+        {
+            _sphereCollider.radius = detectionRadius;
+        }
+
+        #endregion
+
+        #region Extending Detection Radius For M Character
+
+        if (indexPos == 2)
+        {
+            radius = extendedDetectionRadius;
+            
+            #region Debug
+
+            if (P2_GameManager.Instance.enableDebug)
+            {
+                Debug.Log($"P2_PlayerDetector: Player character 3 is active. Radius = {radius}");
+            }
+
+            #endregion
+        }
+        else
+        {
+            radius = detectionRadius;
+        }
 
         #endregion
 
@@ -200,7 +225,7 @@ public class P2_PlayerDetector : MonoBehaviour
         //Apply changes to the active player only
         if (playersInRange.Contains(activePlayer.gameObject))
         {
-            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "M")
+            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "Ms M")
             {
                 activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = true;
             }
@@ -233,7 +258,7 @@ public class P2_PlayerDetector : MonoBehaviour
             activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
             activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
 
-            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "M")
+            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "Ms M")
             {
                 activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = false;
             }

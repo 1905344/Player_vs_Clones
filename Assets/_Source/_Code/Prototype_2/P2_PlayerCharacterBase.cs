@@ -1,6 +1,7 @@
 using Cinemachine;
 using System;
 using UnityEngine;
+using TMPro;
 
 public class P2_PlayerCharacterBase : MonoBehaviour
 {
@@ -8,9 +9,11 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
     [Header("References")]
     private Guid characterID;
+    [SerializeField] private Camera mainCamera;
     [SerializeField] private P2_fpsMovement moveScript;
     [SerializeField] private P2_GunplayManager gunScript;
     [SerializeField] private GameObject playerCanvas;
+    [SerializeField] private TextMeshProUGUI characterNameText;
     [SerializeField] private CinemachineVirtualCamera characterCam;
     [SerializeField] private string characterIDString;
     [SerializeField] private P2_CameraID cameraID;
@@ -78,6 +81,8 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         hudHealthBar.SetMaxHealth(maxHealth);
 
         P2_GameManager.Instance.PlayerHit += OnCharacterHit;
+
+        characterNameText.text = characterName;
     }
 
     #region Game Functions
@@ -195,6 +200,11 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         else
         {
             updateHealth = false;
+            otherHealthBar.transform.LookAt(mainCamera.transform);
+            otherHealthBar.transform.localRotation *= Quaternion.Euler(0, -180, 0);
+
+            characterNameText.transform.LookAt(mainCamera.transform);
+            characterNameText.transform.localRotation *= Quaternion.Euler(0, -180, 0);
         }
 
         playerCanvas.SetActive(!isCharacterActive);

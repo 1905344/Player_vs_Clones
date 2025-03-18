@@ -17,11 +17,7 @@ public class P2_GunplayManager : MonoBehaviour
     [Space(10)]
 
     [Header("Layer Masks")]
-    [SerializeField] private LayerMask isEnemy;
-    [SerializeField] private LayerMask isGround;
-    [SerializeField] private LayerMask isWall;
-    [SerializeField] private LayerMask isEnvironment;
-    [SerializeField] private LayerMask isPushable;
+    [SerializeField] private LayerMask detectionMask;
 
     [Space(10)]
 
@@ -243,7 +239,7 @@ public class P2_GunplayManager : MonoBehaviour
 
         #region Raycast for Bullets
 
-        if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
+        if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, detectionMask))
         {
             #region Debug
 
@@ -263,7 +259,7 @@ public class P2_GunplayManager : MonoBehaviour
 
             Guid enemyGuid = new Guid();
 
-            if (_raycastHit.collider.CompareTag("Enemy"))
+            if (_raycastHit.collider != null && _raycastHit.collider.CompareTag("Enemy"))
             {
                 enemyGuid = Guid.Empty;
                 enemyGuid = _raycastHit.collider.GetComponentInParent<P2_enemyHealth>().enemyID;
@@ -297,66 +293,22 @@ public class P2_GunplayManager : MonoBehaviour
                     P2_GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
             }
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isWall))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (P2_GameManager.Instance.enableDebug)
+            else if (_raycastHit.collider != null && _raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground") 
+                || _raycastHit.collider.CompareTag("Environment") || _raycastHit.collider.CompareTag("Pushable"))
             {
-                Debug.Log("P2_GunplayManager: Hit a wall. Spawning a bullet decal.");
+                bulletHoleDecalSpawnLocation = _raycastHit.point;
+
+                spawnBulletDecal = true;
+
+                #region Debug
+
+                if (P2_GameManager.Instance.enableDebug)
+                {
+                    Debug.Log($"P2_GunplayManager: Hit {_raycastHit.collider.tag}. Spawning a bullet decal.");
+                }
+
+                #endregion
             }
-
-            #endregion
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isGround))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (P2_GameManager.Instance.enableDebug)
-            {
-                Debug.Log("P2_GunplayManager: Hit the ground. Spawning a bullet decal.");
-            }
-
-            #endregion
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnvironment))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (P2_GameManager.Instance.enableDebug)
-            {
-                Debug.Log("P2_GunplayManager: Hit an environment object. Spawning a bullet decal.");
-            }
-
-            #endregion
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isPushable))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (P2_GameManager.Instance.enableDebug)
-            {
-                Debug.Log("P2_GunplayManager: Hit the heist object. Spawning a bullet decal.");
-            }
-
-            #endregion
         }
 
         #endregion
