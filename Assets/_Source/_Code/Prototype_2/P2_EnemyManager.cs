@@ -18,6 +18,11 @@ public class P2_EnemyManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> enemies = new(7);
 
+    [SerializeField, Tooltip("How long to delay loading the enemies by")] private float delayEnemySpawnTimer;
+    [SerializeField] private float timer = 0f;
+    [SerializeField] private bool startTimer = false;
+    [SerializeField] private bool loadEnemies = false;
+
     #endregion
 
     private void Awake()
@@ -44,10 +49,35 @@ public class P2_EnemyManager : MonoBehaviour
 
     private void EnableAgents()
     {
+        startTimer = true;
+    }
+
+    private void LoadNavAgents()
+    {
         foreach (GameObject enemy in enemies)
         {
             enemy.GetComponent<NavMeshAgent>().Warp(enemy.transform.position);
             enemy.gameObject.SetActive(true);
         }
+
+        timer = 0f;
+        loadEnemies = false;
+        this.enabled = false;
+    }
+
+    private void Update()
+    {
+        if (startTimer)
+        {
+            timer += Time.deltaTime;
+        }
+
+        if (timer > delayEnemySpawnTimer)
+        {
+            startTimer = false;
+            loadEnemies = true;
+            LoadNavAgents();
+        }
+
     }
 }
