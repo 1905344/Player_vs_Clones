@@ -205,17 +205,12 @@ public class P2_InputManager : MonoBehaviour
         P2_GameManager.Instance.OnStartGame += OnEnable;
         P2_GameManager.Instance.LevelCompleted += OnDisable;
 
-        //vCam = vCameras[0];
-        //getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
-
         SetToggleStates();
         SetMouseSensSliders();
         SetCameraFOVSlider();
 
         ApplyMouseXSens();
         ApplyMouseYSens();
-
-        //SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
         #region Debug
 
@@ -378,7 +373,7 @@ public class P2_InputManager : MonoBehaviour
             Debug.Log($"Player pressed change character input key.");
             UpdateCamera();
         }
-        else if (context.canceled || !canChangeCharacter)
+        else
         {
             return;
         }

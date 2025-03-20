@@ -102,7 +102,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3280516098931204257}
   m_LocalRotation: {x: -0, y: -0.99987185, z: -0, w: -0.01601126}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.99999976, y: 1, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8587,7 +8587,7 @@ GameObject:
   - component: {fileID: 6358866990821273455}
   - component: {fileID: 279600076710102482}
   m_Layer: 5
-  m_Name: HUD Health Bar
+  m_Name: Enemy Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8910,6 +8910,7 @@ GameObject:
   - component: {fileID: 8601740280168173850}
   - component: {fileID: 1620269555559267825}
   - component: {fileID: 1249834692516511608}
+  - component: {fileID: -1430527073342574085}
   m_Layer: 8
   m_Name: P2_Enemy_Basic
   m_TagString: Enemy
@@ -9052,7 +9053,6 @@ MonoBehaviour:
   - rid: 962654937165070968
   - rid: 962654937165070969
   - rid: 962654941375628048
-  - rid: 962654941375628051
   - rid: 962654944518209739
   - rid: 974930510006452732
   - rid: 974930510006452733
@@ -9099,7 +9099,7 @@ MonoBehaviour:
         GUID:
           m_Value0: 6209034085712898663
           m_Value1: 11995292748115612250
-        Name: Speed
+        Name: Speed Float
         m_Value: 3.5
     - rid: 962654914690417043
       type: {class: 'BlackboardVariable`1[[UnityEngine.Animator, UnityEngine.AnimationModule]]',
@@ -9155,15 +9155,6 @@ MonoBehaviour:
           m_Value1: 6575527366972096620
         Name: Idle Wait Time
         m_Value: 2
-    - rid: 962654941375628051
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 10670582298267885654
-          m_Value1: 12935881535669826158
-        Name: Reset After Attacking Time
-        m_Value: 0.5
     - rid: 962654944518209739
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
         asm: Unity.Behavior}
@@ -9233,6 +9224,7 @@ MonoBehaviour:
   gameObjectUndetectedColour:
     serializedVersion: 2
     rgba: 4278190335
+  detectionDebug: 0
 --- !u!114 &1620269555559267825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9271,3 +9263,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   healthBar: {fileID: 279600076710102482}
+--- !u!114 &-1430527073342574085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8561733962346435951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 888c8d5fc6044d646accf2a72dce5437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 0}
+  healthBar: {fileID: 6753127781939196079}

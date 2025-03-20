@@ -19,9 +19,9 @@ public class P2_EnemyManager : MonoBehaviour
     [SerializeField] private List<GameObject> enemies = new(7);
 
     [SerializeField, Tooltip("How long to delay loading the enemies by")] private float delayEnemySpawnTimer;
-    [SerializeField] private float timer = 0f;
-    [SerializeField] private bool startTimer = false;
-    [SerializeField] private bool loadEnemies = false;
+    private float timer = 0f;
+    private bool startTimer = false;
+    private bool loadEnemies = false;
 
     #endregion
 

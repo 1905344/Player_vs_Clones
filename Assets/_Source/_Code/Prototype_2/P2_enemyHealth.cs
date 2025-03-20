@@ -6,16 +6,13 @@ public class P2_enemyHealth : MonoBehaviour
     #region Variables
 
     [Header("Health Variables")]
-    [SerializeField] private int health = 100;
-    private int maxHealth;
+    [SerializeField] public int health = 100;
+    public int maxHealth;
     [SerializeField] private P2_Healthbar healthBar;
-
 
     [Space(10)]
 
     [SerializeField] public Guid enemyID;
-
-
 
     private static Guid GenerateGuid()
     {

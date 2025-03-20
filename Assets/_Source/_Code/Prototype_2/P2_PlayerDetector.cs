@@ -7,7 +7,7 @@ public class P2_PlayerDetector : MonoBehaviour
     #region Variables
 
     [Header("Detection Settings")]
-    [SerializeField] private float radius;
+    private float radius;
     [SerializeField] public float detectionRadius;
     [SerializeField] public float extendedDetectionRadius;
     [SerializeField] private List<GameObject> playerCharacters = new(3);
@@ -284,7 +284,7 @@ public class P2_PlayerDetector : MonoBehaviour
             warningText.text += $"Player {playerScript.characterName} out of range of the gold cube.\n";
 
             //Prevent the player from switching characters
-            P2_InputManager.Instance.canChangeCharacter = false;
+            //P2_InputManager.Instance.canChangeCharacter = false;
         }
 
         #endregion
