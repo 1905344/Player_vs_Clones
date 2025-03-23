@@ -40,7 +40,7 @@ public class P2_PlayerDetector : MonoBehaviour
 
     [SerializeField] private List<GameObject> playersInRange = new(3);
     [SerializeField] private List<GameObject> playersOutOfRange = new(3);
-
+    
     #endregion
 
     private void Awake()
@@ -225,7 +225,7 @@ public class P2_PlayerDetector : MonoBehaviour
         //Apply changes to the active player only
         if (playersInRange.Contains(activePlayer.gameObject))
         {
-            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "Ms M")
+            if (indexPos == 2)
             {
                 activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = true;
             }
@@ -258,7 +258,7 @@ public class P2_PlayerDetector : MonoBehaviour
             activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
             activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
 
-            if (activePlayer.GetComponent<P2_PlayerCharacterBase>().characterName == "Ms M")
+            if (indexPos == 2)
             {
                 activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = false;
             }
@@ -281,7 +281,7 @@ public class P2_PlayerDetector : MonoBehaviour
             //Apply changes to all characters out of range
             P2_PlayerCharacterBase playerScript = character.GetComponent<P2_PlayerCharacterBase>();
 
-            warningText.text += $"Player {playerScript.characterName} out of range of the gold cube.\n";
+            warningText.text += $"Player {playerScript.characterName} is too far from the gold cube!\n"/* + "\nPlease return to the gold cube."*/;
 
             //Prevent the player from switching characters
             //P2_InputManager.Instance.canChangeCharacter = false;
