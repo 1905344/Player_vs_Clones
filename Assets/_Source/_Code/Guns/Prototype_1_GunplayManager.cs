@@ -2,27 +2,22 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 
-public class GunplayManager : MonoBehaviour
+public class Prototype_1_GunplayManager : MonoBehaviour
 {
     #region Variables
 
     [Header("References")]
+    //[SerializeField] private Camera _camera;
     [SerializeField] private Camera _camera;
-    [SerializeField] private Transform muzzle;
     private RaycastHit _raycastHit;
+    [SerializeField] private LayerMask isEnemy;
     [SerializeField] private Transform applyRecoilTarget;
+
+    [Space(5)]
+
     [SerializeField] private GameObject leftHand;
     [SerializeField] private GameObject rightHand;
-
-    [Space(10)]
-
-    [Header("Layer Masks")]
-    [SerializeField] private LayerMask isEnemy;
-    [SerializeField] private LayerMask isGround;
-    [SerializeField] private LayerMask isWall;
-    [SerializeField] private LayerMask isEnvironment;
 
     [Space(10)]
 
@@ -33,7 +28,10 @@ public class GunplayManager : MonoBehaviour
     //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
-    private Vector3 bulletHoleDecalSpawnLocation;
+    [SerializeField, Tooltip("Parent object for the instantiated muzzle flashes")] private Transform muzzleFlashParent;
+
+    private List<GameObject> muzzleFlashList = new List<GameObject>();
+    private List<GameObject> bulletHoleDecalList = new List<GameObject>();
 
     [Space(10)]
 
@@ -83,14 +81,12 @@ public class GunplayManager : MonoBehaviour
 
     [Space(15)]
 
-    [Header("Visual Feedback Despawning")]
+    [Header("Visual Feedback Despawn Timers")]
+    //[SerializeField] private float muzzleFlashDespawnTimer;
     [SerializeField] private float bulletDecalDespawnTimer;
     private float despawningTimer;
-    private bool despawnBulletHoleDecals = false;
+    private bool toggleDespawnTimer = false;
     private bool startDespawn = false;
-    private bool spawnBulletDecal = false;
-    [SerializeField, Tooltip("The maximum number of bullet decals spawned by the player")] private float bulletDecalLimit;
-    [SerializeField, Tooltip("The number of bullet decals to destroy when the limit is reached")] private float bulletDecalDestroyAmount;
 
     [Space(10)]
 
@@ -101,7 +97,6 @@ public class GunplayManager : MonoBehaviour
     private float gunRecoilTimer;
     [SerializeField] private bool isGunRecoiling;
 
-    [Space(10)]
 
     [SerializeField, Tooltip("[DEBUGGING] Show a line of where the player is looking and can shoot")] private bool showFiringLine = false;
 
@@ -128,7 +123,6 @@ public class GunplayManager : MonoBehaviour
         this.gameObject.SetActive(true);
 
         #endregion
-
     }
 
     private void Start()
@@ -141,7 +135,7 @@ public class GunplayManager : MonoBehaviour
 
     #region Enable and Disable The Gun
 
-    public void EnableGun()
+    public void EnableGun(int courseID)
     {
         updateGunPosition = true;
         canShoot = true;
@@ -154,12 +148,12 @@ public class GunplayManager : MonoBehaviour
         {
             rightHand.gameObject.SetActive(true);
         }
-        
+
         bulletsRemainingText.gameObject.SetActive(true);
         gameObject.SetActive(true);
     }
 
-    public void DisableGun()
+    public void DisableGun(int courseID)
     {
         canShoot = false;
         bulletsRemaining = magazineClipSize;
@@ -177,11 +171,11 @@ public class GunplayManager : MonoBehaviour
 
         if (allowFireButtonHold)
         {
-            isShooting = InputManager.Instance.IsPlayerHoldingTheFireButton;
+            isShooting = Prototype_1_InputManager.Instance.IsPlayerHoldingTheFireButton;
         }
         else
         {
-            isShooting = InputManager.Instance.IsPlayerTappingTheFireButton;
+            isShooting = Prototype_1_InputManager.Instance.IsPlayerTappingTheFireButton;
         }
 
         #endregion
@@ -198,7 +192,7 @@ public class GunplayManager : MonoBehaviour
 
         #region Reloading 
 
-        if (InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
+        if (Prototype_1_InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
         {
             ReloadGun();
         }
@@ -235,9 +229,9 @@ public class GunplayManager : MonoBehaviour
 
         if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnemy))
         {
-            #region Debug
+            #region Debugging
 
-            if (GameManager.Instance.toggleDebug)
+            if (Prototype_1_GameManager.Instance.toggleDebug)
             {
                 if (showFiringLine)
                 {
@@ -256,95 +250,46 @@ public class GunplayManager : MonoBehaviour
             if (_raycastHit.collider.CompareTag("Enemy"))
             {
                 enemyGuid = Guid.Empty;
-                enemyGuid = _raycastHit.collider.GetComponentInParent<enemyHealth>().enemyID;
+                enemyGuid = _raycastHit.collider.GetComponentInParent<Prototype_1_enemyAiController>().enemyID;
 
-                #region Debug
-
-                if (GameManager.Instance.toggleDebug)
+                if (Prototype_1_GameManager.Instance.toggleDebug)
                 {
                     Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
                 }
-
-                #endregion
 
                 //Using events
                 if (_raycastHit.collider.name == "Enemy Head")
                 {
                     //Additional damage if raycast hits enemy head
-                    GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
-
-                    #region Debug
-
-                    if (GameManager.Instance.toggleDebug)
-                    {
-                        Debug.Log("GunplayManager: Hit enemy " + enemyGuid + "'s head!");
-                    }
-
-                    #endregion
+                    Prototype_1_GameManager.Instance.OnEnemyHit(enemyGuid, headShotDamage);
                 }
                 else
                 {
-                    GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
+                    Prototype_1_GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
             }
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isWall))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (GameManager.Instance.toggleDebug)
-            {
-                Debug.Log("GunplayManager: Hit a wall. Spawning a bullet decal.");
-            }
-
-            #endregion
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isGround))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (GameManager.Instance.toggleDebug)
-            {
-                Debug.Log("GunplayManager: Hit the ground. Spawning a bullet decal.");
-            }
-
-            #endregion
-        }
-        else if (Physics.Raycast(_camera.transform.position, spreadDirection, out _raycastHit, bulletRange, isEnvironment))
-        {
-            bulletHoleDecalSpawnLocation = _raycastHit.point;
-
-            spawnBulletDecal = true;
-
-            #region Debug
-
-            if (GameManager.Instance.toggleDebug)
-            {
-                Debug.Log("GunplayManager: Hit an environment object. Spawning a bullet decal.");
-            }
-
-            #endregion
         }
 
         #endregion
 
         #region Camera Shake
 
-        CinemachineShake.Instance.ShakeCamera(cameraShakeMagnitude, cameraShakeAmplitude);
+        Prototype_1_CinemachineShake.Instance.ShakeCamera(cameraShakeMagnitude, cameraShakeAmplitude);
 
         #endregion
 
         #region Visual Feedback: Bullet Hole & Muzzle Flash
-        
-        CreateVisualFeedback(muzzleFlash, bulletHoleDecal, bulletHoleDecalSpawnLocation);
+
+        //Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
+        //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
+
+        CreateVisualFeedback(muzzleFlash, bulletHoleDecal, _raycastHit.point);
+
+        #endregion
+
+        #region Recoil
+
+        GunRecoil();
 
         #endregion
 
@@ -359,11 +304,6 @@ public class GunplayManager : MonoBehaviour
             SoundManager.instance.PlaySFX(gunTapFireSFX);
         }
 
-        #endregion
-
-        #region Recoil
-
-        GunRecoil();
 
         #endregion
 
@@ -378,35 +318,20 @@ public class GunplayManager : MonoBehaviour
         }
     }
 
-    private void ResetShot()
-    {
-        canShoot = true;
-    }
-
-    private void ReloadGun()
-    {
-        isReloading = true;
-        Invoke(nameof(ReloadingComplete), gunReloadTime);
-    }
-
-    private void ReloadingComplete()
-    {
-        bulletsRemaining = magazineClipSize;
-        isReloading = false;
-    }
+    #region Recoil
 
     private void GunRecoil()
     {
         #region Debug
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("GunplayManager: Gun recoil function has been called.");
         }
 
         #endregion
 
-        //GameManager.Instance.OnGunFired();
+        Prototype_1_GameManager.Instance.OnGunFired();
         isGunRecoiling = true;
     }
 
@@ -428,46 +353,66 @@ public class GunplayManager : MonoBehaviour
 
     #endregion
 
+    private void ResetShot()
+    {
+        canShoot = true;
+    }
+
+    private void ReloadGun()
+    {
+        isReloading = true;
+        Invoke(nameof(ReloadingComplete), gunReloadTime);
+    }
+
+    private void ReloadingComplete()
+    {
+        bulletsRemaining = magazineClipSize;
+        isReloading = false;
+    }
+
+    #endregion
+
     #region Visual Feedback
 
     private void CreateVisualFeedback(GameObject flash, GameObject bulletHole, Vector3 raycastHitPoint)
     {
-        if (spawnBulletDecal)
-        {
-            Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
-            spawnBulletDecal = false;
-        }
+        //if (muzzleFlashParent.childCount > 0)
+        //{
+        //    GameObject child = muzzleFlashParent.GetChild(0).gameObject;
+        //    DestroyImmediate(child);
+        //}
 
-        Instantiate(flash, muzzle.position, Quaternion.identity);
+        //if (bulletDecalParent.childCount > 0)
+        //{
+        //    GameObject child = bulletDecalParent.GetChild(0).gameObject;
+        //    DestroyImmediate(child);
+        //}
+
+        Instantiate(flash, muzzleFlash.transform.position, Quaternion.identity, muzzleFlashParent);
+        Instantiate(bulletHole, raycastHitPoint, Quaternion.Euler(0, 180, 0), bulletDecalParent);
+
+        DespawnDecals();
     }
 
-    private void DespawnBulletHoleDecals()
+    private void DespawnDecals()
     {
-        if (!despawnBulletHoleDecals)
+        despawningTimer = 0f;
+        toggleDespawnTimer = true;
+    }
+
+    private void DespawnNow()
+    {
+        if (bulletDecalParent.childCount >= 10)
         {
-            return;
-        }
-
-        //Could change the for loop to remove all but X amount from the limit
-        //Example 1: i < bulletDecalLimit - 1
-        //Example 2: i < bulletDecalLimit - bulletDecalDestroyAmount
-
-
-        for (int i = 0; i < bulletDecalDestroyAmount; i++)
-        {
-            Destroy(bulletDecalParent.GetChild(i).gameObject);
-
-            #region Debug
-
-            if (GameManager.Instance.toggleDebug)
+            for (int i = 0; i > 10; i++)
             {
-                Debug.Log("GunplayManager: Destroying bullet hole decals.");
+                DestroyImmediate(bulletDecalParent.GetChild(i).gameObject);
             }
-
-            #endregion
         }
-
-        despawnBulletHoleDecals = false;
+        else
+        {
+            toggleDespawnTimer = false;
+        }
     }
 
     #endregion
@@ -476,47 +421,14 @@ public class GunplayManager : MonoBehaviour
     {
         GunInput();
 
-        #region Reloading
-
         if (isReloading)
         {
             bulletsRemainingText.text = "Reloading...";
-            GameManager.Instance.HideReloadPrompt();
-
-            if (GameManager.Instance.enableReloadPromptTextAsTimer)
-            {
-                GameManager.Instance.HideReloadPrompt();
-            }
         }
         else
         {
             bulletsRemainingText.SetText(bulletsRemaining + " / " + magazineClipSize);
         }
-
-        if (isShooting && !isReloading && bulletsRemaining == 0 && canShoot)
-        {
-            if (GameManager.Instance.enableReloadPromptTextAsTimer)
-            {
-                GameManager.Instance.ShowReloadPrompt();
-
-                #region Debug
-
-                if (GameManager.Instance.toggleDebug)
-                {
-                    Debug.Log("GunplayManager: Prompting reload text.");
-                }
-
-                #endregion
-            }
-            else
-            {
-                GameManager.Instance.HideReloadPrompt();
-            }
-        }
-
-        #endregion
-
-        #region Gun Position
 
         if (updateGunPosition)
         {
@@ -532,17 +444,15 @@ public class GunplayManager : MonoBehaviour
             updateGunPosition = false;
         }
 
-        #endregion
-
-        #region Despawning Bullet Hole Decals
-
-        if (bulletDecalParent.childCount >= bulletDecalLimit)
+        if (toggleDespawnTimer)
         {
-            despawnBulletHoleDecals = true;
-            DespawnBulletHoleDecals();
-        }
+            despawningTimer = Time.deltaTime;
 
-        #endregion
+            if (despawningTimer <= bulletDecalDespawnTimer)
+            {
+                DespawnNow();
+            }
+        }
 
         #region Recoil timer
 

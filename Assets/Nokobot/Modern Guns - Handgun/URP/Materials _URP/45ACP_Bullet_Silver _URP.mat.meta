@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Nokobot/Modern Guns - Handgun/URP/Materials _URP/45ACP_Bullet_Silver _URP.mat.meta
 guid: a6446c3d60c24484389f62b51dad12a3
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0
+========
+guid: c623e1a7c30a01b498ff5d499ecaf8a1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 13400000
+>>>>>>>> Merging-First-Prototype:Assets/_Source/_Game/Physics/Icy.physicMaterial.meta
   userData: 
   assetBundleName: 
   assetBundleVariant: 

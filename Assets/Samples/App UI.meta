@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Samples/App UI.meta
 guid: dcc8c1cbac1571e4cbf83561f59ecbc3
+========
+guid: ac835756cbc65e14cb09197684e0c53b
+>>>>>>>> Merging-First-Prototype:Assets/Samples/App UI/2.0.0-pre.14.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

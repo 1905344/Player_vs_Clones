@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class enemyAiController : MonoBehaviour
+public class Prototype_1_enemyAiController : MonoBehaviour
 {
     #region Variables
 
@@ -48,6 +48,7 @@ public class enemyAiController : MonoBehaviour
 
     [SerializeField] public Guid enemyID;
 
+
     private static Guid GenerateGuid()
     {
         return Guid.NewGuid();
@@ -67,20 +68,16 @@ public class enemyAiController : MonoBehaviour
 
     private void Start()
     {
-        //GameManager.Instance.LevelCompleted += DestroyThisEnemy;
-        //GameManager.Instance.LevelFailed += DestroyThisEnemy;
+        //Prototype_1_GameManager.Instance.LevelCompleted += DestroyThisEnemy;
+        //Prototype_1_GameManager.Instance.LevelFailed += DestroyThisEnemy;
 
-        GameManager.Instance.EnemyHit += TakeDamage;
-        GameManager.Instance.PlayerKilled += StopAttacking;
+        Prototype_1_GameManager.Instance.EnemyHit += TakeDamage;
+        Prototype_1_GameManager.Instance.PlayerKilled += StopAttacking;
 
-        #region Debugging
-
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " active.");
         }
-
-        #endregion
     }
 
     #region States
@@ -126,8 +123,8 @@ public class enemyAiController : MonoBehaviour
             //Attacking code - currently this is a placeholder
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 
-            rb.gameObject.GetComponent<projectileScript>().projectileID = bulletsFired;
-            rb.gameObject.GetComponent<projectileScript>().damage = bulletDamage;
+            rb.gameObject.GetComponent<Prototype_1_projectileScript>().projectileID = bulletsFired;
+            rb.gameObject.GetComponent<Prototype_1_projectileScript>().damage = bulletDamage;
 
             rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
             rb.AddForce(transform.up * 2f, ForceMode.Impulse);
@@ -165,7 +162,7 @@ public class enemyAiController : MonoBehaviour
         }
     }
 
-    private void ResetAttack() 
+    private void ResetAttack()
     {
         hasAttackedAlready = false;
     }
@@ -185,7 +182,7 @@ public class enemyAiController : MonoBehaviour
 
         enemyHealth -= damage;
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " has been hit." + enemyHealth + " health remaining.");
         }
@@ -200,7 +197,7 @@ public class enemyAiController : MonoBehaviour
     {
         //SoundManager.instance.PlaySFX(enemyDeathSFX);
 
-        if (GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Enemy " + enemyID + " destroyed.");
         }
@@ -231,7 +228,7 @@ public class enemyAiController : MonoBehaviour
 
             showSightRange = false;
         }
-        else if (showAttackRange && showSightRange) 
+        else if (showAttackRange && showSightRange)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, aiAttackRange);
@@ -275,7 +272,7 @@ public class enemyAiController : MonoBehaviour
 
         #region Debugging
 
-        if (GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
+        if (Prototype_1_GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
         {
             OnDrawGizmosSelected();
         }

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Nokobot.meta
 guid: 3842c5bbdc42f404faedad06e3fd19a3
+========
+guid: 0486d7be27bcdb24c898efd277df40bf
+>>>>>>>> Merging-First-Prototype:Assets/Polybrush Data.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
