@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1670741192244865018
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7577661253976713335}
-  m_Layer: 0
-  m_Name: Walk point
-  m_TagString: Untagged
-  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &7577661253976713335
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1670741192244865018}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.411806, y: 1.28, z: 42.677517}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7136838766367276179}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5122246961482657229
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,9 +59,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -200,9 +166,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -264,7 +227,7 @@ GameObject:
   - component: {fileID: 939848376142666824}
   - component: {fileID: 2988002071503750322}
   m_Layer: 8
-  m_Name: Prototype_1_Enemy
+  m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -284,7 +247,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2749055591454728796}
-  - {fileID: 7577661253976713335}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &774392304576383882
@@ -305,29 +267,18 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 2048
-  enemyHealth: 30
-  walkPointTransform: {fileID: 7577661253976713335}
+  enemyHealth: 120
   walkPoint: {x: 0, y: 0, z: 0}
   isWalkPointSet: 0
-  walkPointRange: 0
-  timeBetweenAttacks: 0
+  walkPointRange: 150
+  timeBetweenAttacks: 2
   hasAttackedAlready: 0
-  aiSightRange: 0
-  aiAttackRange: 0
+  aiSightRange: 30
+  aiAttackRange: 24
   isPlayerInSightRange: 0
   isPlayerInAttackRange: 0
-  attackSFX: {fileID: 0}
-  playerDiscoveredSFX: {fileID: 0}
-  lostSightOfPlayerSFX: {fileID: 0}
-  enemyInjuredSFX: {fileID: 0}
-  enemyDeathSFX: {fileID: 0}
-  projectile: {fileID: 1867186218399889277, guid: f5b5f79dfaeaa8e4aa6d57d06372c078,
+  projectile: {fileID: 1867186218399889277, guid: 03b2eb805f7c20b4683d018868bb0d9e,
     type: 3}
-  bulletsFired: 0
-  bulletDamage: 10
-  showSightRange: 0
-  showAttackRange: 0
-  stopShooting: 0
 --- !u!195 &939848376142666824
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8382,9 +8333,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

@@ -60,9 +60,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -122,7 +119,7 @@ GameObject:
   - component: {fileID: 865834571842267319}
   - component: {fileID: 2046588993277065979}
   m_Layer: 8
-  m_Name: Prototype_1_FastAggressiveEnemy
+  m_Name: FastAggressiveEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,7 +160,7 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 2048
-  enemyHealth: 100
+  enemyHealth: 30
   walkPointTransform: {fileID: 4358344310803944305}
   walkPoint: {x: 0, y: 0, z: 0}
   isWalkPointSet: 0
@@ -179,7 +176,7 @@ MonoBehaviour:
   lostSightOfPlayerSFX: {fileID: 0}
   enemyInjuredSFX: {fileID: 0}
   enemyDeathSFX: {fileID: 0}
-  projectile: {fileID: 1867186218399889277, guid: f5b5f79dfaeaa8e4aa6d57d06372c078,
+  projectile: {fileID: 1867186218399889277, guid: 03b2eb805f7c20b4683d018868bb0d9e,
     type: 3}
   bulletsFired: 0
   bulletDamage: 10
@@ -296,9 +293,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8383,9 +8377,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -8499,9 +8490,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

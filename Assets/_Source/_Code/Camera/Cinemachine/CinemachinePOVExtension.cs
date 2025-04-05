@@ -1,33 +1,33 @@
 using UnityEngine;
 using Cinemachine;
 
-public class Prototype_1_CinemachinePOVExtension : CinemachineExtension
+public class CinemachinePOVExtension : CinemachineExtension
 {
     //This script allows the use of the "new" input system to move a cinemachine virtual camera
     //within the aim stage.
 
     #region Variables
 
-    [SerializeField, Tooltip("How sensitive the mouse is on the horizontal axis")]
+    [SerializeField, Tooltip("How sensitive the mouse is on the horizontal axis")] 
     private float mouseHorizontalSensitivity = 10f;
 
-    [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis")]
+    [SerializeField, Tooltip("How sensitive the mouse is on the vertical axis")] 
     private float mouseVerticalSensitivity = 10f;
 
-    [SerializeField, Tooltip("How far the mouse can vertically move the camera up or down on the 'y' axis before reaching the defined limit.")]
+    [SerializeField, Tooltip("How far the mouse can vertically move the camera up or down on the 'y' axis before reaching the defined limit.")] 
     private float clampYAngle = 85f;
 
-    //private Prototype_1_InputManager Prototype_1_InputManager;
+    //private InputManager inputManager;
     private Vector3 startingRotation;
 
     #endregion
 
     protected override void Awake()
     {
-        //Referencing the Prototype_1_InputManager by calling the instance
-        //Prototype_1_InputManager = Prototype_1_InputManager.Instance;
+        //Referencing the InputManager by calling the instance
+        //inputManager = InputManager.Instance;
 
-        //Call the Awake function of the Prototype_1_InputManager
+        //Call the Awake function of the InputManager
         base.Awake();
     }
 
@@ -43,9 +43,9 @@ public class Prototype_1_CinemachinePOVExtension : CinemachineExtension
                     startingRotation = transform.localRotation.eulerAngles;
 
                     //Get the mouse delta value from the Input Manager as a vector2 value
-                    Vector2 deltaInput = Prototype_1_InputManager.Instance.GetMouseDelta();
+                    Vector2 deltaInput = InputManager.Instance.GetMouseDelta();
 
-                    //Update the camera rotation using the mouse delta values from the Prototype_1_InputManager
+                    //Update the camera rotation using the mouse delta values from the InputManager
                     //startingRotation.x += deltaInput.x * mouseVerticalSensitivity * Time.deltaTime;
                     //startingRotation.y += deltaInput.y * mouseHorizontalSensitivity * Time.deltaTime;
 
