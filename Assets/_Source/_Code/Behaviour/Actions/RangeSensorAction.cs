@@ -10,7 +10,6 @@ public partial class RangeSensorAction : Action
 {
     [SerializeReference] public BlackboardVariable<RangeSensor> Range_Sensor;
     [SerializeReference] public BlackboardVariable<GameObject> Target;
-
     protected override Status OnUpdate()
     {
         Target.Value = Range_Sensor.Value.UpdateSensor();

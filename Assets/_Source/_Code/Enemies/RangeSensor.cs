@@ -137,8 +137,8 @@ public class RangeSensor : MonoBehaviour
         float maxDistance = Vector3.Distance(target.transform.position, originPoint);
         Physics.Raycast(originPoint, directionToTarget.normalized ,out hit, maxDistance * 2, detectionMask);
 
-        Debug.Log("RangeSensor: " + target.transform.position);
-        Debug.DrawLine(originPoint, target.transform.position);
+        //Debug.Log("RangeSensor: " + target.transform.position);
+        //Debug.DrawLine(originPoint, target.transform.position);
 
         //Debug.Log("RangeSensor: " + hit.collider);
         //Debug.Log("RangeSensor: " + target);

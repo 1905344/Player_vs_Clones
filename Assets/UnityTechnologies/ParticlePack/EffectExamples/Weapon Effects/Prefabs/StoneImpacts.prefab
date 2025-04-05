@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4294938251131082}
   - component: {fileID: 198742569389947464}
   - component: {fileID: 199495713393331546}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: HitEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4869,7 +4869,7 @@ GameObject:
   - component: {fileID: 4383338966039028}
   - component: {fileID: 198441253333576670}
   - component: {fileID: 199120453055608528}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Decal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4899,7 +4899,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1048919004769410}
   serializedVersion: 8
-  lengthInSec: 0.4
+  lengthInSec: 5
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 1
@@ -9782,7 +9782,7 @@ GameObject:
   - component: {fileID: 33350502945847484}
   - component: {fileID: 23196471665287424}
   - component: {fileID: 135263177144982302}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: StoneImpacts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9890,7 +9890,7 @@ GameObject:
   - component: {fileID: 4582481828265024}
   - component: {fileID: 198209522987241120}
   - component: {fileID: 199265998883576332}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: ImpactDebris
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9920,7 +9920,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1918026999510584}
   serializedVersion: 8
-  lengthInSec: 0.4
+  lengthInSec: 2
   simulationSpeed: 1
   stopAction: 2
   cullingMode: 1
@@ -14573,7 +14573,7 @@ GameObject:
   - component: {fileID: 4718239148944406}
   - component: {fileID: 198056859948123932}
   - component: {fileID: 199518860956358596}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Dust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14603,7 +14603,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1985144881953918}
   serializedVersion: 8
-  lengthInSec: 0.4
+  lengthInSec: 2
   simulationSpeed: 1
   stopAction: 2
   cullingMode: 1
