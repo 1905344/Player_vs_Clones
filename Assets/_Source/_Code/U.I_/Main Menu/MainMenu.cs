@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenu : Menu
+public class MainMenu : MonoBehaviour
 {
     //[Header("Menu Navigation")]
     //[SerializeField] private SaveSlotsMenu saveSlotsMenu;

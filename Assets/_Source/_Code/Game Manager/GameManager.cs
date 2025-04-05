@@ -125,10 +125,20 @@ public class GameManager : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Variables for current prototype")]
+    [SerializeField] public bool isFirstPrototype = false;
+    [SerializeField] public bool isSecondPrototype = false;
+    [SerializeField] public bool isThirdPrototype = false;
+    [SerializeField] private string scene_name;
+    [SerializeField, Range (0,2)] private int prototypeID;
+
+    [Space(10)]
+
     [Header("Debugging and Testing")]
     [SerializeField] public bool toggleDebug = false;
     [SerializeField] public bool skipTutorial = false;
     
+
     #endregion
 
     private void Awake()
@@ -141,6 +151,8 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+
+        CheckPrototypeID();
     }
 
     private void Start()
@@ -160,6 +172,28 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateObjectiveText();
+    }
+
+    private void CheckPrototypeID()
+    {
+       switch (prototypeID)
+        {
+            case 0:
+                {
+                    isFirstPrototype = true;
+                    break;   
+                }
+            case 1:
+                {
+                    isSecondPrototype = true;
+                    break;
+                }
+            case 2:
+                {
+                    isThirdPrototype = true;
+                    break;
+                }
+        }
     }
 
     #region Event Functions
