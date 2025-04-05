@@ -37,6 +37,15 @@ public class GameManager : MonoBehaviour
     [Header("Restart Scene")]
     [SerializeField] private string sceneName;
 
+    [Space(3)]
+
+    [Header("Variables for current prototype")]
+    [SerializeField] public bool isFirstPrototype = false;
+    [SerializeField] public bool isSecondPrototype = false;
+    [SerializeField] public bool isThirdPrototype = false;
+    [SerializeField] private string scene_name;
+    [SerializeField, Range(0, 2)] private int prototypeID;
+    
     [Space(5)]
 
     [Header("Level Objective")]
@@ -122,15 +131,6 @@ public class GameManager : MonoBehaviour
     //[SerializeField] Button returnToPauseScreen;
     //[SerializeField] Button quitToMainMenuButton;
     [SerializeField] Button quitGameFromGameOverScreenButton;
-
-    [Space(10)]
-
-    [Header("Variables for current prototype")]
-    [SerializeField] public bool isFirstPrototype = false;
-    [SerializeField] public bool isSecondPrototype = false;
-    [SerializeField] public bool isThirdPrototype = false;
-    [SerializeField] private string scene_name;
-    [SerializeField, Range (0,2)] private int prototypeID;
 
     [Space(10)]
 
