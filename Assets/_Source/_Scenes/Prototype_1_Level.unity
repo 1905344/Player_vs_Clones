@@ -16456,12 +16456,14 @@ MonoBehaviour:
   _currentControlScheme: 
   mouseHorizontalSensitivity: 0.3
   mouseVerticalSensitivity: 0.3
+  cameraFOVSlider: {fileID: 0}
   mouseXSensSlider: {fileID: 1873559566}
   mouseYSensSlider: {fileID: 455658438}
   invertMouseYToggle: {fileID: 362354894}
   mouseAccelerationToggle: {fileID: 2009982397}
-  mouseXSensTextInput: {fileID: 196567991}
-  mouseYSensTextInput: {fileID: 672517031}
+  cameraFOVText: {fileID: 0}
+  mouseXSensText: {fileID: 0}
+  mouseYSensText: {fileID: 0}
   vCam: {fileID: 1448387308}
   _FOV: 90
   updateFOV: 0
@@ -30642,6 +30644,18 @@ MonoBehaviour:
   healthTextColour:
     serializedVersion: 2
     rgba: 4294967295
+  maxHealthColour:
+    serializedVersion: 2
+    rgba: 0
+  highHealthColour:
+    serializedVersion: 2
+    rgba: 0
+  middleHealthColour:
+    serializedVersion: 2
+    rgba: 0
+  lowHealthColour:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &878408399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30668,12 +30682,6 @@ MonoBehaviour:
   jumpSpeed: 0
   timeToJumpApex: 0
   cameraTransform: {fileID: 1448387305}
-  isGunRecoilActive: 0
-  gunRecoilMoveSpeed: 3
-  recoilMoveTimeInterval: 2
-  gunRecoilMoveAmount: 6
-  collisionPushStrength: 4
-  forceBackwardMove: {x: 0, y: 0, z: 0}
   disablePlayerMovement: 1
   disablePlayerJumping: 0
   onGround: 0
@@ -41054,7 +41062,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   m_LegacyBlendHint: 0
-  m_ComponentOwner: {fileID: 2139444727}
+  m_ComponentOwner: {fileID: 2139399374}
 --- !u!114 &1448387309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41064,7 +41072,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1448387304}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1680240326}
+  m_Script: {fileID: 11500000, guid: fb7194dc27b9df64c8beca7482ee8e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerIndex: -1
@@ -43467,24 +43475,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 863c4a17e6fe97241b4c9e571e5c99ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneName: 
+  isFirstPrototype: 0
+  isSecondPrototype: 0
+  isThirdPrototype: 0
+  scene_name: 
+  prototypeID: 0
+  levelObjective: 
+  reloadPromptLength: 0
+  reloadPromptTextAlpha: 0
+  reloadPromptTextAlphaTime: 0
+  reloadPromptText: {fileID: 0}
   tutorialScreen: {fileID: 1851312458}
   pauseScreen: {fileID: 692814434}
   settingsScreen: {fileID: 1476962071}
   gameOverScreen: {fileID: 561964350}
   pauseTitleText: {fileID: 64896479}
-  tutorialStartGame: {fileID: 1171000020}
-  tutorialQuitGame: {fileID: 1372085720}
   resumeFromPauseMenuButton: {fileID: 2085521497}
   restartFromPauseMenuButton: {fileID: 1219386699}
+  tutorialPauseMenuButton: {fileID: 0}
   settingsPauseMenuButton: {fileID: 398887378}
   quitFromPauseMenuButton: {fileID: 1733939773}
+  tutorialStartGame: {fileID: 1171000020}
+  tutorialQuitGame: {fileID: 1372085720}
+  tutorialScreenReturnButton: {fileID: 0}
   returnFromSettingsPageButton: {fileID: 220047289}
+  fovSlider: {fileID: 0}
   mouseXSensitivitySlider: {fileID: 1873559566}
   mouseYSensitivitySlider: {fileID: 455658438}
+  fovText: {fileID: 0}
+  mouseXSensitivityText: {fileID: 0}
+  mouseYSensitivityText: {fileID: 0}
+  objectiveText: {fileID: 0}
   invertMouseY: {fileID: 362354894}
   mouseAcceleration: {fileID: 2009982397}
+  promptForReloadToggle: {fileID: 0}
   quitGameFromGameOverScreenButton: {fileID: 1237336844}
   toggleDebug: 1
+  skipTutorial: 0
 --- !u!1 &1588628803
 GameObject:
   m_ObjectHideFlags: 0
@@ -44433,21 +44461,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!115 &1680240326
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 7
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_Type: 0
-  m_ExecutionOrder: 0
-  m_ClassName: CinemachineInputProvider
-  m_Namespace: Cinemachine
-  m_AssemblyName: Cinemachine
 --- !u!1 &1683547397
 GameObject:
   m_ObjectHideFlags: 0
@@ -46547,17 +46560,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 770599150}
-  isEnemy:
-    serializedVersion: 2
-    m_Bits: 256
+  muzzle: {fileID: 0}
   applyRecoilTarget: {fileID: 1790390097}
   leftHand: {fileID: 1078018131}
   rightHand: {fileID: 880294626}
+  isEnemy:
+    serializedVersion: 2
+    m_Bits: 256
+  isGround:
+    serializedVersion: 2
+    m_Bits: 0
+  isWall:
+    serializedVersion: 2
+    m_Bits: 0
+  isEnvironment:
+    serializedVersion: 2
+    m_Bits: 0
   muzzleFlash: {fileID: 1297820496}
   bulletHoleDecal: {fileID: 0}
   bulletsRemainingText: {fileID: 0}
   bulletDecalParent: {fileID: 0}
-  muzzleFlashParent: {fileID: 0}
   cameraShakeAmplitude: 0.2
   cameraShakeMagnitude: 0.8
   gunTapFireSFX: {fileID: 0}
@@ -46581,6 +46603,8 @@ MonoBehaviour:
   gunInLeftHand: 0
   gunInRightHand: 1
   bulletDecalDespawnTimer: 2
+  bulletDecalLimit: 0
+  bulletDecalDestroyAmount: 0
   gunRecoilUp:
     serializedVersion: 2
     m_Curve:
