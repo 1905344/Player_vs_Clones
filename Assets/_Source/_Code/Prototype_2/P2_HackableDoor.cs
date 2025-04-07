@@ -1,8 +1,6 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Threading;
-using Unity.VisualScripting;
 
 [RequireComponent(typeof(BoxCollider))]
 public class P2_HackableDoor : MonoBehaviour
