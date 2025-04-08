@@ -25,6 +25,7 @@ public class P3_GameManager : MonoBehaviour
     public event Action<string, int> PlayerHit;
     public event Action PlayerKilled;
     public event Action<Guid, int> EnemyHit;
+    public event Action<float> LighthouseHit;
 
     //Event to start the main game
     public event Action OnStartGame;
@@ -35,6 +36,11 @@ public class P3_GameManager : MonoBehaviour
 
     //Event for switching between player characters
     public event Action changePlayerCharacter;
+
+    //Event actions for when different enemy types are killed
+    public event Action BlueEnemyKilled;
+    public event Action YellowEnemyKilled;
+    public event Action GreenEnemyKilled;
 
     [Header("Restart Scene")]
     [SerializeField] private string sceneName;
@@ -223,6 +229,42 @@ public class P3_GameManager : MonoBehaviour
         }
     }
 
+    public void OnLighthouseHit(float damage)
+    {
+        if (LighthouseHit != null)
+        {
+            LighthouseHit(damage);
+        }
+    }
+
+    #region Event Functions for Enemy Types
+
+    public void OnBlueEnemyKilled()
+    {
+        if (BlueEnemyKilled != null)
+        {
+            BlueEnemyKilled();
+        }
+    }
+
+    public void OnGreenEnemyKilled()
+    {
+        if (GreenEnemyKilled != null)
+        {
+            GreenEnemyKilled();
+        }
+    }
+
+    public void OnYellowEnemyKilled()
+    {
+        if (YellowEnemyKilled != null)
+        {
+            YellowEnemyKilled();
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region Tutorial Screen Functions
@@ -292,7 +334,6 @@ public class P3_GameManager : MonoBehaviour
 
         DisableReturnButtonTutorialScreen();
     }
-
 
     #endregion
 

@@ -13,6 +13,10 @@ public class P3_EnemyHealth : MonoBehaviour
 
     [SerializeField] public Guid enemyID;
 
+    [Space(5)]
+
+    [SerializeField] private P3_EnemyBase baseScript;
+
     private static Guid GenerateGuid()
     {
         return Guid.NewGuid();

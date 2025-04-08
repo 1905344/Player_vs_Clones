@@ -17,6 +17,7 @@ TagManager:
   - Hackable
   - Pushable
   - PlayerOther
+  - Lighthouse
   layers:
   - Default
   - TransparentFX
@@ -34,7 +35,7 @@ TagManager:
   - Environment
   - Pushable
   - Lighting
-  - 
+  - Lighthouse
   - 
   - 
   - 

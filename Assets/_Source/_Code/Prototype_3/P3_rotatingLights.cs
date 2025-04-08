@@ -5,13 +5,13 @@ public class P3_rotatingLights : MonoBehaviour
     #region Variables
 
     [SerializeField] private float rotationSpeed;
-    [SerializeField] private Vector3 lightRotation;
+    private Vector3 lightRotation;
 
     #endregion
 
     void Update()
     {
         lightRotation = new Vector3(0f, rotationSpeed, 0f);
-        this.gameObject.transform.Rotate(lightRotation.normalized * Time.deltaTime);
+        this.gameObject.transform.Rotate(lightRotation * Time.deltaTime);
     }
 }
