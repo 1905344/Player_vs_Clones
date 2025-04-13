@@ -16,7 +16,7 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
     [Space(10)]
 
     [Header("U.I. Elements")]
-    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private TMP_Text healthText;
     [SerializeField] private Color32 healthTextColour;
     private bool updateHealthTextColour;
     private bool updateHealthText = false;

@@ -1,7 +1,6 @@
 using Cinemachine;
 using System;
 using UnityEngine;
-using TMPro;
 
 public class P3_fpsCharacterBase : MonoBehaviour
 {
@@ -10,9 +9,7 @@ public class P3_fpsCharacterBase : MonoBehaviour
     [Header("References")]
     private Guid characterID;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private P3_fpsMovement moveScript;
     [SerializeField] private P3_GunplayManager gunScript;
-    [SerializeField] private GameObject playerCanvas;
     [SerializeField] private CinemachineVirtualCamera characterCam;
     [SerializeField] private CapsuleCollider playerCollider;
 
@@ -22,59 +19,52 @@ public class P3_fpsCharacterBase : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Health Variables")]
     [SerializeField] private int currentHealth;
-    [SerializeField] private int maxHealth;
-    [SerializeField] private bool isAlive;
+    [SerializeField] private int defaultHealth;
+    [SerializeField] private int maxHealth = 100;
 
+    [Space(10)]
+
+    [Header("Debug Variables")]
     [SerializeField] public bool isCharacterActive = false;
-    [SerializeField] private bool characterGunEnabled;
-
-    private static Guid GenerateID()
-    {
-        return Guid.NewGuid();
-    }
-
-    public Guid GetCharacterID()
-    {
-        return characterID;
-    }
-
-    public bool CharacterGunStatus()
-    {
-        return characterGunEnabled = gunScript.gameObject.activeSelf;
-    }
 
     #endregion
 
     private void Awake()
     {
-        characterID = GenerateID();
-
-        isAlive = true;
-        currentHealth = maxHealth;
+        currentHealth = defaultHealth;
+        defaultHealth = maxHealth;
     }
 
     void Start()
     {
+        hudHealthBar.SetCurrentHealth(currentHealth);
         hudHealthBar.SetMaxHealth(maxHealth);
     }
 
     #region Health Functions
 
-    public void UpdateHealth()
-    {
-        if (!isCharacterActive)
-        {
-            return;
-        }
+    //public void UpdateHealth()
+    //{
+    //    if (!isCharacterActive)
+    //    {
+    //        return;
+    //    }
 
-        updateHealth = true;
-    }
+    //    updateHealth = true;
+    //}
 
-    public void IncreaseHealth()
-    {
+    //public void IncreaseHealth(int IncreaseAmount)
+    //{
+    //    if (currentHealth == maxHealth)
+    //    {
+    //        return;
+    //    }
 
-    }
+    //    currentHealth += IncreaseAmount;
+    //    updateHealth = true;
+    //}
 
     #endregion
 
@@ -86,26 +76,46 @@ public class P3_fpsCharacterBase : MonoBehaviour
         {
             P3_GameManager.Instance.OnPlayerKilled();
 
-            isAlive = false;
             gameObject.SetActive(false);
         }
     }
 
     #endregion
 
+    public void EnableFPSCharacter()
+    {
+        if (!isCharacterActive)
+        {
+            return;
+        }
+
+        gunScript.EnableGun();
+
+        isCharacterActive = true;
+        updateHealth = true;
+    }
+
+    public void DisableFPSCharacter()
+    {
+        if (isCharacterActive)
+        {
+            return;
+        }
+
+        isCharacterActive = false;
+        updateHealth = false;
+        hudHealthBar.gameObject.SetActive(false);
+        gunScript.DisableGun();
+    }
 
     void Update()
     {
-        if (isCharacterActive)
+        if (updateHealth)
         {
             hudHealthBar.SetMaxHealth(maxHealth);
             hudHealthBar.SetCurrentHealth(currentHealth);
 
-            if (updateHealth)
-            {
-                hudHealthBar.SetMaxHealth(maxHealth);
-                hudHealthBar.SetCurrentHealth(currentHealth);
-            }
+            updateHealth = false;
         }
     }
 }

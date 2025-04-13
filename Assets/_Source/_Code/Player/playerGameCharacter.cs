@@ -16,7 +16,7 @@ public class playerGameCharacter : MonoBehaviour
     [Space(10)]
 
     [Header("U.I. Elements")]
-    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private TMP_Text healthText;
     [SerializeField] private Color32 healthTextColour;
     [SerializeField] private Color32 maxHealthColour;
     [SerializeField] private Color32 highHealthColour;

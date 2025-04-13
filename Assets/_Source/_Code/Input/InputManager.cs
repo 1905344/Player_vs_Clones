@@ -56,9 +56,9 @@ public class InputManager : MonoBehaviour
 
     //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseXSensTextInput;
     //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseYSensTextInput;
-    [SerializeField] TextMeshProUGUI cameraFOVText;
-    [SerializeField] TextMeshProUGUI mouseXSensText;
-    [SerializeField] TextMeshProUGUI mouseYSensText;
+    [SerializeField] TMP_Text cameraFOVText;
+    [SerializeField] TMP_Text mouseXSensText;
+    [SerializeField] TMP_Text mouseYSensText;
     private bool updateMouseXSensText = false;
     private bool updateMouseYSensText = false;
 

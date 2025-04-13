@@ -1,6 +1,9 @@
 using System;
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 
 public class P3_GunplayManager : MonoBehaviour
 {
@@ -25,12 +28,15 @@ public class P3_GunplayManager : MonoBehaviour
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHoleDecal;
     [SerializeField] private P3_AmmoHudBar ammoHudBar;
-    [SerializeField] private TextMeshProUGUI reloadingText;
+    [SerializeField] private TMP_Text reloadingText;
     private bool updateHUD = false;
     //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
     private Vector3 bulletHoleDecalSpawnLocation;
+    [SerializeField] private Transform bulletTrailSpawnPos;
+    //[SerializeField] private LineRenderer bulletTrail;
+    [SerializeField] private TrailRenderer bulletTrailRend;
 
     [Space(10)]
 
@@ -54,6 +60,7 @@ public class P3_GunplayManager : MonoBehaviour
 
     [Space(10)]
 
+    [SerializeField] private float bulletSpeed = 100f;
     [SerializeField] private float bulletSpread;
     [SerializeField] private float bulletRange;
     [SerializeField] private float gunReloadTime;
@@ -139,6 +146,10 @@ public class P3_GunplayManager : MonoBehaviour
         ammoHudBar.SetMaxAmmo(magazineClipSize);
         ammoHudBar.SetCurrentAmmo(bulletsRemaining);
         updateGunPosition = true;
+
+        //If using line renderer for bullet trails
+        //Vector3[] initLaserPositions = new Vector3[2] { Vector3.zero, Vector3.zero };
+        //bulletTrail.SetPositions(initLaserPositions);
     }
 
     #region Enable and Disable The Gun
@@ -224,6 +235,8 @@ public class P3_GunplayManager : MonoBehaviour
             return;
         }
 
+        //bulletTrail.enabled = true;
+
         #region Bullet Spread
 
         float x = UnityEngine.Random.Range(-bulletSpread, bulletSpread);
@@ -257,12 +270,20 @@ public class P3_GunplayManager : MonoBehaviour
 
             #endregion
 
+            //Bullet trails
+            //Using trail renderer
+            TrailRenderer newTrail = Instantiate(bulletTrailRend, bulletTrailSpawnPos.transform.position, Quaternion.identity);
+            StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
+
+            //Using line renderer
+            //SpawnBulletTrail(bulletTrailSpawnPos.transform.position, _raycastHit.point);
+
             Guid enemyGuid = new Guid();
 
             if (_raycastHit.collider != null && _raycastHit.collider.CompareTag("Enemy"))
             {
                 enemyGuid = Guid.Empty;
-                enemyGuid = _raycastHit.collider.GetComponentInParent<P3_EnemyHealth>().enemyID;
+                enemyGuid = _raycastHit.collider.GetComponentInParent<P3_EnemyBase>().enemyID;
 
                 #region Debug
 
@@ -431,6 +452,25 @@ public class P3_GunplayManager : MonoBehaviour
         }
 
         despawnBulletHoleDecals = false;
+    }
+
+    private IEnumerator SpawnBulletTrail(TrailRenderer Trail, Vector3 HitPoint)
+    {
+        Vector3 startPos = Trail.transform.position;
+        float distance = Vector3.Distance(Trail.transform.position, HitPoint);
+        float remainingDistance = distance;
+
+        while (distance > 0)
+        {
+            Trail.transform.position = Vector3.Lerp(startPos, HitPoint, 1 - (remainingDistance / distance));
+            distance -= bulletSpeed * Time.deltaTime;
+
+            yield return null;
+        }
+
+        //yield return Trail.time;
+        Trail.transform.position = HitPoint;
+        Destroy(Trail.gameObject, Trail.time);
     }
 
     #endregion

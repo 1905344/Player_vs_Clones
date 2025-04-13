@@ -13,7 +13,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
     [SerializeField] private P2_fpsMovement moveScript;
     [SerializeField] private P2_GunplayManager gunScript;
     [SerializeField] private GameObject playerCanvas;
-    [SerializeField] private TextMeshProUGUI characterNameText;
+    [SerializeField] private TMP_Text characterNameText;
     [SerializeField] private CinemachineVirtualCamera characterCam;
     [SerializeField] private string characterIDString;
     [SerializeField] private P2_CameraID cameraID;

@@ -9,5 +9,6 @@ public enum P3_Enemy_Types
 	Red,
 	Yellow,
 	Grey,
-	White
+	White,
+	Black
 }

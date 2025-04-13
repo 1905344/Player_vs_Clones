@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
     [Space(20)]
 
     [Header("U.I. Elements")]
-    [SerializeField] TextMeshProUGUI reloadPromptText;
+    [SerializeField] TMP_Text reloadPromptText;
 
     [Space(5)]
 
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI pauseTitleText;
+    [SerializeField] TMP_Text pauseTitleText;
 
     [Space(5)]
 
@@ -114,10 +114,10 @@ public class GameManager : MonoBehaviour
     [Space(5)]
     //[SerializeField] TMP_InputField mouseXSensitivtyTextInput;
     //[SerializeField] TMP_InputField mouseYSensitivtyTextInput;
-    [SerializeField] TextMeshProUGUI fovText;
-    [SerializeField] TextMeshProUGUI mouseXSensitivityText;
-    [SerializeField] TextMeshProUGUI mouseYSensitivityText;
-    [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] TMP_Text fovText;
+    [SerializeField] TMP_Text mouseXSensitivityText;
+    [SerializeField] TMP_Text mouseYSensitivityText;
+    [SerializeField] TMP_Text objectiveText;
 
     [Space(5)]
 

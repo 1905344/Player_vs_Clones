@@ -29,7 +29,7 @@ public class GunplayManager : MonoBehaviour
     [Header("Visual Feedback References")]
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHoleDecal;
-    [SerializeField] private TextMeshProUGUI bulletsRemainingText;
+    [SerializeField] private TMP_Text bulletsRemainingText;
     //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;

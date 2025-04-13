@@ -16,7 +16,7 @@ PrefabInstance:
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.07
       objectReference: {fileID: 0}
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
@@ -62,12 +62,37 @@ PrefabInstance:
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 6ee6561ebf75a4b15857523107eae6bd, type: 2}
+      objectReference: {fileID: 2100000, guid: 395a67e88aeeb7c4aba991c286d608b1, type: 2}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597894217531670].m_Value
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088754].m_Value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088981].m_Value
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4735965037108472619, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 6ee6561ebf75a4b15857523107eae6bd, type: 2}
+      objectReference: {fileID: 2100000, guid: 395a67e88aeeb7c4aba991c286d608b1, type: 2}
+    - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: m_Speed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: m_Acceleration
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8561733962346435951, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_Name

@@ -21,9 +21,9 @@ public class P2_HackableDoor : MonoBehaviour
 
     [Header("U.I.")]
     [SerializeField] private GameObject hackingScreen;
-    [SerializeField] private TextMeshProUGUI hackScreenText;
-    [SerializeField] private TextMeshProUGUI frontText;
-    [SerializeField] private TextMeshProUGUI backText;
+    [SerializeField] private TMP_Text hackScreenText;
+    [SerializeField] private TMP_Text frontText;
+    [SerializeField] private TMP_Text backText;
 
     [Space(5)]
 

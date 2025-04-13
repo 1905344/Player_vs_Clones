@@ -19,7 +19,7 @@ public class P2_PlayerDetector : MonoBehaviour
 
     [Header("U.I. References")]
     [SerializeField] private GameObject warningScreen;
-    [SerializeField] private TextMeshProUGUI warningText;
+    [SerializeField] private TMP_Text warningText;
 
     [Space(10)]
 

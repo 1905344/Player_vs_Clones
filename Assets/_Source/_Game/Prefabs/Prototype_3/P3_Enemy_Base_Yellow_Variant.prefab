@@ -8,6 +8,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3277810399669570697, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: enemyType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -16,7 +21,7 @@ PrefabInstance:
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.07
       objectReference: {fileID: 0}
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
@@ -58,11 +63,129 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3458037839894647888, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1205df28f0cdbd64a8e1cc7208a47601, type: 2}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'managedReferences[866597894217531672]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[P3_Enemy_Types,
+        Assembly-CSharp]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'managedReferences[866597962399088758]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[System.Single,
+        mscorlib]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'managedReferences[866597962399088987]'
+      value: 'Unity.Behavior Unity.Behavior.BlackboardVariable`1[[UnityEngine.GameObject,
+        UnityEngine.CoreModule]]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597894217531672].Name
+      value: P3_Enemy_Types
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088758].Name
+      value: NavigationSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088987].Name
+      value: Lighthouse
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: m_BlackboardVariableOverridesList.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597894217531670].m_Value
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597894217531672].m_Value
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088758].m_Value
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088987].m_Value
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[4]'
+      value: 866597894217531672
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[5]'
+      value: 866597962399088758
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: 'm_BlackboardVariableOverridesList.Array.data[6]'
+      value: 866597962399088987
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597894217531672].GUID.m_Value0
+      value: 17541746728540264598
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597894217531672].GUID.m_Value1
+      value: 4432494848359596298
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088758].GUID.m_Value0
+      value: 16527007091264960494
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088758].GUID.m_Value1
+      value: 16525705456258577153
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088987].GUID.m_Value0
+      value: 7575823837439073621
+      objectReference: {fileID: 0}
+    - target: {fileID: 4413813156276666703, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: managedReferences[866597962399088987].GUID.m_Value1
+      value: 15554814435717343397
+      objectReference: {fileID: 0}
     - target: {fileID: 4735965037108472619, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: df6219926368041ac926da7e3dbc92c7, type: 2}
+      objectReference: {fileID: 2100000, guid: 1205df28f0cdbd64a8e1cc7208a47601, type: 2}
+    - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: m_Speed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: m_Acceleration
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8561733962346435951, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_Name

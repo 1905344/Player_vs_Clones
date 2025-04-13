@@ -1,6 +1,5 @@
 using Cinemachine;
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -55,9 +54,9 @@ public class P3_InputManager : MonoBehaviour
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI cameraFOVText;
-    [SerializeField] TextMeshProUGUI mouseXSensText;
-    [SerializeField] TextMeshProUGUI mouseYSensText;
+    [SerializeField] TMP_Text cameraFOVText;
+    [SerializeField] TMP_Text mouseXSensText;
+    [SerializeField] TMP_Text mouseYSensText;
     private bool updateMouseXSensText = false;
     private bool updateMouseYSensText = false;
 
@@ -72,8 +71,9 @@ public class P3_InputManager : MonoBehaviour
 
     [Header("Camera Field of View")]
     [SerializeField, Range(60f, 180f)] private float _FOV = 90f;
-
     public bool updateFOV;
+
+    [Space(5)]
 
     [Header("Toggle or Hold Shift to Sprint")]
     public bool holdToSprint = true;
@@ -140,14 +140,15 @@ public class P3_InputManager : MonoBehaviour
         return playerInputActions.Player.ChangeCharacter.triggered;
     }
 
-    public bool isPlayerSprintingThisFrame { get; private set; }
+    public bool PlayerPressedInteractButton()
+    {
+        return playerInputActions.Player.Interact.triggered;
+    }
 
+    public bool isPlayerSprintingThisFrame { get; private set; }
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
-
     public bool pauseGame = false;
-
-    public bool canChangeCharacter = true;
 
     #endregion
 
@@ -174,10 +175,10 @@ public class P3_InputManager : MonoBehaviour
 
         //Pause and Resume Game
         playerInputActions.Player.PauseGame.performed += OnPause;
-        playerInputActions.Player.PauseGame.performed -= OnResume;
+        //playerInputActions.Player.PauseGame.performed -= OnResume;
 
         playerInputActions.UI.PauseGame.performed += OnResume;
-        playerInputActions.UI.PauseGame.performed -= OnResume;
+        //playerInputActions.UI.PauseGame.performed -= OnResume;
 
         //Change characters
         playerInputActions.Player.ChangeCharacter.started += OnChangeCharacter;
@@ -195,7 +196,7 @@ public class P3_InputManager : MonoBehaviour
 
         //When the game starts
         P3_GameManager.Instance.OnStartGame += OnEnable;
-        P3_GameManager.Instance.LevelCompleted += OnDisable;
+        P3_GameManager.Instance.PlayerKilled += OnDisable;
 
         SetToggleStates();
         SetMouseSensSliders();
@@ -356,7 +357,7 @@ public class P3_InputManager : MonoBehaviour
 
     private void OnChangeCharacter(InputAction.CallbackContext context)
     {
-        if (context.started && canChangeCharacter)
+        if (context.started)
         {
             P3_GameManager.Instance.OnCharacterChanged();
             Debug.Log($"Player pressed change character input key.");
@@ -428,17 +429,18 @@ public class P3_InputManager : MonoBehaviour
         {
             OnPause(context);
         }
-        else
-        {
-            //SetToggleStates();
-            SetMouseSensSliders();
-            SetCameraFOVSlider();
-            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-            P3_GameManager.Instance.DisablePauseUI();
-            pauseGame = false;
-            EnableGameInput();
-        }
+        //SetToggleStates();
+        SetMouseSensSliders();
+        SetCameraFOVSlider();
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        P3_GameManager.Instance.OnResume();
+        pauseGame = false;
+        EnableGameInput();
     }
 
     public void OnResumeUIButtonPressed()
@@ -466,22 +468,15 @@ public class P3_InputManager : MonoBehaviour
 
     #endregion
 
-    private void OnPlayerDeath()
-    {
-        isPlayerDead = true;
-        ToggleActionMap(playerInputActions.UI);
-        DisableGameInput();
-    }
-
     #region Camera
 
     private void UpdateCamera()
     {
-        if (player1_Camera.gameObject.activeInHierarchy)
+        if (vCam == player1_Camera)
         {
             vCam = player2_Camera;
         }
-        else
+        else if (vCam == player2_Camera)
         {
             vCam = player1_Camera;
         }
@@ -583,6 +578,13 @@ public class P3_InputManager : MonoBehaviour
     #endregion
 
     #endregion
+
+    private void OnPlayerDeath()
+    {
+        isPlayerDead = true;
+        ToggleActionMap(playerInputActions.UI);
+        DisableGameInput();
+    }
 
     private void Update()
     {

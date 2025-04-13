@@ -55,9 +55,9 @@ public class P2_InputManager : MonoBehaviour
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI cameraFOVText;
-    [SerializeField] TextMeshProUGUI mouseXSensText;
-    [SerializeField] TextMeshProUGUI mouseYSensText;
+    [SerializeField] TMP_Text cameraFOVText;
+    [SerializeField] TMP_Text mouseXSensText;
+    [SerializeField] TMP_Text mouseYSensText;
     private bool updateMouseXSensText = false;
     private bool updateMouseYSensText = false;
 

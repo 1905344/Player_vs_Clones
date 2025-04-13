@@ -43,27 +43,38 @@ public class Prototype_1_InputManager : MonoBehaviour
     [Space(10)]
 
     [Header("U.I. for Settings Page")]
+    [SerializeField] Slider cameraFOVSlider;
     [SerializeField] Slider mouseXSensSlider;
     [SerializeField] Slider mouseYSensSlider;
+
+    [Space(5)]
+
     [SerializeField] Toggle invertMouseYToggle;
     [SerializeField] Toggle mouseAccelerationToggle;
-    [SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseXSensTextInput;
-    [SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseYSensTextInput;
+
+    [Space(5)]
+
+    [SerializeField] TextMeshProUGUI cameraFOVText;
+    [SerializeField] TextMeshProUGUI mouseXSensText;
+    [SerializeField] TextMeshProUGUI mouseYSensText;
+    private bool updateMouseXSensText = false;
+    private bool updateMouseYSensText = false;
+
+    //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseXSensTextInput;
+    //[SerializeField, Tooltip("Drag the placeholder text child object of the text input object")] TMP_InputField mouseYSensTextInput;
 
     [Space(15)]
 
     [Header("Cinemachine Virtual Camera Reference")]
     [SerializeField] CinemachineVirtualCamera vCam;
 
-    //Only for testing the two cameras at once
-    //[SerializeField] CinemachineVirtualCamera playerTwoVCam;
-
     [Space(10)]
 
     [Header("Camera Field of View")]
     [SerializeField, Range(90f, 180f)] private float _FOV = 90f;
-
     public bool updateFOV;
+
+    [Space(5)]
 
     [Header("Toggle or Hold Shift to Sprint")]
     public bool holdToSprint = true;
@@ -126,15 +137,9 @@ public class Prototype_1_InputManager : MonoBehaviour
     }
 
     public bool isPlayerSprintingThisFrame { get; private set; }
-
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
-
     public bool pauseGame = false;
-
-    //[Space(10)]
-
-    //[SerializeField] private bool isTestingTwoCharactersAtOnce = false;
 
     #endregion
 
@@ -161,51 +166,45 @@ public class Prototype_1_InputManager : MonoBehaviour
 
         //Pause and Resume Game
         playerActions.Player.PauseGame.performed += OnPause;
-
         playerActions.Player.PauseGame.performed -= OnResume;
 
         playerActions.UI.PauseGame.performed += OnResume;
         playerActions.UI.PauseGame.performed -= OnResume;
 
-        //Level completed
-        //Prototype_1_GameManager.Instance.LevelCompleted += DisableGameInput;
-        //Prototype_1_GameManager.Instance.LevelFailed += DisableGameInput;
-
-        //Prototype_1_GameManager.Instance.OnStartGame += OnEnable;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        //Event for when the player has been killed
-        Prototype_1_GameManager.Instance.PlayerKilled += OnPlayerDeath;
+        mouseXSensText.maxVisibleCharacters = 4;
+        mouseYSensText.maxVisibleCharacters = 4;
     }
 
     private void Start()
     {
+        //Event for when the player has been killed
+        Prototype_1_GameManager.Instance.PlayerKilled += OnPlayerDeath;
+        Prototype_1_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
+
+        Prototype_1_GameManager.Instance.OnStartGame += OnEnable;
+        Prototype_1_GameManager.Instance.LevelCompleted += OnDisable;
+
+
+        SetToggleStates();
+        SetMouseSensSliders();
+        SetCameraFOVSlider();
+
+        ApplyMouseXSens();
+        ApplyMouseYSens();
+
+        #region Debug
+
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("InputManager: The starting action map is: " + _currentControlScheme);
         }
 
-        //mouseXSensSlider.onValueChanged.AddListener(delegate { ApplyMouseXSens(); });
-        //mouseYSensSlider.onValueChanged.AddListener(delegate { ApplyMouseYSens(); });
-
-        SetToggleStates();
-        SetMouseSensSliders();
-
-        //invertMouseYToggle.onValueChanged.AddListener(delegate { InvertMouseYToggled(); });
-        //mouseAccelerationToggle.onValueChanged.AddListener(delegate { MouseAccelerationToggled(); });
-
-        ApplyMouseXSens();
-        ApplyMouseYSens();
-
-        vCam.SetFocalLength(_FOV);
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
         }
 
-        vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
+        #endregion
     }
 
     #region OnEnable and OnDisable
@@ -214,6 +213,12 @@ public class Prototype_1_InputManager : MonoBehaviour
     {
         ToggleActionMap(playerActions.Player);
         playerActions.Player.Enable();
+        updateFOV = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
 
     public void OnDisable()
@@ -221,18 +226,25 @@ public class Prototype_1_InputManager : MonoBehaviour
         ToggleActionMap(playerActions.UI);
         playerActions.Player.Disable();
         playerActions.UI.Enable();
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void EnableGameInput()
     {
-        if (isPlayerDead || pauseGame)
-        {
-            return;
-        }
+        #region Debug
 
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input enabled.");
+        }
+
+        #endregion
+
+        if (isPlayerDead || pauseGame)
+        {
+            return;
         }
 
         Cursor.visible = false;
@@ -245,22 +257,17 @@ public class Prototype_1_InputManager : MonoBehaviour
 
     public void DisableGameInput()
     {
-        //if (!levelComplete)
-        //{
-        //    return;
-        //}
-
-        //if (isPlayerDead)
-        //{
-        //    return;
-        //}
+        #region Debug
 
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
             Debug.Log("Input Manager: game input disabled.");
         }
 
-        vCam.SetCameraPOV(0, 0, mouseAcceleration, invertMouseY);
+        #endregion
+
+        SetCamera(0, 0, _FOV);
+
         playerActions.Player.Disable();
         ToggleActionMap(playerActions.UI);
         Cursor.visible = true;
@@ -406,8 +413,9 @@ public class Prototype_1_InputManager : MonoBehaviour
         }
         else
         {
-            SetToggleStates();
             SetMouseSensSliders();
+            SetCameraFOVSlider();
+            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
             Prototype_1_GameManager.Instance.DisablePauseUI();
             pauseGame = false;
@@ -428,6 +436,10 @@ public class Prototype_1_InputManager : MonoBehaviour
         }
         else
         {
+            SetMouseSensSliders();
+            SetCameraFOVSlider();
+            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+
             pauseGame = false;
             EnableGameInput();
         }
@@ -435,14 +447,45 @@ public class Prototype_1_InputManager : MonoBehaviour
 
     #endregion
 
+    #region Camera
+
+    private void UpdateCamera()
+    {
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+    }
+
+    private void SetCamera(float mouseX, float mouseY, float setFOV)
+    {
+        vCam.SetCameraPOV(mouseX, mouseY, mouseAcceleration, invertMouseY);
+        vCam.SetFocalLength(setFOV);
+    }
+
+    #endregion
+
     #region Settings Functions
+
+    #region Field of View
+
+    public void OnCameraFOVChange()
+    {
+        _FOV = cameraFOVSlider.value;
+        updateFOV = true;
+    }
+
+    private void SetCameraFOVSlider()
+    {
+        cameraFOVSlider.value = _FOV;
+        cameraFOVText.text = _FOV.ToString();
+    }
+
+    #endregion
 
     #region MouseSensitivity
 
     public void ApplyMouseXSens()
     {
         mouseHorizontalSensitivity = mouseXSensSlider.value;
-        mouseXSensTextInput.text = mouseHorizontalSensitivity.ToString();
+        //mouseXSensTextInput.text = mouseHorizontalSensitivity.ToString();
 
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
@@ -453,7 +496,7 @@ public class Prototype_1_InputManager : MonoBehaviour
     public void ApplyMouseYSens()
     {
         mouseVerticalSensitivity = mouseYSensSlider.value;
-        mouseYSensTextInput.text = mouseVerticalSensitivity.ToString();
+        //mouseYSensTextInput.text = mouseVerticalSensitivity.ToString();
 
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
@@ -521,40 +564,23 @@ public class Prototype_1_InputManager : MonoBehaviour
     {
         invertMouseYToggle.isOn = invertMouseY;
         mouseAccelerationToggle.isOn = mouseAcceleration;
-    }
 
-    private void InvertMouseYToggled()
-    {
-        if (invertMouseY)
-        {
-            invertMouseY = false;
-        }
-        else
-        {
-            invertMouseY = true;
-        }
+        #region Debug
 
         if (Prototype_1_GameManager.Instance.toggleDebug)
         {
-            Debug.Log("Input Manager: Invert mouse Y has been toggled.");
-        }
-    }
+            if (invertMouseYToggle.isOn)
+            {
+                Debug.Log("Input Manager: Invert mouse Y has been toggled.");
+            }
 
-    private void MouseAccelerationToggled()
-    {
-        if (mouseAcceleration)
-        {
-            mouseAcceleration = false;
-        }
-        else
-        {
-            mouseAcceleration = true;
+            if (mouseAccelerationToggle.isOn)
+            {
+                Debug.Log("Input Manager: Mouse acceleration has been toggled.");
+            }
         }
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
-        {
-            Debug.Log("Input Manager: Mouse acceleration has been toggled.");
-        }
+        #endregion
     }
 
     #endregion
@@ -574,16 +600,17 @@ public class Prototype_1_InputManager : MonoBehaviour
 
         if (updateFOV)
         {
+            cameraFOVText.text = _FOV.ToString();
             vCam.SetFocalLength(_FOV);
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
 
-            /*if (isTestingTwoCharactersAtOnce)
-            {
-                playerTwoVCam.SetFocalLength(_FOV);
-                Debug.Log("Camera FOV is: " + playerTwoVCam.GetFocalLength());
-            }*/
-
             updateFOV = false;
+
+            #region Debug
+
+            Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
+
+            #endregion
         }
 
         #endregion
@@ -599,6 +626,22 @@ public class Prototype_1_InputManager : MonoBehaviour
         {
             //Debug.Log("Input Manager: Keyboard connected.");
             _currentControlScheme = "Keyboard";
+        }
+
+        #endregion
+
+        #region Update Mouse Sensitivity Text
+
+        if (updateMouseXSensText)
+        {
+            mouseXSensText.text = mouseHorizontalSensitivity.ToString();
+            updateMouseXSensText = false;
+        }
+
+        if (updateMouseYSensText)
+        {
+            mouseYSensText.text = mouseVerticalSensitivity.ToString();
+            updateMouseYSensText = false;
         }
 
         #endregion

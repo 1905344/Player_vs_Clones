@@ -40,52 +40,98 @@ public class Prototype_1_GameManager : MonoBehaviour
     //public event Action LevelFailed;
     public event Action LevelCompleted;
 
+    [Header("Restart Scene")]
+    [SerializeField] private string sceneName;
 
-    [Space(20)]
+    [Space(5)]
+
+    [Header("Level Objective")]
+    [SerializeField] private string levelObjective;
+
+    [Header("Reload Prompt Variables")]
+    private bool startReloadPromptTimer = false;
+    [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = false;
+
+    [Space(5)]
+
+    [SerializeField, Tooltip("How long the prompt should stay on screen for")] private float reloadPromptLength;
+    [SerializeField, Range(0, 100), Tooltip("The alpha value for the reload prompt text colour to tween")] private int reloadPromptTextAlpha;
+    [SerializeField, Tooltip("The frequency of the tweening of the alpha value for the reload prompt text colour")] private float reloadPromptTextAlphaTime;
+    private float promptTimer;
+    private bool toggleReloadPromptText = false;
+
+    [Space(10)]
 
     [Header("U.I. Elements")]
+    [SerializeField] TMP_Text reloadPromptText;
+    [SerializeField] TMP_Text pauseTitleText;
+
+    [Space(5)]
+
+    [Header("Screen References")]
     [SerializeField] Transform tutorialScreen;
     [SerializeField] Transform pauseScreen;
+    [SerializeField] Transform controlsScreen;
     [SerializeField] Transform settingsScreen;
-    //[SerializeField] Transform quitPromptScreen;
     [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI pauseTitleText;
-
-    [Space(5)]
-
-    [Header("Buttons")]
+    [Header("Tutorial Screen Buttons")]
     [SerializeField] Button tutorialStartGame;
     [SerializeField] Button tutorialQuitGame;
+    [SerializeField] Button tutorialScreenReturnButton;
 
     [Space(5)]
 
+    [Header("Pause Menu Buttons")]
     [SerializeField] Button resumeFromPauseMenuButton;
     [SerializeField] Button restartFromPauseMenuButton;
+    [SerializeField] Button tutorialPauseMenuButton;
+    [SerializeField] Button controlsPauseMenuButton;
     [SerializeField] Button settingsPauseMenuButton;
     [SerializeField] Button quitFromPauseMenuButton;
 
     [Space(5)]
 
+    [Header("Settings Menu U.I. Elements")]
     [SerializeField] Button returnFromSettingsPageButton;
+
+    [Space(3)]
+
+    [SerializeField] Slider fovSlider;
     [SerializeField] Slider mouseXSensitivitySlider;
     [SerializeField] Slider mouseYSensitivitySlider;
-    //[SerializeField] TMP_InputField mouseXSensitivtyTextInput;
-    //[SerializeField] TMP_InputField mouseYSensitivtyTextInput;
-    [SerializeField] Toggle invertMouseY;
-    [SerializeField] Toggle mouseAcceleration;
 
     [Space(5)]
 
-    //[SerializeField] Button returnToPauseScreen;
-    //[SerializeField] Button quitToMainMenuButton;
+    [SerializeField] TMP_Text fovText;
+    [SerializeField] TMP_Text mouseXSensitivityText;
+    [SerializeField] TMP_Text mouseYSensitivityText;
+    [SerializeField] TMP_Text objectiveText;
+
+    [Space(5)]
+
+    [SerializeField] Toggle invertMouseY;
+    [SerializeField] Toggle mouseAcceleration;
+    [SerializeField] Toggle promptForReloadToggle;
+
+    [Space(5)]
+
+    [Header("Controls Screen")]
+    [SerializeField] Button returnFromControlsPageButton;
+
+    [Space(5)]
+
+    [Header("Game Over Screen")]
     [SerializeField] Button quitGameFromGameOverScreenButton;
+    [SerializeField] TMP_Text gameOverText;
+    [SerializeField] TMP_Text levelCompletedText;
 
     [Space(10)]
 
     [SerializeField] public bool toggleDebug = false;
+    [SerializeField] public bool skipTutorial = false;
 
     #endregion
 
@@ -103,10 +149,25 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     private void Start()
     {
-        tutorialScreen.gameObject.SetActive(true);
-        tutorialStartGame.interactable = true;
-        tutorialQuitGame.interactable = true;
         Prototype_1_InputManager.Instance.DisableGameInput();
+
+        SetReloadPromptToggle();
+
+        if (!skipTutorial)
+        {
+            ShowTutorial();
+            DisableReturnButtonTutorialScreen();
+            Prototype_1_InputManager.Instance.DisableGameInput();
+        }
+        else
+        {
+            //Time.timeScale = 0f;
+
+            HideTutorial();
+            Prototype_1_InputManager.Instance.EnableGameInput();
+        }
+
+        UpdateObjectiveText();
     }
 
     #region Event Functions
@@ -185,8 +246,11 @@ public class Prototype_1_GameManager : MonoBehaviour
     {
         #region Disable buttons
 
+        tutorialStartGame.gameObject.SetActive(false);
         tutorialStartGame.enabled = false;
         tutorialStartGame.interactable = false;
+
+        tutorialQuitGame.gameObject.SetActive(false);
         tutorialQuitGame.enabled = false;
         tutorialQuitGame.interactable = false;
 
@@ -194,7 +258,53 @@ public class Prototype_1_GameManager : MonoBehaviour
 
         tutorialScreen.gameObject.SetActive(false);
         Cursor.visible = false;
-        Prototype_1_InputManager.Instance.OnEnable();
+        Cursor.lockState = CursorLockMode.None;
+        OnStartMainGame();
+    }
+
+    private void ShowTutorial()
+    {
+        tutorialScreen.gameObject.SetActive(true);
+
+        tutorialStartGame.gameObject.SetActive(true);
+        tutorialStartGame.enabled = true;
+        tutorialStartGame.interactable = true;
+
+        tutorialQuitGame.gameObject.SetActive(true);
+        tutorialQuitGame.enabled = true;
+        tutorialQuitGame.interactable = true;
+
+        DisableReturnButtonTutorialScreen();
+    }
+
+    private void HideTutorial()
+    {
+        tutorialScreen.gameObject.SetActive(false);
+
+        tutorialStartGame.gameObject.SetActive(false);
+        tutorialStartGame.enabled = false;
+        tutorialStartGame.interactable = false;
+
+        tutorialQuitGame.gameObject.SetActive(false);
+        tutorialQuitGame.enabled = false;
+        tutorialQuitGame.interactable = false;
+    }
+
+    private void ShowTutorialScreenFromPauseMenu()
+    {
+        tutorialScreen.gameObject.SetActive(true);
+        tutorialScreenReturnButton.gameObject.SetActive(true);
+
+        tutorialScreenReturnButton.enabled = true;
+        tutorialScreenReturnButton.interactable = true;
+        tutorialScreenReturnButton.gameObject.SetActive(true);
+    }
+
+    private void HideTutorialScreenFromPauseMenu()
+    {
+        tutorialScreen.gameObject.SetActive(false);
+
+        DisableReturnButtonTutorialScreen();
     }
 
     #endregion
@@ -215,6 +325,14 @@ public class Prototype_1_GameManager : MonoBehaviour
         restartFromPauseMenuButton.interactable = true;
         restartFromPauseMenuButton.gameObject.SetActive(true);
 
+        tutorialPauseMenuButton.enabled = true;
+        tutorialPauseMenuButton.interactable = true;
+        tutorialPauseMenuButton.gameObject.SetActive(true);
+
+        controlsPauseMenuButton.enabled = true;
+        controlsPauseMenuButton.interactable = true;
+        controlsPauseMenuButton.gameObject.SetActive(true);
+
         settingsPauseMenuButton.enabled = true;
         settingsPauseMenuButton.interactable = true;
         settingsPauseMenuButton.gameObject.SetActive(true);
@@ -224,6 +342,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         quitFromPauseMenuButton.gameObject.SetActive(true);
 
         pauseTitleText.gameObject.SetActive(true);
+        objectiveText.gameObject.SetActive(true);
     }
 
     private void DisablePauseButtons()
@@ -236,6 +355,14 @@ public class Prototype_1_GameManager : MonoBehaviour
         restartFromPauseMenuButton.interactable = false;
         restartFromPauseMenuButton.gameObject.SetActive(false);
 
+        tutorialPauseMenuButton.enabled = false;
+        tutorialPauseMenuButton.interactable = false;
+        tutorialPauseMenuButton.gameObject.SetActive(false);
+
+        controlsPauseMenuButton.enabled = false;
+        controlsPauseMenuButton.interactable = false;
+        controlsPauseMenuButton.gameObject.SetActive(false);
+
         settingsPauseMenuButton.enabled = false;
         settingsPauseMenuButton.interactable = false;
         settingsPauseMenuButton.gameObject.SetActive(false);
@@ -245,6 +372,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         quitFromPauseMenuButton.gameObject.SetActive(false);
 
         pauseTitleText.gameObject.SetActive(false);
+        objectiveText.gameObject.SetActive(false);
     }
 
     private void EnableSettingsUi()
@@ -252,6 +380,10 @@ public class Prototype_1_GameManager : MonoBehaviour
         returnFromSettingsPageButton.enabled = true;
         returnFromSettingsPageButton.interactable = true;
         returnFromSettingsPageButton.gameObject.SetActive(true);
+
+        fovSlider.enabled = true;
+        fovSlider.interactable = true;
+        fovSlider.gameObject.SetActive(true);
 
         mouseXSensitivitySlider.enabled = true;
         mouseXSensitivitySlider.interactable = true;
@@ -261,13 +393,9 @@ public class Prototype_1_GameManager : MonoBehaviour
         mouseYSensitivitySlider.interactable = true;
         mouseYSensitivitySlider.gameObject.SetActive(true);
 
-        //mouseXSensitivtyTextInput.enabled = true;
-        //mouseXSensitivtyTextInput.interactable = true;
-        //mouseXSensitivtyTextInput.gameObject.SetActive(true);
-
-        //mouseYSensitivtyTextInput.enabled = true;
-        //mouseYSensitivtyTextInput.interactable = true;
-        //mouseYSensitivtyTextInput.gameObject.SetActive(true);
+        fovText.gameObject.SetActive(true);
+        mouseXSensitivityText.gameObject.SetActive(true);
+        mouseYSensitivityText.gameObject.SetActive(true);
 
         invertMouseY.enabled = true;
         invertMouseY.interactable = true;
@@ -276,6 +404,10 @@ public class Prototype_1_GameManager : MonoBehaviour
         mouseAcceleration.enabled = true;
         mouseAcceleration.interactable = true;
         mouseAcceleration.gameObject.SetActive(true);
+
+        promptForReloadToggle.enabled = true;
+        promptForReloadToggle.interactable = true;
+        promptForReloadToggle.gameObject.SetActive(true);
     }
 
     private void DisableSettingsUi()
@@ -283,6 +415,10 @@ public class Prototype_1_GameManager : MonoBehaviour
         returnFromSettingsPageButton.enabled = false;
         returnFromSettingsPageButton.interactable = false;
         returnFromSettingsPageButton.gameObject.SetActive(false);
+
+        fovSlider.enabled = false;
+        fovSlider.interactable = false;
+        fovSlider.gameObject.SetActive(false);
 
         mouseXSensitivitySlider.enabled = false;
         mouseXSensitivitySlider.interactable = false;
@@ -292,13 +428,9 @@ public class Prototype_1_GameManager : MonoBehaviour
         mouseYSensitivitySlider.interactable = false;
         mouseYSensitivitySlider.gameObject.SetActive(false);
 
-        //mouseXSensitivtyTextInput.enabled = false;
-        //mouseXSensitivtyTextInput.interactable = false;
-        //mouseXSensitivtyTextInput.gameObject.SetActive(false);
-
-        //mouseYSensitivtyTextInput.enabled = false;
-        //mouseYSensitivtyTextInput.interactable = false;
-        //mouseYSensitivtyTextInput.gameObject.SetActive(false);
+        fovText.gameObject.SetActive(false);
+        mouseXSensitivityText.gameObject.SetActive(false);
+        mouseYSensitivityText.gameObject.SetActive(false);
 
         invertMouseY.enabled = false;
         invertMouseY.interactable = false;
@@ -307,25 +439,11 @@ public class Prototype_1_GameManager : MonoBehaviour
         mouseAcceleration.enabled = false;
         mouseAcceleration.interactable = false;
         mouseAcceleration.gameObject.SetActive(false);
+
+        promptForReloadToggle.enabled = false;
+        promptForReloadToggle.interactable = false;
+        promptForReloadToggle.gameObject.SetActive(false);
     }
-
-    //private void EnableQuitScreenButtons()
-    //{
-    //    //quitToMainMenuButton.enabled = true;
-    //    //quitToMainMenuButton.interactable = true;
-
-    //    quitGameFromGameOverScreenButton.enabled = true;
-    //    quitGameFromGameOverScreenButton.interactable = true;
-    //}
-
-    //private void DisableQuitScreenButtons()
-    //{
-    //    //quitToMainMenuButton.enabled = false;
-    //    //quitToMainMenuButton.interactable = false;
-
-    //    quitGameFromGameOverScreenButton.enabled = false;
-    //    quitGameFromGameOverScreenButton.interactable = false;
-    //}
 
     #endregion
 
@@ -350,10 +468,14 @@ public class Prototype_1_GameManager : MonoBehaviour
         }
         else
         {
+            #region Debug
+
             if (toggleDebug)
             {
                 Debug.Log("Resuming the game.");
             }
+
+            #endregion
 
             Time.timeScale = 1.0f;
             DisablePauseUI();
@@ -370,27 +492,13 @@ public class Prototype_1_GameManager : MonoBehaviour
         //of the U.I. button to resume the game
         pauseScreen.gameObject.SetActive(false);
         settingsScreen.gameObject.SetActive(false);
-        //quitPromptScreen.gameObject.SetActive(false);
 
         DisablePauseButtons();
-        //DisableQuitScreenButtons();
     }
-
-    //public void OnQuitButtonPressed()
-    //{
-    //    quitPromptScreen.gameObject.SetActive(true);
-    //    DisablePauseButtons();
-    //    EnableQuitScreenButtons();
-
-    //    Cursor.visible = true;
-    //    Cursor.lockState = CursorLockMode.None;
-    //}
 
     public void OnReturnToPauseScreenPressed()
     {
-        //quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
-        //DisableQuitScreenButtons();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -398,7 +506,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     public void OnRestartButtonPressed()
     {
-        RestartScene("Prototype_1_Level");
+        RestartScene(sceneName);
     }
 
     public void OnSettingsButtonPressed()
@@ -413,19 +521,38 @@ public class Prototype_1_GameManager : MonoBehaviour
         DisableSettingsPage();
     }
 
-    //public void OnQuitToMainMenu()
-    //{
-    //    Cursor.visible = true;
-    //    Cursor.lockState = CursorLockMode.None;
-    //    LoadMainMenu();
-    //}
-
     public void OnApplicationQuit()
     {
         Debug.Log("Game quit");
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         Application.Quit();
+    }
+
+    public void OnTutorialButtonPressed()
+    {
+        DisablePauseButtons();
+        ShowTutorialScreenFromPauseMenu();
+    }
+
+    public void OnReturnFromPausedTutorialScreen()
+    {
+        EnablePauseButtons();
+        HideTutorialScreenFromPauseMenu();
+    }
+
+    public void EnableReturnButtonTutorialScreen()
+    {
+        tutorialScreenReturnButton.enabled = true;
+        tutorialScreenReturnButton.interactable = true;
+        tutorialScreenReturnButton.gameObject.SetActive(true);
+    }
+
+    public void DisableReturnButtonTutorialScreen()
+    {
+        tutorialScreenReturnButton.enabled = false;
+        tutorialScreenReturnButton.interactable = false;
+        tutorialScreenReturnButton.gameObject.SetActive(false);
     }
 
     #endregion
@@ -442,6 +569,49 @@ public class Prototype_1_GameManager : MonoBehaviour
     {
         settingsScreen.gameObject.SetActive(false);
         DisableSettingsUi();
+    }
+
+    #endregion
+
+    #region Settings Page: Reload Prompt Toggle
+
+    private void SetReloadPromptToggle()
+    {
+        promptForReloadToggle.isOn = enableReloadPromptTextAsTimer;
+    }
+
+    #endregion
+
+    #region Controls Page Functions
+
+    private void EnableControlsPage()
+    {
+        returnFromControlsPageButton.interactable = true;
+        returnFromControlsPageButton.enabled = true;
+        returnFromControlsPageButton.gameObject.SetActive(true);
+
+        controlsScreen.gameObject.SetActive(true);
+    }
+
+    private void DisableControlsPage()
+    {
+        returnFromControlsPageButton.interactable = false;
+        returnFromControlsPageButton.enabled = false;
+        returnFromControlsPageButton.gameObject.SetActive(false);
+
+        controlsScreen.gameObject.SetActive(false);
+    }
+
+    public void OnControlsButtonPressed()
+    {
+        EnableControlsPage();
+        DisablePauseButtons();
+    }
+
+    public void OnControlsPageReturnButtonPressed()
+    {
+        DisableControlsPage();
+        EnablePauseButtons();
     }
 
     #endregion
@@ -467,6 +637,7 @@ public class Prototype_1_GameManager : MonoBehaviour
     private void RestartScene(string name)
     {
         SceneManager.LoadSceneAsync(name);
+        Time.timeScale = 1.0f;
     }
 
     private void LoadMainMenu()
@@ -474,6 +645,58 @@ public class Prototype_1_GameManager : MonoBehaviour
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
+    public void ShowReloadPrompt()
+    {
+        if (!enableReloadPromptTextAsTimer)
+        {
+            return;
+        }
+
+        startReloadPromptTimer = true;
+        toggleReloadPromptText = true;
+        reloadPromptText.gameObject.SetActive(true);
+    }
+
+    public void HideReloadPrompt()
+    {
+        if (!enableReloadPromptTextAsTimer)
+        {
+            return;
+
+        }
+
+        promptTimer = 0f;
+        startReloadPromptTimer = false;
+        toggleReloadPromptText = false;
+
+        reloadPromptText.gameObject.SetActive(false);
+        reloadPromptText.alpha = 0.5f;
+    }
+
+    private void UpdateObjectiveText()
+    {
+        objectiveText.text = "Objective:" + "\n" + levelObjective;
+    }
+
     #endregion
 
+    private void Update()
+    {
+        if (startReloadPromptTimer)
+        {
+            promptTimer += Time.deltaTime;
+
+            reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
+
+            if (promptTimer > reloadPromptLength)
+            {
+                HideReloadPrompt();
+            }
+        }
+
+        if (toggleReloadPromptText)
+        {
+            reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
+        }
+    }
 }

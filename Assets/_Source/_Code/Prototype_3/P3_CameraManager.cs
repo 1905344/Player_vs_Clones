@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class P3_CameraManager : MonoBehaviour
@@ -20,7 +19,7 @@ public class P3_CameraManager : MonoBehaviour
 
     #endregion
 
-    void Awake()
+    void Start()
     {
         P3_GameManager.Instance.changePlayerCharacter += OnCameraChanged;
     }

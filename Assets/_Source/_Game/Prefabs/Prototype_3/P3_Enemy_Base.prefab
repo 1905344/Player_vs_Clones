@@ -315,12 +315,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 737308637690026905}
-  - component: {fileID: 5973613506242075403}
   - component: {fileID: 5219798911751709296}
   - component: {fileID: 4296680581618443461}
-  - component: {fileID: 3427117234153888404}
+  - component: {fileID: 5816836142450105271}
   - component: {fileID: 4413813156276666703}
-  - component: {fileID: 1252749416844858718}
+  - component: {fileID: -3277810399669570697}
   m_Layer: 8
   m_Name: P3_Enemy_Base
   m_TagString: Enemy
@@ -337,35 +336,13 @@ Transform:
   m_GameObject: {fileID: 8561733962346435951}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.99987185, z: -0, w: -0.01601126}
-  m_LocalPosition: {x: 11.323045, y: 3.2, z: -16.056461}
+  m_LocalPosition: {x: 0, y: 1.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6139685318952065191}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 181.835, z: 0}
---- !u!95 &5973613506242075403
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8561733962346435951}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 29a2bcf79bd055145894578262097872, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &5219798911751709296
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -376,8 +353,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 25
-  m_Acceleration: 17
+  m_Speed: 7
+  m_Acceleration: 10
   avoidancePriority: 70
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -385,9 +362,9 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0.88
+  m_BaseOffset: 1.02
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!54 &4296680581618443461
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -415,8 +392,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!135 &3427117234153888404
-SphereCollider:
+--- !u!136 &5816836142450105271
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -425,17 +402,19 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 76224
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 15
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: -0}
 --- !u!114 &4413813156276666703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,33 +422,70 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8561733962346435951}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Graph: {fileID: -2621471722764884037, guid: 86e3530307f744849aa2876e169a37c9,
+  m_Graph: {fileID: -4960080283475254862, guid: 7f266ac39b3ad444c92c13d24586a852,
     type: 2}
   m_BlackboardVariableOverridesList:
   - rid: 962654846156275712
-  - rid: 962654846156275727
-  - rid: 962654849558380879
-  - rid: 962654914690417034
-  - rid: 962654914690417043
-  - rid: 974930466173879162
-  - rid: 962654936298685248
-  - rid: 962654936298685249
-  - rid: 962654937165070968
-  - rid: 962654937165070969
-  - rid: 962654941375628048
-  - rid: 962654944518209739
-  - rid: 974930510006452732
-  - rid: 974930510006452733
+  - rid: 866597894217531669
+  - rid: 866597894217531670
+  - rid: 866597894217531671
+  - rid: 866597962399088754
+  - rid: 866597962399088981
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
     version: 2
     RefIds:
+    - rid: 866597894217531669
+      type: {class: 'BlackboardVariable`1[[UnityEngine.AI.NavMeshAgent, UnityEngine.AIModule]]',
+        ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2759205170933767148
+          m_Value1: 2141903682016387249
+        Name: Nav Mesh Agent
+        m_Value: {fileID: 5219798911751709296}
+    - rid: 866597894217531670
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
+        ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 15959813490288765016
+          m_Value1: 4511371481274942175
+        Name: Player
+        m_Value: {fileID: 0}
+    - rid: 866597894217531671
+      type: {class: 'BlackboardVariable`1[[P3_EnemyBase, Assembly-CSharp]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 5580507023067137026
+          m_Value1: 4937094815474159733
+        Name: P3_Base_Script
+        m_Value: {fileID: -3277810399669570697}
+    - rid: 866597962399088754
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
+        asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 16527007091264960494
+          m_Value1: 16525705456258577153
+        Name: NavigationSpeed
+        m_Value: 25
+    - rid: 866597962399088981
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
+        ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7575823837439073621
+          m_Value1: 15554814435717343397
+        Name: Lighthouse
+        m_Value: {fileID: 0}
     - rid: 962654846156275712
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
         ns: Unity.Behavior, asm: Unity.Behavior}
@@ -479,128 +495,7 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 8561733962346435951}
-    - rid: 962654846156275727
-      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.GameObject, UnityEngine.CoreModule]], mscorlib]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7908470907781452335
-          m_Value1: 16144222283311196303
-        Name: Waypoints
-        m_Value:
-        - {fileID: 0}
-        - {fileID: 0}
-        - {fileID: 0}
-        - {fileID: 0}
-    - rid: 962654849558380879
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 10812192071893624599
-          m_Value1: 8877545721886987231
-        Name: Target
-        m_Value: {fileID: 0}
-    - rid: 962654914690417034
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 6209034085712898663
-          m_Value1: 11995292748115612250
-        Name: Speed Float
-        m_Value: 3.5
-    - rid: 962654914690417043
-      type: {class: 'BlackboardVariable`1[[UnityEngine.Animator, UnityEngine.AnimationModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 6643534075362141473
-          m_Value1: 5928917178051464179
-        Name: Animator
-        m_Value: {fileID: 5973613506242075403}
-    - rid: 962654936298685248
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1770115289718902885
-          m_Value1: 16868892588929528430
-        Name: Alerted time
-        m_Value: 2
-    - rid: 962654936298685249
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 3240894423581979132
-          m_Value1: 13583999906261728155
-        Name: Sprint Speed
-        m_Value: 5.25
-    - rid: 962654937165070968
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1467025006629937259
-          m_Value1: 5946869170058747654
-        Name: Attack Wait Time
-        m_Value: 1
-    - rid: 962654937165070969
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 178145388175675716
-          m_Value1: 5669784284488491827
-        Name: Attack Distance
-        m_Value: 8
-    - rid: 962654941375628048
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 14056696746163170794
-          m_Value1: 6575527366972096620
-        Name: Idle Wait Time
-        m_Value: 2
-    - rid: 962654944518209739
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 9303945847056549267
-          m_Value1: 2107436214643711291
-        Name: Navigation Distance
-        m_Value: 8
-    - rid: 974930466173879162
-      type: {class: 'BlackboardVariable`1[[P2_RangeSensor, Assembly-CSharp]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 5329623404877443075
-          m_Value1: 12179755905394738529
-        Name: P2 Agent Range Sensor
-        m_Value: {fileID: 0}
-    - rid: 974930510006452732
-      type: {class: 'BlackboardVariable`1[[P2_enemyAttack, Assembly-CSharp]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 528505348773625959
-          m_Value1: 18236086396221140816
-        Name: P2 enemy Attack
-        m_Value: {fileID: 0}
-    - rid: 974930510006452733
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7639807137369901376
-          m_Value1: 4085063918940642326
-        Name: Alert Exclamation Mark
-        m_Value: {fileID: 0}
---- !u!114 &1252749416844858718
+--- !u!114 &-3277810399669570697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -609,9 +504,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8561733962346435951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 687a1a33425e4bb40a2675fcec1ed50a, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ffb27bf62d5b2d43b8d7b5e0d8a854f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
-  maxHealth: 0
-  healthBar: {fileID: 0}
+  defaultHealth: 100
+  maxHealth: 100
+  enemyType: 0
+  damageAmount: 0
+  waitTimer: 0.3
+  explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
+    type: 3}
+  meshAgent: {fileID: 5219798911751709296}
+  startMoving: 0

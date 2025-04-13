@@ -62,8 +62,8 @@ public class P2_GameManager : MonoBehaviour
     [Space(20)]
 
     [Header("U.I. Elements")]
-    [SerializeField] TextMeshProUGUI reloadPromptText;
-    [SerializeField] TextMeshProUGUI pauseTitleText;
+    [SerializeField] TMP_Text reloadPromptText;
+    [SerializeField] TMP_Text pauseTitleText;
 
     [Space(5)]
 
@@ -106,10 +106,10 @@ public class P2_GameManager : MonoBehaviour
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI fovText;
-    [SerializeField] TextMeshProUGUI mouseXSensitivityText;
-    [SerializeField] TextMeshProUGUI mouseYSensitivityText;
-    [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] TMP_Text fovText;
+    [SerializeField] TMP_Text mouseXSensitivityText;
+    [SerializeField] TMP_Text mouseYSensitivityText;
+    [SerializeField] TMP_Text objectiveText;
 
     [Space(5)]
 
@@ -128,8 +128,8 @@ public class P2_GameManager : MonoBehaviour
     //[SerializeField] Button returnToPauseScreen;
     //[SerializeField] Button quitToMainMenuButton;
     [SerializeField] Button quitGameFromGameOverScreenButton;
-    [SerializeField] TextMeshProUGUI gameOverText;
-    [SerializeField] TextMeshProUGUI levelCompletedText;
+    [SerializeField] TMP_Text gameOverText;
+    [SerializeField] TMP_Text levelCompletedText;
 
     [Space(10)]
 

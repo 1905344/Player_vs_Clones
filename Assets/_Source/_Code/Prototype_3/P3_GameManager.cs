@@ -30,10 +30,6 @@ public class P3_GameManager : MonoBehaviour
     //Event to start the main game
     public event Action OnStartGame;
 
-    //Events for game over states
-    //public event Action LevelFailed;
-    public event Action LevelCompleted;
-
     //Event for switching between player characters
     public event Action changePlayerCharacter;
 
@@ -50,6 +46,17 @@ public class P3_GameManager : MonoBehaviour
     [Header("Level Objective")]
     [SerializeField] private string levelObjective;
 
+    [Space(5)]
+
+    [Header("Survival Variables")]
+    [SerializeField] public float survivalTimer;
+    [SerializeField] private bool startTimer = false;
+    [SerializeField] private TMP_Text survivalTimeText;
+    [SerializeField] private string survivalTimeString;
+    public bool enableMilliseconds { get; set; } = false;
+
+    [Space(5)]
+
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer = false;
     [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = false;
@@ -62,11 +69,11 @@ public class P3_GameManager : MonoBehaviour
     private float promptTimer;
     private bool toggleReloadPromptText = false;
 
-    [Space(20)]
+    [Space(10)]
 
     [Header("U.I. Elements")]
-    [SerializeField] TextMeshProUGUI reloadPromptText;
-    [SerializeField] TextMeshProUGUI pauseTitleText;
+    [SerializeField] TMP_Text reloadPromptText;
+    [SerializeField] TMP_Text pauseTitleText;
 
     [Space(5)]
 
@@ -94,7 +101,6 @@ public class P3_GameManager : MonoBehaviour
     [SerializeField] Button settingsPauseMenuButton;
     [SerializeField] Button quitFromPauseMenuButton;
 
-
     [Space(5)]
 
     [Header("Settings Menu U.I. Elements")]
@@ -108,10 +114,10 @@ public class P3_GameManager : MonoBehaviour
 
     [Space(5)]
 
-    [SerializeField] TextMeshProUGUI fovText;
-    [SerializeField] TextMeshProUGUI mouseXSensitivityText;
-    [SerializeField] TextMeshProUGUI mouseYSensitivityText;
-    [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] TMP_Text fovText;
+    [SerializeField] TMP_Text mouseXSensitivityText;
+    [SerializeField] TMP_Text mouseYSensitivityText;
+    [SerializeField] TMP_Text objectiveText;
 
     [Space(5)]
 
@@ -128,8 +134,7 @@ public class P3_GameManager : MonoBehaviour
 
     [Header("Game Over Screen")]
     [SerializeField] Button quitGameFromGameOverScreenButton;
-    [SerializeField] TextMeshProUGUI gameOverText;
-    [SerializeField] TextMeshProUGUI levelCompletedText;
+    [SerializeField] TMP_Text gameOverText;
 
     [Space(10)]
 
@@ -160,32 +165,19 @@ public class P3_GameManager : MonoBehaviour
             ShowTutorial();
             DisableReturnButtonTutorialScreen();
             P3_InputManager.Instance.DisableGameInput();
+            survivalTimeText.gameObject.SetActive(false);
         }
         else
         {
-            //Time.timeScale = 0f;
-
             HideTutorial();
             P3_InputManager.Instance.EnableGameInput();
+            survivalTimeText.gameObject.SetActive(true);
         }
 
         UpdateObjectiveText();
     }
 
     #region Event Functions
-
-    public void OnLevelCompleted()
-    {
-        if (LevelCompleted != null)
-        {
-            LevelCompleted();
-
-            Time.timeScale = 0f;
-            gameOverScreen.gameObject.SetActive(true);
-            gameOverText.gameObject.SetActive(false);
-            levelCompletedText.gameObject.SetActive(true);
-        }
-    }
 
     public void OnPlayerHit(string characterID, int damage)
     {
@@ -200,7 +192,7 @@ public class P3_GameManager : MonoBehaviour
         if (PlayerKilled != null)
         {
             PlayerKilled();
-            gameOverScreen.gameObject.SetActive(true);
+            OnGameOver();
         }
     }
 
@@ -218,6 +210,8 @@ public class P3_GameManager : MonoBehaviour
         {
             OnStartGame();
             Time.timeScale = 1.0f;
+            startTimer = true;
+            survivalTimeText.gameObject.SetActive(true);
         }
     }
 
@@ -506,10 +500,14 @@ public class P3_GameManager : MonoBehaviour
             #endregion
 
             Time.timeScale = 1.0f;
+            DisableControlsPage();
+            DisableSettingsPage();
+            HideTutorialScreenFromPauseMenu();
+            DisableReturnButtonTutorialScreen();
             DisablePauseUI();
-
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            
+            //Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
             P3_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
@@ -543,11 +541,11 @@ public class P3_GameManager : MonoBehaviour
         EnableSettingsPage();
     }
 
-    public void OnReturnFromSettingsButtonPressed()
-    {
-        EnablePauseButtons();
-        DisableSettingsPage();
-    }
+    //public void OnReturnFromSettingsButtonPressed()
+    //{
+    //    EnablePauseButtons();
+    //    DisableSettingsPage();
+    //}
 
     public void OnApplicationQuit()
     {
@@ -648,6 +646,15 @@ public class P3_GameManager : MonoBehaviour
 
     #region Game Over Functions
 
+    private void OnGameOver()
+    {
+        startTimer = false;
+        gameOverScreen.gameObject.SetActive(true);
+        survivalTimeText.gameObject.SetActive(false);
+
+        gameOverText.text = $"You survived for: {survivalTimeString} \n Try again?";
+    }
+
     public void OnGameOverReturnToMainMenu()
     {
         LoadMainMenu();
@@ -725,6 +732,26 @@ public class P3_GameManager : MonoBehaviour
         if (toggleReloadPromptText)
         {
             reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
+        }
+
+        if (startTimer)
+        {
+            survivalTimer += Time.deltaTime;
+
+            float seconds = Mathf.FloorToInt(survivalTimer % 60f);
+            float minutes = Mathf.FloorToInt(survivalTimer / 60f); 
+
+            if (enableMilliseconds)
+            {
+                float milliseconds = (survivalTimer % 1) * 1000;
+                survivalTimeString = string.Format("{0:00}:{1:00}:{02:000}", minutes, seconds, milliseconds);
+                survivalTimeText.text = survivalTimeString;
+            }
+            else
+            {
+                survivalTimeString = string.Format("{0:00}:{1:00}", minutes, seconds);
+                survivalTimeText.text = survivalTimeString;
+            }
         }
     }
 }

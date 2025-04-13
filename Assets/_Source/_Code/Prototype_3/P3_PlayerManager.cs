@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEditor;
+using UnityEngine;
 
 public class P3_PlayerManager : MonoBehaviour
 {
@@ -21,99 +20,70 @@ public class P3_PlayerManager : MonoBehaviour
 
     [Space(5)]
 
-    [Header("Active Players and Guns")]
-    [SerializeField] private List<GameObject> playerCharacters = new List<GameObject>(2);
-    [SerializeField] private GameObject currentlyActiveCharacter;
-    [SerializeField] private GameObject currentlyActiveGun;
-    private Guid currentCharacterID;
+    [Header("Player Characters")]
+    [SerializeField] private GameObject playerCharacter_1;
+    [SerializeField] private GameObject playerCharacter_2;
+    private bool isCharacter1Active = true;
+    private bool isCharacter2Active = false;
 
     [Space(5)]
 
-    [SerializeField] private int currentIndexPos = 0;
-    [SerializeField] private string currentIDString = string.Empty;
-
-    //[Space(5)]
-
-    //[SerializeField] private TextMeshProUGUI currentPlayerCharacterText;
-
-    public int GetCurrentCharacter()
-    {
-        return currentIndexPos;
-    }
-
-    public GameObject GetCurrentlyActivePlayer()
-    {
-        return playerCharacters[currentIndexPos].gameObject;
-    }
-
-    public string GetCurrentIDString()
-    {
-        return currentIDString;
-    }
+    [Header("HUD References")]
+    [SerializeField] private TMP_Text HealthText;
+    [SerializeField] private TMP_Text AmmoText;
+    [SerializeField] private TMP_Text lighthouseInteractText;
 
     #endregion
 
-    void Awake()
-    {
-        //P3_GameManager.Instance.OnStartGame += GameStarted;
-        P3_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
-        currentIndexPos = 0;
-    }
-
     private void Start()
     {
-        currentlyActiveCharacter = playerCharacters[0].gameObject;
-        currentCharacterID = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterID();
-        currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
-        currentlyActiveGun = playerCharacters[0].GetComponentInChildren<P2_GunplayManager>().gameObject;
+        P3_GameManager.Instance.changePlayerCharacter += OnCharacterChanged;
 
-        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
-        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
-        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
-        currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
+        isCharacter1Active = playerCharacter_1.GetComponent<P3_fpsCharacterBase>().isCharacterActive;
+        isCharacter2Active = playerCharacter_2.GetComponent<P3_LighthouseCharacter>().isCharacterActive;
+
+        isCharacter1Active = true;
+        isCharacter2Active = false;
+
+        playerCharacter_1.GetComponent<P3_fpsCharacterBase>().EnableFPSCharacter();
+        playerCharacter_2.GetComponent<P3_LighthouseCharacter>().DisableLighthouseCharacter();
+
     }
 
     #region Character Functions
 
     private void OnCharacterChanged()
     {
-        //Disable the active character
-        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
-        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
-
-        //Disable the gun attached to the active character
-        currentlyActiveGun.GetComponent<P2_GunplayManager>().DisableGun();
-
-        //Increment the integer for the current index position.
-        currentIndexPos++;
-
-        //Check that the integer for the current index position is not greater
-        //than the number of items within the list.
-        currentIndexPos %= playerCharacters.Count;
-
-        //Set the currentlyActiveCharacter game object variable to the next
-        //character game object in the list.
-        currentlyActiveCharacter = playerCharacters[currentIndexPos];
-
-        if (playerCharacters[currentIndexPos].GetComponent<P2_PlayerCharacterBase>().CharacterGunStatus())
+        if (isCharacter1Active && !isCharacter2Active)
         {
-            currentlyActiveGun = playerCharacters[currentIndexPos].GetComponentInChildren<P2_GunplayManager>().gameObject;
-            currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
+            playerCharacter_1.GetComponent<P3_fpsCharacterBase>().DisableFPSCharacter();
+            playerCharacter_1.GetComponent<P3_fpsMovement>().DisablePlayerMovement();
+
+            playerCharacter_2.GetComponent<P3_LighthouseCharacter>().EnableLighthouseCharacter();
+            playerCharacter_2.GetComponent<P3_fpsMovement>().EnablePlayerMovement();
+
+            HealthText.gameObject.SetActive(false);
+            AmmoText.gameObject.SetActive(false);
+            lighthouseInteractText.gameObject.SetActive(true);
         }
+        else if (isCharacter2Active && !isCharacter1Active)
+        {
+            playerCharacter_2.GetComponent<P3_LighthouseCharacter>().DisableLighthouseCharacter();
+            playerCharacter_2.GetComponent<P3_fpsMovement>().DisablePlayerMovement();
 
-        //Enabling various different components attached to the character
-        //and calling functions to update the GUI
-        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = true;
-        currentIDString = currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
+            playerCharacter_1.GetComponent<P3_fpsCharacterBase>().EnableFPSCharacter();
+            playerCharacter_1.GetComponent<P3_fpsMovement>().EnablePlayerMovement();
 
-        currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
-        currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
+            HealthText.gameObject.SetActive(true);
+            AmmoText.gameObject.SetActive(true);
+            lighthouseInteractText.gameObject.SetActive(false);
+        }
     }
 
     #endregion
 
-    //private void Update()
-    //{
-    //    currentPlayerCharacterText.text = $"Current character: \n {currentlyActiveCharacter.GetComponentInChildren<P2_PlayerCharacterBase>().characterName}";
-    //}
+    private void Update()
+    {
+        isCharacter1Active = !isCharacter2Active;
+    }
 }
