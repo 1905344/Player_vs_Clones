@@ -86,8 +86,6 @@ public class playerGameCharacter : MonoBehaviour
             }
 
             #endregion
-
-            //Application.Quit();
         }
     }
 

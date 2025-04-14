@@ -130,7 +130,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     [Space(10)]
 
-    [SerializeField] public bool toggleDebug = false;
+    [SerializeField] public bool enableDebug = false;
     [SerializeField] public bool skipTutorial = false;
 
     #endregion
@@ -470,7 +470,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         {
             #region Debug
 
-            if (toggleDebug)
+            if (enableDebug)
             {
                 Debug.Log("Resuming the game.");
             }

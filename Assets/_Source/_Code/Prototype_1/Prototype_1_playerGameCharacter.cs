@@ -5,9 +5,11 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
 {
     #region Variables
 
-    [SerializeField] private int health;
+    [Header("Health Variables")]
+    [SerializeField] private int currentHealth;
+    [SerializeField] private int defaultHealth;
+    [SerializeField] private int maxHealth = 100;
     [SerializeField] private bool isAlive;
-    //[SerializeField] private 
 
     [Space(10)]
 
@@ -16,34 +18,33 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
     [Space(10)]
 
     [Header("U.I. Elements")]
-    [SerializeField] private TMP_Text healthText;
-    [SerializeField] private Color32 healthTextColour;
-    private bool updateHealthTextColour;
-    private bool updateHealthText = false;
+    [SerializeField] private Prototype_1_HealthBar hudHealthBar;
+    private bool updateHealth = false;
 
     #endregion
 
     private void Awake()
     {
-        isAlive = true;
-        healthTextColour = Color.green;
+        currentHealth = defaultHealth;
+        defaultHealth = maxHealth;
     }
 
     private void Start()
     {
         Prototype_1_GameManager.Instance.PlayerHit += OnPlayerHit;
-        healthText.text = health.ToString() + "/100";
-        healthText.color = healthTextColour;
+
+        hudHealthBar.SetCurrentHealth(currentHealth);
+        hudHealthBar.SetMaxHealth(maxHealth);
     }
 
     public void OnPlayerHit(int damage)
     {
         #region Debug
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Player has been hit for " + damage.ToString() + " damage!");
-            Debug.Log("Player has " + health.ToString() + " health remaining.");
+            Debug.Log("Player has " + currentHealth.ToString() + " health remaining.");    
         }
 
         #endregion
@@ -53,9 +54,9 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
             return;
         }
 
-        health -= damage;
+        currentHealth -= damage;
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             OnPlayerDeath();
         }
@@ -71,7 +72,7 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
 
             Prototype_1_GameManager.Instance.OnPlayerKilled();
 
-            if (Prototype_1_GameManager.Instance.toggleDebug)
+            if (Prototype_1_GameManager.Instance.enableDebug)
             {
                 Debug.Log("Player has been killed.");
             }
@@ -80,42 +81,20 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
 
     private void UpdateHealth()
     {
-        updateHealthText = true;
-
-        #region UpdateHealthText Colour
-
-        float currentHealthPercentage = health / 100;
-
-        if (currentHealthPercentage < 0.7 && currentHealthPercentage >= 0.55)
+        if (!isAlive)
         {
-            healthTextColour = new Color(255, 205, 0, 255);
-            updateHealthTextColour = true;
-        }
-        else if (currentHealthPercentage < 1 && currentHealthPercentage >= 0.75)
-        {
-            healthTextColour = new Color(255, 155, 0, 255);
-            updateHealthTextColour = true;
-        }
-        else if (currentHealthPercentage < 1 && currentHealthPercentage >= 0.75)
-        {
-            healthTextColour = Color.red;
-            updateHealthTextColour = true;
+            return;
         }
 
-        #endregion
+        updateHealth = true;
     }
 
     private void Update()
     {
-        if (updateHealthText)
+        if (updateHealth)
         {
-            healthText.text = health.ToString() + "/100";
-
-            if (updateHealthTextColour)
-            {
-                healthText.color = healthTextColour;
-                updateHealthTextColour = false;
-            }
+            hudHealthBar.SetMaxHealth(maxHealth);
+            hudHealthBar.SetCurrentHealth(currentHealth);
         }
     }
 }

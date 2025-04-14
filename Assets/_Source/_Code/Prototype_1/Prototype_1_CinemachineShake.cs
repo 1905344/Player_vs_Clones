@@ -37,7 +37,7 @@ public class Prototype_1_CinemachineShake : MonoBehaviour
 
         #region Debug
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("CinemachineShake: Shaking the camera!");
         }

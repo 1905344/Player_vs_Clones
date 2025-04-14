@@ -246,7 +246,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         {
             #region Debugging
 
-            if (Prototype_1_GameManager.Instance.toggleDebug)
+            if (Prototype_1_GameManager.Instance.enableDebug)
             {
                 if (showFiringLine)
                 {
@@ -266,7 +266,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
             {
                 #region Debug
 
-                if (Prototype_1_GameManager.Instance.toggleDebug)
+                if (Prototype_1_GameManager.Instance.enableDebug)
                 {
                     Debug.Log("GunplayManager: Hit an enemy! ID is: " + enemyGuid);
                 }
@@ -302,7 +302,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
                 #region Debug
 
-                if (Prototype_1_GameManager.Instance.toggleDebug)
+                if (Prototype_1_GameManager.Instance.enableDebug)
                 {
                     Debug.Log($"Prototype_1_GunplayManager: Hit {_raycastHit.collider.tag}. Spawning a bullet decal.");
                 }
@@ -362,7 +362,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
     {
         #region Debug
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("GunplayManager: Gun recoil function has been called.");
         }
@@ -430,7 +430,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
             #region Debug
 
-            if (Prototype_1_GameManager.Instance.toggleDebug)
+            if (Prototype_1_GameManager.Instance.enableDebug)
             {
                 Debug.Log("P3_GunplayManager: Destroying bullet hole decals.");
             }
@@ -528,7 +528,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
                 #region Debug
 
-                if (Prototype_1_GameManager.Instance.toggleDebug)
+                if (Prototype_1_GameManager.Instance.enableDebug)
                 {
                     Debug.Log("P3_GunplayManager: Prompting reload text.");
                 }

@@ -652,7 +652,7 @@ public class P3_GameManager : MonoBehaviour
         gameOverScreen.gameObject.SetActive(true);
         survivalTimeText.gameObject.SetActive(false);
 
-        gameOverText.text = $"You survived for: {survivalTimeString} \n Try again?";
+        gameOverText.text = $"You survived for: {survivalTimeString} \n \n Try again?";
     }
 
     public void OnGameOverReturnToMainMenu()

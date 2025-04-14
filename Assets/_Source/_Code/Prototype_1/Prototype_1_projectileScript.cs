@@ -15,7 +15,7 @@ public class Prototype_1_projectileScript : MonoBehaviour
 
     private void Awake()
     {
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Projectile " + projectileID + " instantiated.");
         }
@@ -27,7 +27,7 @@ public class Prototype_1_projectileScript : MonoBehaviour
     {
         #region Debug
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Projectile hit: " + other.gameObject.tag.ToString());
         }
@@ -53,7 +53,7 @@ public class Prototype_1_projectileScript : MonoBehaviour
     {
         #region Debug
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Destroyed projectile " + projectileID + " because it has reached the end of its lifespan.");
         }

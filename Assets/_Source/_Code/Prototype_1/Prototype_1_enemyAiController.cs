@@ -74,7 +74,7 @@ public class Prototype_1_enemyAiController : MonoBehaviour
         Prototype_1_GameManager.Instance.EnemyHit += TakeDamage;
         Prototype_1_GameManager.Instance.PlayerKilled += StopAttacking;
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Enemy " + enemyID + " active.");
         }
@@ -182,7 +182,7 @@ public class Prototype_1_enemyAiController : MonoBehaviour
 
         enemyHealth -= damage;
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Enemy " + enemyID + " has been hit." + enemyHealth + " health remaining.");
         }
@@ -197,7 +197,7 @@ public class Prototype_1_enemyAiController : MonoBehaviour
     {
         //SoundManager.instance.PlaySFX(enemyDeathSFX);
 
-        if (Prototype_1_GameManager.Instance.toggleDebug)
+        if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Enemy " + enemyID + " destroyed.");
         }
@@ -272,7 +272,7 @@ public class Prototype_1_enemyAiController : MonoBehaviour
 
         #region Debugging
 
-        if (Prototype_1_GameManager.Instance.toggleDebug && (showSightRange || showAttackRange))
+        if (Prototype_1_GameManager.Instance.enableDebug && (showSightRange || showAttackRange))
         {
             OnDrawGizmosSelected();
         }
