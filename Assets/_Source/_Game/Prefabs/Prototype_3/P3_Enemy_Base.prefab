@@ -318,7 +318,6 @@ GameObject:
   - component: {fileID: 5219798911751709296}
   - component: {fileID: 4296680581618443461}
   - component: {fileID: 5816836142450105271}
-  - component: {fileID: 4413813156276666703}
   - component: {fileID: -3277810399669570697}
   m_Layer: 8
   m_Name: P3_Enemy_Base
@@ -335,14 +334,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8561733962346435951}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.99987185, z: -0, w: -0.01601126}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6139685318952065191}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 181.835, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &5219798911751709296
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -364,7 +363,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 1.02
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 1
+  m_ObstacleAvoidanceType: 2
 --- !u!54 &4296680581618443461
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -415,86 +414,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: -0}
---- !u!114 &4413813156276666703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8561733962346435951}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Graph: {fileID: -4960080283475254862, guid: 7f266ac39b3ad444c92c13d24586a852,
-    type: 2}
-  m_BlackboardVariableOverridesList:
-  - rid: 962654846156275712
-  - rid: 866597894217531669
-  - rid: 866597894217531670
-  - rid: 866597894217531671
-  - rid: 866597962399088754
-  - rid: 866597962399088981
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 866597894217531669
-      type: {class: 'BlackboardVariable`1[[UnityEngine.AI.NavMeshAgent, UnityEngine.AIModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 2759205170933767148
-          m_Value1: 2141903682016387249
-        Name: Nav Mesh Agent
-        m_Value: {fileID: 5219798911751709296}
-    - rid: 866597894217531670
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 15959813490288765016
-          m_Value1: 4511371481274942175
-        Name: Player
-        m_Value: {fileID: 0}
-    - rid: 866597894217531671
-      type: {class: 'BlackboardVariable`1[[P3_EnemyBase, Assembly-CSharp]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 5580507023067137026
-          m_Value1: 4937094815474159733
-        Name: P3_Base_Script
-        m_Value: {fileID: -3277810399669570697}
-    - rid: 866597962399088754
-      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior,
-        asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 16527007091264960494
-          m_Value1: 16525705456258577153
-        Name: NavigationSpeed
-        m_Value: 25
-    - rid: 866597962399088981
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7575823837439073621
-          m_Value1: 15554814435717343397
-        Name: Lighthouse
-        m_Value: {fileID: 0}
-    - rid: 962654846156275712
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]',
-        ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 8561733962346435951}
 --- !u!114 &-3277810399669570697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,4 +434,5 @@ MonoBehaviour:
   explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
   meshAgent: {fileID: 5219798911751709296}
+  enemyCollider: {fileID: 0}
   startMoving: 0

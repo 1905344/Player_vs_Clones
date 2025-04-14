@@ -506,8 +506,6 @@ public class P3_GameManager : MonoBehaviour
             DisableReturnButtonTutorialScreen();
             DisablePauseUI();
             
-            //Cursor.visible = false;
-            //Cursor.lockState = CursorLockMode.Locked;
             P3_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }

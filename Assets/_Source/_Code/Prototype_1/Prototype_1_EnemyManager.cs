@@ -44,7 +44,14 @@ public class Prototype_1_EnemyManager : MonoBehaviour
             enemy.gameObject.SetActive(false);
         }
 
-        Prototype_1_GameManager.Instance.OnStartGame += EnableAgents;
+        if (!Prototype_1_GameManager.Instance.skipTutorial)
+        {
+            Prototype_1_GameManager.Instance.OnStartGame += EnableAgents;
+        }
+        else
+        {
+            EnableAgents();
+        }
     }
 
     private void EnableAgents()
@@ -62,7 +69,18 @@ public class Prototype_1_EnemyManager : MonoBehaviour
 
         timer = 0f;
         loadEnemies = false;
-        this.enabled = false;
+        //this.enabled = false;
+    }
+
+    public void RemoveEnemy(GameObject enemy)
+    {
+        foreach (GameObject agent in enemies) 
+        {
+            if (agent == enemy)
+            {
+                enemies.Remove(agent);
+            }
+        }
     }
 
     private void Update()
@@ -79,5 +97,9 @@ public class Prototype_1_EnemyManager : MonoBehaviour
             LoadNavAgents();
         }
 
+        if (enemies.Count == 0)
+        {
+            Prototype_1_GameManager.Instance.OnLevelCompleted();
+        }
     }
 }

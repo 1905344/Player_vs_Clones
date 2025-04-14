@@ -518,6 +518,15 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""97c41c55-c9de-4c6d-a227-96a3cd67d7af"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -960,6 +969,17 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Start Game"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""596d73d9-83d8-46b2-b9d1-72fba312b992"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Cancel Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1053,6 +1073,7 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_PauseGame = m_UI.FindAction("Pause Game", throwIfNotFound: true);
         m_UI_StartGame = m_UI.FindAction("Start Game", throwIfNotFound: true);
+        m_UI_CancelInteract = m_UI.FindAction("Cancel Interact", throwIfNotFound: true);
     }
 
     ~@P3_PlayerControls()
@@ -1250,6 +1271,7 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_TrackedDeviceOrientation;
     private readonly InputAction m_UI_PauseGame;
     private readonly InputAction m_UI_StartGame;
+    private readonly InputAction m_UI_CancelInteract;
     public struct UIActions
     {
         private @P3_PlayerControls m_Wrapper;
@@ -1266,6 +1288,7 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
         public InputAction @PauseGame => m_Wrapper.m_UI_PauseGame;
         public InputAction @StartGame => m_Wrapper.m_UI_StartGame;
+        public InputAction @CancelInteract => m_Wrapper.m_UI_CancelInteract;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1311,6 +1334,9 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
             @StartGame.started += instance.OnStartGame;
             @StartGame.performed += instance.OnStartGame;
             @StartGame.canceled += instance.OnStartGame;
+            @CancelInteract.started += instance.OnCancelInteract;
+            @CancelInteract.performed += instance.OnCancelInteract;
+            @CancelInteract.canceled += instance.OnCancelInteract;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1351,6 +1377,9 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
             @StartGame.started -= instance.OnStartGame;
             @StartGame.performed -= instance.OnStartGame;
             @StartGame.canceled -= instance.OnStartGame;
+            @CancelInteract.started -= instance.OnCancelInteract;
+            @CancelInteract.performed -= instance.OnCancelInteract;
+            @CancelInteract.canceled -= instance.OnCancelInteract;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1440,5 +1469,6 @@ public partial class @P3_PlayerControls: IInputActionCollection2, IDisposable
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnPauseGame(InputAction.CallbackContext context);
         void OnStartGame(InputAction.CallbackContext context);
+        void OnCancelInteract(InputAction.CallbackContext context);
     }
 }

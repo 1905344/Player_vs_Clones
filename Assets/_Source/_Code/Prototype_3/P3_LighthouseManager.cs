@@ -1,7 +1,4 @@
-using JetBrains.Annotations;
-using System.Runtime.CompilerServices;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,6 +54,7 @@ public class P3_LighthouseManager : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private Button repairButton;
     [SerializeField] private Button rechargeButton;
+    [SerializeField] private Button closeWindowButton;
 
     [Space(10)]
 
@@ -77,7 +75,7 @@ public class P3_LighthouseManager : MonoBehaviour
     [Header("Lighthouse Variables")]
     [SerializeField] private bool startDischarging = false;
     [SerializeField] private bool startRotating = false;
-    [SerializeField, Tooltip("Increase the difficulty of the game by increasing the discharge speed"), Range(1f, 10f)] private float increaseDischargeRate = 1f;
+    [SerializeField, Tooltip("Increase the difficulty of the game by increasing the discharge speed"), Range(0.1f, 10f)] private float increaseDischargeRate = 0.5f;
 
     [Space(3)]
 
@@ -116,9 +114,14 @@ public class P3_LighthouseManager : MonoBehaviour
     [Space(10)]
 
     [Header("Player Reference")]
-    [SerializeField] private P3_fpsMovement characterMoveScript;
+    [SerializeField] private GameObject lighthousePlayerCharacter;
 
     public bool isLighthouseScreenActive;
+
+    public GameObject GetLighthouseObject()
+    {
+        return this.gameObject;
+    }
 
     #endregion
 
@@ -166,18 +169,16 @@ public class P3_LighthouseManager : MonoBehaviour
 
     public void OnInteraction()
     {
-        if (!lighthouseProgressScreen.gameObject.activeInHierarchy)
-        {
-            characterMoveScript.DisablePlayerMovement();
-            lighthouseProgressScreen.gameObject.SetActive(true);
-            isLighthouseScreenActive = true;
-        }
-        else
-        {
-            characterMoveScript.EnablePlayerMovement();
-            lighthouseProgressScreen.gameObject.SetActive(false);
-            isLighthouseScreenActive = false;
-        }
+        lighthousePlayerCharacter.GetComponent<P3_fpsMovement>().DisablePlayerMovement();
+        EnableLighthouseUI();
+        P3_InputManager.Instance.OnShowLighthouseUI();
+    }
+
+    public void OnCancelInteraction()
+    {
+        lighthousePlayerCharacter.GetComponent<P3_fpsMovement>().EnablePlayerMovement();
+        DisableLighthouseUI();
+        P3_InputManager.Instance.OnHideLighthouseUI();
     }
 
     private void OnTakeDamage(float Amount)
@@ -256,7 +257,7 @@ public class P3_LighthouseManager : MonoBehaviour
 
     public void OnRepair()
     {
-        if (!canRepair && !isRepairing && currentMaxCharge == defaultMaximumCharge)
+        if (!canRepair || !isRepairing || currentMaxCharge == defaultMaximumCharge)
         {
             return;
         }
@@ -300,29 +301,39 @@ public class P3_LighthouseManager : MonoBehaviour
 
     #region U.I.
     
-    public void EnableLighthouseScreen()
-    {
-        lighthouseProgressScreen.SetActive(true);
-    }
-
     public void EnableLighthouseUI()
     {
-        rechargeButton.enabled = true;
+        lighthouseProgressScreen.SetActive(true);
+        isLighthouseScreenActive = true;
+
+        closeWindowButton.enabled = true;
+        closeWindowButton.interactable = true;
+
+        //rechargeButton.enabled = true;
         rechargeButton.interactable = true;
 
-        repairButton.enabled = true;
+        //repairButton.enabled = true;
         repairButton.interactable = true;
     }
 
     public void DisableLighthouseUI()
     {
         lighthouseProgressScreen.SetActive(false);
+        isLighthouseScreenActive = false;
 
-        rechargeButton.enabled = false;
+        closeWindowButton.enabled = false;
+        closeWindowButton.interactable = false;
+
+        //rechargeButton.enabled = false;
         rechargeButton.interactable = false;
 
-        repairButton.enabled = false;
+        //repairButton.enabled = false;
         repairButton.interactable = false;
+    }
+
+    public void OnCloseUiScreenButtonPressed()
+    {
+        OnCancelInteraction();
     }
 
     #endregion
@@ -363,9 +374,14 @@ public class P3_LighthouseManager : MonoBehaviour
         #region Interaction Input
 
         //Getting the input from the InputManager
-        if (P3_InputManager.Instance.PlayerPressedInteractButton())
+        if (P3_InputManager.Instance.PlayerPressedInteractButton() && !isLighthouseScreenActive)
         {
             OnInteraction();
+        }
+        
+        if (P3_InputManager.Instance.PlayerPressedUiCancelInteractButton() && lighthouseProgressScreen)
+        {
+            OnCancelInteraction();
         }
 
         #endregion

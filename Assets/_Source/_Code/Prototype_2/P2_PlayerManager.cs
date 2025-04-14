@@ -34,7 +34,9 @@ public class P2_PlayerManager : MonoBehaviour
 
     [Space(5)]
 
-    [SerializeField] private TextMeshProUGUI currentPlayerCharacterText;
+    [SerializeField] private TMP_Text currentPlayerCharacterText;
+    [SerializeField] private GameObject ammoHudBar;
+    [SerializeField] private TMP_Text ammoTitleText;
 
     public int GetCurrentCharacter()
     {
@@ -101,6 +103,17 @@ public class P2_PlayerManager : MonoBehaviour
         {
             currentlyActiveGun = playerCharacters[currentIndexPos].GetComponentInChildren<P2_GunplayManager>().gameObject;
             currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
+        }
+
+        if (currentIndexPos == 2)
+        {
+            ammoHudBar.SetActive(false);
+            ammoTitleText.gameObject.SetActive(false);
+        }
+        else
+        {
+            ammoHudBar.SetActive(true);
+            ammoTitleText.gameObject.SetActive(true);
         }
 
         //Enabling various different components attached to the character

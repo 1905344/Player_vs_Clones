@@ -1,5 +1,6 @@
 using Cinemachine;
 using System;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -86,6 +87,7 @@ public class P3_InputManager : MonoBehaviour
     public bool levelComplete = false;
 
     [SerializeField] private bool isPlayerDead = false;
+    [SerializeField] public bool canChangeCharacter = true;
 
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
@@ -143,6 +145,11 @@ public class P3_InputManager : MonoBehaviour
     public bool PlayerPressedInteractButton()
     {
         return playerInputActions.Player.Interact.triggered;
+    }
+
+    public bool PlayerPressedUiCancelInteractButton()
+    {
+        return playerInputActions.UI.CancelInteract.triggered;
     }
 
     public bool isPlayerSprintingThisFrame { get; private set; }
@@ -357,7 +364,7 @@ public class P3_InputManager : MonoBehaviour
 
     private void OnChangeCharacter(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && canChangeCharacter)
         {
             P3_GameManager.Instance.OnCharacterChanged();
             Debug.Log($"Player pressed change character input key.");
@@ -393,6 +400,15 @@ public class P3_InputManager : MonoBehaviour
         playerInputActions.Disable();
         changeActionMap?.Invoke(actionMap);
         actionMap.Enable();
+
+        #region Debug
+
+        //if (P3_GameManager.Instance.enableDebug)
+        //{
+        //    Debug.Log("InputManager: Changing action map to: " + actionMap.name.ToString());
+        //}
+
+        #endregion
     }
 
     #endregion
@@ -430,7 +446,6 @@ public class P3_InputManager : MonoBehaviour
             OnPause(context);
         }
 
-        //SetToggleStates();
         SetMouseSensSliders();
         SetCameraFOVSlider();
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
@@ -454,16 +469,13 @@ public class P3_InputManager : MonoBehaviour
         {
             return;
         }
-        else
-        {
-            //SetToggleStates();
-            SetMouseSensSliders();
-            SetCameraFOVSlider();
-            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-            pauseGame = false;
-            EnableGameInput();
-        }
+        SetMouseSensSliders();
+        SetCameraFOVSlider();
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+
+        pauseGame = false;
+        EnableGameInput();
     }
 
     #endregion
@@ -585,6 +597,22 @@ public class P3_InputManager : MonoBehaviour
         ToggleActionMap(playerInputActions.UI);
         DisableGameInput();
     }
+    
+    public void OnShowLighthouseUI()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        SetCamera(0, 0, _FOV);
+        canChangeCharacter = false;
+    }
+
+    public void OnHideLighthouseUI()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+        canChangeCharacter = true;
+    }
 
     private void Update()
     {
@@ -603,6 +631,19 @@ public class P3_InputManager : MonoBehaviour
             Debug.Log("Camera FOV is: " + vCam.GetFocalLength());
 
             #endregion
+        }
+
+        #endregion
+
+        #region Enable and Disable Interact Input Button
+
+        if (vCam == player1_Camera)
+        {
+            playerInputActions.Player.Interact.Disable();
+        }
+        else if (vCam == player2_Camera)
+        {
+            playerInputActions.Player.Interact.Enable();
         }
 
         #endregion

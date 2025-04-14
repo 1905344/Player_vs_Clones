@@ -496,6 +496,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel Interact",
+                    "type": "Button",
+                    "id": "97c41c55-c9de-4c6d-a227-96a3cd67d7af",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -936,6 +945,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Start Game",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "596d73d9-83d8-46b2-b9d1-72fba312b992",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Cancel Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

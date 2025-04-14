@@ -100,7 +100,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                             wAction.enemyPrefab = Instantiate(wAction.enemyPrefab, enemySpawnPosition, Quaternion.identity, enemyParent.transform);
 
                             wAction.enemyPrefab.GetComponent<P3_EnemyBase>().playerRef = fpsPlayerCharacter;
-                            wAction.enemyPrefab.GetComponent<P3_EnemyBase>().lighthouseRef = lighthouseGameObject;
+                            wAction.enemyPrefab.GetComponent<P3_EnemyBase>().lighthouseRef = lighthouseGameObject.transform;
                         }
                     }
                 }
@@ -119,6 +119,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     private void Start()
     {
         P3_GameManager.Instance.OnStartGame += StartSpawning;
+        P3_GameManager.Instance.PlayerKilled += StopSpawning;
 
         if (P3_GameManager.Instance.enableDebug && P3_GameManager.Instance.skipTutorial)
         {
@@ -129,6 +130,11 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     private void StartSpawning()
     {
         StartCoroutine(WaveSpawnLoop());
+    }
+
+    private void StopSpawning()
+    {
+        StopCoroutine(WaveSpawnLoop());
     }
 
     private void OnDrawGizmos()

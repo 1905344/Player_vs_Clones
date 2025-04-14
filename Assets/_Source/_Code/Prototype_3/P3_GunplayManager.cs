@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
 
 public class P3_GunplayManager : MonoBehaviour
 {
@@ -234,8 +232,6 @@ public class P3_GunplayManager : MonoBehaviour
         {
             return;
         }
-
-        //bulletTrail.enabled = true;
 
         #region Bullet Spread
 

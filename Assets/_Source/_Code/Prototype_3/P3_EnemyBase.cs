@@ -42,8 +42,15 @@ public class P3_EnemyBase : MonoBehaviour
 
     [Header("External References")]
     [SerializeField] NavMeshAgent meshAgent;
+    [SerializeField] private CapsuleCollider enemyCollider;
     public GameObject playerRef { get; set; }
-    public GameObject lighthouseRef { get; set; }
+    public Transform lighthouseRef { get; set; }
+    private GameObject lighthouse;
+
+    private Transform destinationPosition;
+    private Vector3 destinationVector;
+
+    private GameObject explosion;
 
     [Space(5)]
 
@@ -61,13 +68,16 @@ public class P3_EnemyBase : MonoBehaviour
     {
         enemyID = GenerateGuid();
         maxHealth = defaultHealth;
-
-        startMoving = true;
     }
 
     void Start()
     {
         P3_GameManager.Instance.EnemyHit += TakeDamage;
+        lighthouse = GameObject.Find("Lighthouse");
+
+        GetDestination();
+        startMoving = true;
+        EnemyMovement();
     }
 
     public void TakeDamage(Guid id, int damage)
@@ -94,11 +104,11 @@ public class P3_EnemyBase : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
         if (enemyType == P3_Enemy_Types.Red)
         {
-            if (collision.gameObject.CompareTag("Lighthouse"))
+            if (other.CompareTag("Lighthouse"))
             {
                 P3_GameManager.Instance.OnLighthouseHit(damageAmount);
                 ExplodeEnemy();
@@ -106,7 +116,7 @@ public class P3_EnemyBase : MonoBehaviour
         }
         else
         {
-            if (collision.gameObject.CompareTag("Player"))
+            if (other.gameObject.CompareTag("Player"))
             {
                 P3_GameManager.Instance.OnPlayerKilled();
             }
@@ -140,17 +150,29 @@ public class P3_EnemyBase : MonoBehaviour
         startDeathTimer = true;
     }
 
-    private void EnemyMovement()
+    #region Set Enemy Destination and Enemy Movement
+
+    private void GetDestination()
     {
         if (enemyType == P3_Enemy_Types.Red)
         {
-            meshAgent.SetDestination(lighthouseRef.transform.position);
+            destinationPosition = lighthouseRef.transform;
+            //Debug.Log($"P3_EnemyBase: Enemy type is: {enemyType} and lighthouse destination is: {destinationPosition.position}");
         }
         else
         {
-            meshAgent.SetDestination(playerRef.transform.position);
+            destinationPosition = playerRef.transform;
         }
+
+        destinationVector = destinationPosition.position;
     }
+
+    private void EnemyMovement()
+    {
+        meshAgent.SetDestination(destinationVector);
+    }
+
+    #endregion
 
     #region Enemy Death Functions
 
@@ -170,6 +192,7 @@ public class P3_EnemyBase : MonoBehaviour
         timer = 0f;
         startDeathTimer = false;
 
+        //P3_GameManager.Instance.Instance.RemoveEnemy(this.gameObject);
         this.gameObject.SetActive(false);
         Destroy(this.gameObject);
     }
@@ -182,7 +205,7 @@ public class P3_EnemyBase : MonoBehaviour
         }
 
         //Instantiate(explosionPrefab, explosionParent.transform, this.transform);
-        Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
+        explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
         startDeathTimer = true;
     }
 
@@ -190,17 +213,13 @@ public class P3_EnemyBase : MonoBehaviour
 
     void Update()
     {
-        if (startMoving)
-        {
-            EnemyMovement();
-        }
-
         if (startDeathTimer)
         {
             timer += Time.deltaTime;
 
             if (timer > waitTimer)
             {
+                Destroy(explosion);
                 DestroyThisEnemy();
             }
         }

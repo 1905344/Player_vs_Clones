@@ -193,6 +193,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         if (LevelCompleted != null)
         {
             LevelCompleted();
+            OnGameCompleted();
         }
     }
 
@@ -210,7 +211,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         {
             //OnGameOverReturnToMainMenu();
             PlayerKilled();
-            gameOverScreen.gameObject.SetActive(true);
+            OnGameOver();
         }
     }
 
@@ -478,10 +479,12 @@ public class Prototype_1_GameManager : MonoBehaviour
             #endregion
 
             Time.timeScale = 1.0f;
+            DisableControlsPage();
+            DisableSettingsPage();
+            HideTutorialScreenFromPauseMenu();
+            DisableReturnButtonTutorialScreen();
             DisablePauseUI();
 
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
             Prototype_1_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
@@ -633,6 +636,19 @@ public class Prototype_1_GameManager : MonoBehaviour
     #endregion
 
     #region Game Functions
+
+    private void OnGameOver()
+    {
+        gameOverScreen.gameObject.SetActive(true);
+        gameOverText.gameObject.SetActive(true);
+    }
+
+    private void OnGameCompleted()
+    {
+        gameOverScreen.gameObject.SetActive(true);
+        gameOverText.gameObject.SetActive(false);
+        levelCompletedText.gameObject.SetActive(true);
+    }
 
     private void RestartScene(string name)
     {

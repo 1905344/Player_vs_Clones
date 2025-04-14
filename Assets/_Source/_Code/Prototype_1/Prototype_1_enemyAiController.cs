@@ -202,6 +202,8 @@ public class Prototype_1_enemyAiController : MonoBehaviour
             Debug.Log("Enemy " + enemyID + " destroyed.");
         }
 
+        Prototype_1_EnemyManager.Instance.RemoveEnemy(this.gameObject);
+
         this.gameObject.SetActive(false);
         Destroy(this.gameObject);
     }

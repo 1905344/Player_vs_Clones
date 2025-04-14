@@ -397,16 +397,17 @@ public class Prototype_1_InputManager : MonoBehaviour
         {
             OnPause(context);
         }
-        else
-        {
-            SetMouseSensSliders();
-            SetCameraFOVSlider();
-            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-            Prototype_1_GameManager.Instance.DisablePauseUI();
-            pauseGame = false;
-            EnableGameInput();
-        }
+        SetMouseSensSliders();
+        SetCameraFOVSlider();
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        Prototype_1_GameManager.Instance.OnResume();
+        pauseGame = false;
+        EnableGameInput();
     }
 
     public void OnResumeUIButtonPressed()
@@ -420,15 +421,13 @@ public class Prototype_1_InputManager : MonoBehaviour
         {
             return;
         }
-        else
-        {
-            SetMouseSensSliders();
-            SetCameraFOVSlider();
-            SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-            pauseGame = false;
-            EnableGameInput();
-        }
+        SetMouseSensSliders();
+        SetCameraFOVSlider();
+        SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
+
+        pauseGame = false;
+        EnableGameInput();
     }
 
     #endregion

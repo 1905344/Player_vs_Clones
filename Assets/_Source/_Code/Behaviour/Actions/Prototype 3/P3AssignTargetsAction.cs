@@ -15,7 +15,7 @@ public partial class P3AssignTargetsAction : Action
     protected override Status OnUpdate()
     {
         Player.Value = enemyBaseScript.Value.playerRef;
-        Lighthouse.Value = enemyBaseScript.Value.lighthouseRef;
+        //Lighthouse.Value = enemyBaseScript.Value.lighthouseRef;
         return Status.Success;
     }
 }

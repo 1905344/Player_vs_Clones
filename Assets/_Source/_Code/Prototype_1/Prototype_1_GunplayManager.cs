@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -26,7 +25,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
     [Header("Visual Feedback References")]
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHoleDecal;
-    //[SerializeField] private P3_AmmoHudBar ammoHudBar;
+    [SerializeField] private Prototype_1_AmmoHudBar ammoHudBar;
     [SerializeField] private TMP_Text reloadingText;
     private bool updateHUD = false;
     //[SerializeField] private Material gunMaterial;
@@ -119,22 +118,10 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         bulletsRemaining = magazineClipSize;
         canShoot = true;
 
-        #region Check which hand the gun should be
-
-        if (gunInLeftHand)
-        {
-            gunInRightHand = false;
-            updateGunPosition = true;
-        }
-        else if (gunInRightHand)
-        {
-            gunInLeftHand = false;
-            updateGunPosition = true;
-        }
-
-        this.gameObject.SetActive(true);
-
-        #endregion
+        ammoHudBar.gameObject.SetActive(true);
+        ammoHudBar.SetMaxAmmo(magazineClipSize);
+        ammoHudBar.SetCurrentAmmo(bulletsRemaining);
+        updateGunPosition = true;
     }
 
     private void Start()
@@ -163,6 +150,9 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
         reloadingText.gameObject.SetActive(true);
         gameObject.SetActive(true);
+        ammoHudBar.gameObject.SetActive(true);
+        ammoHudBar.SetMaxAmmo(magazineClipSize);
+        ammoHudBar.SetCurrentAmmo(bulletsRemaining);
     }
 
     public void DisableGun(int courseID)
@@ -173,6 +163,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         Debug.Log("GunplayManager: Disabling the gun!");
         reloadingText.gameObject.SetActive(false);
         gameObject.SetActive(false);
+        ammoHudBar.gameObject.SetActive(false);
     }
 
     #endregion
@@ -260,6 +251,11 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
             #endregion
 
+            //Bullet trail
+            //Using trail renderer
+            TrailRenderer newTrail = Instantiate(bulletTrail, bulletTrailSpawnPos.transform.position, Quaternion.identity);
+            StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
+
             Guid enemyGuid = new Guid();
 
             if (_raycastHit.collider != null && _raycastHit.collider.CompareTag("Enemy"))
@@ -275,12 +271,6 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
                 enemyGuid = Guid.Empty;
                 enemyGuid = _raycastHit.collider.GetComponentInParent<Prototype_1_enemyAiController>().enemyID;
-
-                //Bullet trail
-                //Using trail renderer
-                TrailRenderer newTrail = Instantiate(bulletTrail, bulletTrailSpawnPos.transform.position, Quaternion.identity);
-                StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
-
 
                 //Using events
                 if (_raycastHit.collider.name == "Enemy Head")
@@ -321,10 +311,6 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
         #region Visual Feedback: Bullet Hole & Muzzle Flash
 
-        //Instantiate(bulletHoleDecal, _raycastHit.point, Quaternion.Euler(0, 180, 0));
-        //Instantiate(muzzleFlash, muzzle.position, Quaternion.identity);
-
-        //CreateVisualFeedback(muzzleFlash, bulletHoleDecal, _raycastHit.point);
         CreateVisualFeedback(muzzleFlash, bulletHoleDecal, bulletHoleDecalSpawnLocation);
 
         #endregion
@@ -390,11 +376,6 @@ public class Prototype_1_GunplayManager : MonoBehaviour
     }
 
     #endregion
-
-    private void ResetShot()
-    {
-        canShoot = true;
-    }
 
     private void ReloadGun()
     {
@@ -494,7 +475,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
 
         if (updateHUD)
         {
-            //ammoHudBar.SetCurrentAmmo(bulletsRemaining);
+            ammoHudBar.SetCurrentAmmo(bulletsRemaining);
             updateHUD = false;
         }
 
@@ -509,15 +490,15 @@ public class Prototype_1_GunplayManager : MonoBehaviour
             reloadingText.gameObject.SetActive(true);
             reloadingText.text = "Reloading";
 
-            //if (Prototype_1_GameManager.Instance.enableReloadPromptTextAsTimer)
-            //{
-            //    Prototype_1_GameManager.Instance.HideReloadPrompt();
-            //}
+            if (Prototype_1_GameManager.Instance.enableReloadPromptTextAsTimer)
+            {
+                Prototype_1_GameManager.Instance.HideReloadPrompt();
+            }
         }
         else
         {
             reloadingText.gameObject.SetActive(false);
-            //ammoHudBar.SetCurrentAmmo(bulletsRemaining);
+            ammoHudBar.SetCurrentAmmo(bulletsRemaining);
         }
 
         if (isShooting && !isReloading && bulletsRemaining == 0 && canShoot)

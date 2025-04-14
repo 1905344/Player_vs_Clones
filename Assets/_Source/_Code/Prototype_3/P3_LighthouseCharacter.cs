@@ -9,7 +9,7 @@ public class P3_LighthouseCharacter : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera mainCamera;
     [SerializeField] private CinemachineVirtualCamera characterCam;
-    [SerializeField] private P3_LighthouseManager lighthouseScript;
+    //[SerializeField] private P3_LighthouseManager lighthouseScript;
 
     [Space(10)]
 
@@ -26,12 +26,12 @@ public class P3_LighthouseCharacter : MonoBehaviour
         }
 
         isCharacterActive = true;
-        lighthouseScript.EnableLighthouseUI();
+        //lighthouseScript.EnableLighthouseUI();
 
-        if (lighthouseScript.isLighthouseScreenActive)
-        {
-            lighthouseScript.EnableLighthouseScreen();
-        }
+        //if (lighthouseScript.isLighthouseScreenActive)
+        //{
+            //lighthouseScript.EnableLighthouseUI();
+        //}
     }
 
     public void DisableLighthouseCharacter()

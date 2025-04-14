@@ -15,37 +15,30 @@ public class Prototype_1_projectileScript : MonoBehaviour
 
     private void Awake()
     {
+        #region Debug
+
         if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Projectile " + projectileID + " instantiated.");
         }
 
+        #endregion
+
         projectileCollider = GetComponent<SphereCollider>();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        #region Debug
-
-        if (Prototype_1_GameManager.Instance.enableDebug)
-        {
-            Debug.Log("Projectile hit: " + other.gameObject.tag.ToString());
-        }
-
-        #endregion
-
-        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Ground") || other.gameObject.CompareTag("Environment"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Environment"))
         {
             DestroyProjectile();
         }
-        else if (other.gameObject.CompareTag("Player"))
+        else if (collision.gameObject.CompareTag("Player"))
         {
             //Using events
             Prototype_1_GameManager.Instance.OnPlayerHit(damage);
 
             DestroyProjectile();
-            //Using colliders
-            //collision.gameObject.GetComponent<playerGameCharacter>().OnPlayerHit(damage);
         }
     }
 
