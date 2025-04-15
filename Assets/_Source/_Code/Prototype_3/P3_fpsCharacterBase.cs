@@ -110,12 +110,15 @@ public class P3_fpsCharacterBase : MonoBehaviour
 
     void Update()
     {
-        if (updateHealth)
+        if (isCharacterActive)
         {
-            hudHealthBar.SetMaxHealth(maxHealth);
-            hudHealthBar.SetCurrentHealth(currentHealth);
+            if (updateHealth)
+            {
+                hudHealthBar.SetMaxHealth(maxHealth);
+                hudHealthBar.SetCurrentHealth(currentHealth);
 
-            updateHealth = false;
+                updateHealth = false;
+            }
         }
     }
 }

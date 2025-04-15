@@ -34,11 +34,6 @@ public class P3_EnemyBase : MonoBehaviour
 
     [Header("Visual Feedback References")]
     [SerializeField] private GameObject explosionPrefab;
-    //[SerializeField] private GameObject explosionParent;
-
-    //[Space(10)]
-
-    //[SerializeField] private int healthDropAmount;
 
     [Header("External References")]
     [SerializeField] NavMeshAgent meshAgent;
@@ -98,8 +93,6 @@ public class P3_EnemyBase : MonoBehaviour
 
         if (defaultHealth <= 0)
         {
-            //Invoke(nameof(DestroyThisEnemy), 0.5f);
-            //startDeathTimer = true;
             CheckType();
         }
     }
@@ -110,7 +103,6 @@ public class P3_EnemyBase : MonoBehaviour
         {
             if (other.CompareTag("Lighthouse"))
             {
-                P3_GameManager.Instance.OnLighthouseHit(damageAmount);
                 ExplodeEnemy();
             }
         }
@@ -204,7 +196,7 @@ public class P3_EnemyBase : MonoBehaviour
             return;
         }
 
-        //Instantiate(explosionPrefab, explosionParent.transform, this.transform);
+        P3_GameManager.Instance.OnLighthouseHit(damageAmount);
         explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
         startDeathTimer = true;
     }

@@ -86,7 +86,6 @@ public class P2_HackableDoor : MonoBehaviour
                 return;
             }
         }
-        
     }
 
     private void OnTriggerExit(Collider other)

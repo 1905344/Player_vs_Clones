@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,9 +33,15 @@ public class P3_LighthouseManager : MonoBehaviour
     [Header("Primary Progress Bar")]
     [SerializeField] private Slider lighthouseProgressBar;
     [SerializeField] private Image lighthouseProgressBarFill;
-    [SerializeField] private Image lighthouseProgressBarFillMask;
     [SerializeField] private Gradient lighthouseProgressBarFillGradient;
 
+    [Space(5)]
+
+    [Header("Maximum Charge Capacity Progress Bar")]
+    [SerializeField] private Slider maxChargeProgressBar;
+    [SerializeField] private Image maxChargeProgressBarFill;
+    [SerializeField] private Gradient maxChargeProgressBarGradient;
+    
     [Space(5)]
 
     [Header("Recharging Progress Bar")]
@@ -79,33 +86,33 @@ public class P3_LighthouseManager : MonoBehaviour
 
     [Space(3)]
 
-    [SerializeField] private bool needsCharge;
-    [SerializeField] private bool canCharge;
-    [SerializeField] private bool isRecharging;
+    [SerializeField] private bool needsCharge = false;
+    [SerializeField] private bool isRecharging = false;
 
     [Space(3)]
 
-    [SerializeField] private bool needsRepair;
-    [SerializeField] private bool isRepairing;
-    [SerializeField] private bool canRepair;
+    [SerializeField] private bool needsRepair = false;
+    [SerializeField] private bool isRepairing = false;
 
     [Space(3)]
 
-    [SerializeField] private float currentCharge;
-    [SerializeField] private float increaseChargeAmount;
+    [SerializeField] private float currentChargeCapacity;
+    [SerializeField] private float increaseCurrentChargeCapacity;
 
     [Space(3)]
 
-    [SerializeField] private float restoreMaxChargeAmount;
-    [SerializeField] private float currentMaxCharge;
-    [SerializeField] private float mininumMaxCharge;
-    [SerializeField] private float defaultMaximumCharge;
-    [SerializeField] private float cappedMaxCharge;
+    [SerializeField] private float restoreMaxChargeCapacity;
+    [SerializeField] private float currentMaxChargeCapacity;
+    [SerializeField] private float defaultMaximumChargeCapacity;
+
+    [Space(2)]
+
+    [SerializeField, Tooltip("Maximum value for the cap on the max charge capacity")] private float maxChargeCapCapacity;
+    [SerializeField] private float cappedMaxChargeCapacity;
 
     [Space(10)]
 
     [Header("Timers")]
-    [SerializeField, Tooltip("How fast the charge progress bar decreases")] private float rechargeCountdownTimer;
     private float rechargeTimer = 0f;
     [SerializeField, Tooltip("How long it takes to recharge")] private float rechargeTimeDuration;
     [SerializeField, Tooltip("How long it takes to repair")] private float repairTimeDuration;
@@ -118,24 +125,21 @@ public class P3_LighthouseManager : MonoBehaviour
 
     public bool isLighthouseScreenActive;
 
-    public GameObject GetLighthouseObject()
-    {
-        return this.gameObject;
-    }
-
     #endregion
 
     private void Awake()
     {
-        rechargeProgressBar.maxValue = requiredYellowEnemiesNeeded;
-        repairProgressBar.maxValue = requiredBlueEnemiesNeeded;
+        currentChargeCapacity = defaultMaximumChargeCapacity;
+        currentMaxChargeCapacity = defaultMaximumChargeCapacity;
 
-        currentCharge = defaultMaximumCharge;
-        currentMaxCharge = defaultMaximumCharge;
-        cappedMaxCharge = defaultMaximumCharge;
+        //Setting the progress bars
+        PrimaryProgressBarCurrentValue(defaultMaximumChargeCapacity);
+        PrimaryProgressBarMaxValue(defaultMaximumChargeCapacity);
 
-        lighthouseProgressBar.maxValue = defaultMaximumCharge;
-        lighthouseProgressBar.value = currentCharge;
+        MaxChargeProgressBarMaxValue(defaultMaximumChargeCapacity);
+        
+        RechargeProgressBarMaxValue(requiredYellowEnemiesNeeded);
+        RepairProgressBarMaxValue(requiredBlueEnemiesNeeded);
     }
 
     private void Start()
@@ -161,11 +165,285 @@ public class P3_LighthouseManager : MonoBehaviour
         startRotating = true;
     }
 
-    private void UpdatePrimaryProgressBar()
+    private void OnDischarging()
     {
-        currentCharge -= Time.deltaTime * increaseDischargeRate;
-        lighthouseProgressBar.value = currentCharge;
+        currentChargeCapacity -= Time.deltaTime * increaseDischargeRate;
+
+        if (currentChargeCapacity <= 0)
+        {
+            startRotating = false;
+            startDischarging = false;
+            currentChargeCapacity = 0;
+        }
+
+        lighthouseProgressBar.value = currentChargeCapacity;
+        lighthouseProgressBarFill.color = lighthouseProgressBarFillGradient.Evaluate(1f);
     }
+
+    private void OnTakeDamage(float Amount)
+    {
+        cappedMaxChargeCapacity += Amount;
+        currentChargeCapacity -= Amount;
+
+        if (currentChargeCapacity <= 0)
+        {
+            currentChargeCapacity = 0;
+        }
+
+        if (cappedMaxChargeCapacity >= maxChargeCapCapacity)
+        {
+            cappedMaxChargeCapacity = maxChargeCapCapacity;
+        }
+
+        currentMaxChargeCapacity = defaultMaximumChargeCapacity - cappedMaxChargeCapacity;
+
+        PrimaryProgressBarCurrentValue(currentChargeCapacity);
+        MaxChargeProgressBarCurrentValue(currentMaxChargeCapacity);
+
+        #region Debug
+
+        if (P3_GameManager.Instance.enableDebug)
+        {
+            Debug.Log($"P3_LighthouseManager: Lighthouse has been damaged by {Amount}");
+        }
+
+        #endregion
+    }
+
+    #region Progress Bar Functions
+
+    #region Primary Progress Bar
+
+    private void PrimaryProgressBarCurrentValue(float currentValue)
+    {
+        lighthouseProgressBar.value = currentValue;
+        lighthouseProgressBarFill.color = lighthouseProgressBarFillGradient.Evaluate(lighthouseProgressBar.normalizedValue);
+    }
+
+    private void PrimaryProgressBarMaxValue(float maxValue)
+    {
+        lighthouseProgressBar.maxValue = maxValue;
+    }
+
+    #endregion
+
+    #region Max Charge Progress Bar
+
+    private void MaxChargeProgressBarCurrentValue(float maxChargeValue)
+    {
+        maxChargeProgressBar.value = maxChargeValue;
+        maxChargeProgressBarFill.color = maxChargeProgressBarGradient.Evaluate(maxChargeProgressBar.normalizedValue);
+    }
+
+    private void MaxChargeProgressBarMaxValue(float maxValue)
+    {
+        maxChargeProgressBar.value = maxValue;
+        maxChargeProgressBar.value = maxValue;
+        maxChargeProgressBarFill.color = maxChargeProgressBarGradient.Evaluate(maxChargeProgressBar.normalizedValue);
+
+        maxChargeProgressBar.handleRect.gameObject.SetActive(false);
+    }
+
+    #endregion
+
+    #region Recharge Progress Bar
+
+    private void RechargeProgressBarCurrentValue(float currentValue)
+    {
+        rechargeProgressBar.value = currentValue;
+        rechargeProgressBarFill.color = rechargeFillGradient.Evaluate(rechargeProgressBar.normalizedValue);
+    }
+
+    private void RechargeProgressBarMaxValue(float maxValue)
+    {
+        rechargeProgressBar.maxValue = maxValue;
+    }
+
+    #endregion
+
+    #region Repair Progress Bar
+
+    private void RepairProgressBarCurrentValue(float currentValue)
+    {
+        repairProgressBar.value = currentValue;
+        repairProgressBarFill.color = repairFillGradient.Evaluate(repairProgressBar.normalizedValue);
+    }
+
+    private void RepairProgressBarMaxValue(float maxValue)
+    {
+        repairProgressBar.maxValue = maxValue;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Recharge Functions
+
+    public void CheckCharge()
+    {
+        if (currentChargeCapacity < currentMaxChargeCapacity && !isRecharging)
+        {
+            needsCharge = true;
+        }
+        else if (currentChargeCapacity == currentMaxChargeCapacity || isRecharging)
+        {
+            needsCharge = false;
+        }
+    }
+
+    private void SetChargeButtonStatus()
+    {
+        if (needsCharge && !isRecharging && currentYellowEnemiesKilled >= requiredYellowEnemiesNeeded)
+        {
+            rechargeButton.enabled = true;
+            rechargeButton.interactable = true;
+        }
+        else if (!needsCharge || isRecharging || currentYellowEnemiesKilled < requiredYellowEnemiesNeeded)
+        {
+            rechargeButton.enabled = false;
+            rechargeButton.interactable = false;
+        }
+    }
+
+    private void UpdateChargeUI()
+    {
+        currentYellowEnemiesKilled++;
+        RechargeProgressBarCurrentValue(currentYellowEnemiesKilled);
+    }
+
+    public void OnRecharge()
+    {
+        //Function for the recharge U.I. button 
+
+        if (!needsCharge)
+        {
+            return;
+        }
+
+        if (currentYellowEnemiesKilled > requiredYellowEnemiesNeeded)
+        {
+            currentYellowEnemiesKilled -= requiredYellowEnemiesNeeded;
+        }
+
+        isRecharging = true;
+        currentYellowEnemiesText.gameObject.SetActive(false);
+        rechargingText.gameObject.SetActive(true);
+    }
+
+    private void Recharging()
+    {
+        startDischarging = false;
+        needsCharge = false;
+
+        currentChargeCapacity += increaseCurrentChargeCapacity;
+
+        if (currentChargeCapacity >= currentMaxChargeCapacity)
+        {
+            currentChargeCapacity = currentMaxChargeCapacity;
+        }
+    }
+
+    private void FinishedRecharging()
+    {
+        rechargingText.gameObject.SetActive(false);
+        currentYellowEnemiesText.gameObject.SetActive(true);
+
+        PrimaryProgressBarCurrentValue(currentChargeCapacity);
+        RechargeProgressBarMaxValue(requiredYellowEnemiesNeeded);
+        RechargeProgressBarCurrentValue(currentYellowEnemiesKilled);
+
+        if (!startRotating)
+        {
+            startRotating = true;
+        }
+
+        startDischarging = true;
+        rechargeTimer = 0f;
+        isRecharging = false;
+    }
+
+    #endregion
+
+    #region Repair Functions
+
+    private void CheckRepair()
+    {
+        if (currentMaxChargeCapacity < defaultMaximumChargeCapacity && !isRepairing)
+        {
+            needsRepair = true;
+        }
+        else if (currentMaxChargeCapacity >= defaultMaximumChargeCapacity || isRepairing)
+        {
+            needsRepair = false;
+        }
+    }
+    
+    private void SetRepairButtonStatus()
+    {
+        if (needsRepair && !isRepairing && currentBlueEnemiesKilled >= requiredBlueEnemiesNeeded)
+        {
+            repairButton.enabled = true;
+            repairButton.interactable = true;
+        }
+        else if (!needsRepair || isRepairing && currentBlueEnemiesKilled < requiredBlueEnemiesNeeded)
+        {
+            repairButton.enabled = false;
+            repairButton.interactable = false;
+        }
+    }
+
+    private void UpdateRepairUI()
+    {
+        currentBlueEnemiesKilled++;
+        RepairProgressBarCurrentValue(currentBlueEnemiesKilled);
+    }
+
+    public void OnRepair()
+    {
+        //Function for the repair U.I. button 
+
+        if (!needsRepair)
+        {
+            return;
+        }
+
+        if (currentBlueEnemiesKilled > requiredBlueEnemiesNeeded)
+        {
+            currentBlueEnemiesKilled -= requiredBlueEnemiesNeeded;
+        }
+
+        isRepairing = true;
+        repairingText.gameObject.SetActive(true);
+        currentBlueEnemiesText.gameObject.SetActive(false);
+        startRotating = false;
+    }
+
+    private void FinishedRepairing()
+    {
+        cappedMaxChargeCapacity -= restoreMaxChargeCapacity;
+        currentMaxChargeCapacity += restoreMaxChargeCapacity;
+
+        if (currentMaxChargeCapacity >= defaultMaximumChargeCapacity)
+        {
+            currentMaxChargeCapacity = defaultMaximumChargeCapacity;
+        }
+
+        repairingText.gameObject.SetActive(false);
+        currentBlueEnemiesText.gameObject.SetActive(true);
+
+        MaxChargeProgressBarCurrentValue(currentMaxChargeCapacity);
+        RepairProgressBarMaxValue(requiredBlueEnemiesNeeded);
+        RepairProgressBarCurrentValue(currentBlueEnemiesKilled);
+
+        repairTimer = 0f;
+        isRepairing = false;
+        startRotating = true;
+    }
+
+    #endregion
+
+    #region Player Interaction with U.I.
 
     public void OnInteraction()
     {
@@ -181,126 +459,10 @@ public class P3_LighthouseManager : MonoBehaviour
         P3_InputManager.Instance.OnHideLighthouseUI();
     }
 
-    private void OnTakeDamage(float Amount)
-    {
-        needsCharge = true;
-
-        cappedMaxCharge += Amount;
-
-        if (cappedMaxCharge >= defaultMaximumCharge)
-        {
-            cappedMaxCharge = mininumMaxCharge;
-        }
-
-        currentMaxCharge = defaultMaximumCharge - cappedMaxCharge;
-
-        //Testing: masking the progress bar
-        //lighthouseProgressBarFillMask.fillAmount = currentMaxCharge;
-    }
-
-    #region Charge Related Functions
-
-    private void UpdateChargeUI()
-    {
-        currentYellowEnemiesKilled++;
-        rechargeProgressBar.value = currentYellowEnemiesKilled;
-    }
-
-    public void OnRecharge()
-    {
-        if (!canCharge && !isRecharging && currentCharge == currentMaxCharge)
-        {
-            return;
-        }
-
-        if (currentYellowEnemiesKilled > requiredYellowEnemiesNeeded)
-        {
-            currentYellowEnemiesKilled -= requiredYellowEnemiesNeeded;
-        }
-
-        Recharging();
-    }
-
-    private void Recharging()
-    {
-        canCharge = false;
-        isRecharging = true;
-        currentCharge += increaseChargeAmount;
-
-        if (currentCharge >= currentMaxCharge)
-        {
-            currentCharge = currentMaxCharge;
-        }
-
-        //currentYellowEnemiesText.gameObject.SetActive(false);
-    }
-
-    private void FinishedRecharging()
-    {
-        rechargeProgressBar.value = currentYellowEnemiesKilled;
-        
-        //currentYellowEnemiesText.gameObject.SetActive(true);
-
-        rechargeTimer = 0f;
-        isRecharging = false;
-    }
-
-    #endregion
-
-    #region Repair Related Functions
-
-    private void UpdateRepairUI()
-    {
-        currentBlueEnemiesKilled++;
-        repairProgressBar.value = currentBlueEnemiesKilled;
-    }
-
-    public void OnRepair()
-    {
-        if (!canRepair || !isRepairing || currentMaxCharge == defaultMaximumCharge)
-        {
-            return;
-        }
-
-        if (currentBlueEnemiesKilled > requiredBlueEnemiesNeeded)
-        {
-            currentBlueEnemiesKilled -= requiredBlueEnemiesNeeded;
-        }
-        
-        Repairing();
-    }
-
-    private void Repairing()
-    {
-        canRepair = false;
-        isRepairing = true;
-
-        //currentBlueEnemiesText.gameObject.SetActive(false);
-    }
-
-    private void FinishedRepairing()
-    {
-        currentMaxCharge += restoreMaxChargeAmount;
-
-        if (currentMaxCharge >= defaultMaximumCharge)
-        {
-            currentMaxCharge = defaultMaximumCharge;
-        }
-
-        repairProgressBar.value = currentBlueEnemiesKilled;
-        cappedMaxCharge -= restoreMaxChargeAmount;
-        currentMaxCharge += restoreMaxChargeAmount;
-
-        //currentBlueEnemiesText.gameObject.SetActive(true);
-
-        repairTimer = 0f;
-        isRepairing = false;
-    }
-
     #endregion
 
     #region U.I.
-    
+
     public void EnableLighthouseUI()
     {
         lighthouseProgressScreen.SetActive(true);
@@ -378,11 +540,15 @@ public class P3_LighthouseManager : MonoBehaviour
         {
             OnInteraction();
         }
-        
-        if (P3_InputManager.Instance.PlayerPressedUiCancelInteractButton() && lighthouseProgressScreen)
+        else if (P3_InputManager.Instance.PlayerPressedInteractButton() && isLighthouseScreenActive)
         {
             OnCancelInteraction();
         }
+
+        //if (P3_InputManager.Instance.PlayerPressedUiCancelInteractButton() && isLighthouseScreenActive)
+        //{
+        //    OnCancelInteraction();
+        //}
 
         #endregion
 
@@ -390,52 +556,33 @@ public class P3_LighthouseManager : MonoBehaviour
 
         if (startDischarging)
         {
-            UpdatePrimaryProgressBar();
+            OnDischarging();
         }
-
-        #endregion
-
-        #region Enabling and Disabling Buttons
-
-        repairButton.enabled = canRepair;
-        repairButton.interactable = canRepair;
-
-        rechargeButton.enabled = canCharge;
-        rechargeButton.interactable = canCharge;
 
         #endregion
 
         #region Checking current charge
 
-        if (currentCharge < currentMaxCharge && !isRecharging)
-        {
-            needsCharge = true;
-        }
-        else 
-        {
-            needsCharge = false;
-        }
+        CheckCharge();
+        CheckRepair();
 
         #endregion
 
-        #region Checking maximum charge (for repairing)
+        #region Enabling and Disabling Buttons
 
-        if (currentMaxCharge < defaultMaximumCharge && !isRepairing)
-        {
-            canRepair = true;
-        }
-        else
-        {
-            canRepair = false;
-        }
+        SetChargeButtonStatus();
+        SetRepairButtonStatus();
 
         #endregion
 
-        #region Recharging 
+        #region Recharging
 
         if (isRecharging)
         {
             rechargeTimer += Time.deltaTime;
+            Recharging();
+            RechargeProgressBarMaxValue(rechargeTimeDuration);
+            RechargeProgressBarCurrentValue(rechargeTimer);
 
             if (rechargeTimer >= rechargeTimeDuration)
             {
@@ -450,6 +597,8 @@ public class P3_LighthouseManager : MonoBehaviour
         if (isRepairing)
         {
             repairTimer += Time.deltaTime;
+            RepairProgressBarMaxValue(repairTimeDuration);
+            RepairProgressBarCurrentValue(repairTimer);
 
             if (repairTimer >= repairTimeDuration)
             {
@@ -460,22 +609,19 @@ public class P3_LighthouseManager : MonoBehaviour
         #endregion
 
         #region Updating U.I.
-
-        lighthouseProgressBarFillMask.fillAmount = currentMaxCharge;
-
-        rechargingText.gameObject.SetActive(isRecharging);
-        rechargeProgressBar.gameObject.SetActive(isRecharging);
         
-        currentYellowEnemiesText.gameObject.SetActive(!isRecharging);
         currentYellowEnemiesText.text = $"Yellow killed: {currentYellowEnemiesKilled} / {requiredYellowEnemiesNeeded}";
-
-        repairingText.gameObject.SetActive(isRepairing);
-        repairProgressBar.gameObject.SetActive(isRepairing);
-
-        currentBlueEnemiesText.gameObject.SetActive(!isRepairing);
         currentBlueEnemiesText.text = $"Blue killed: {currentBlueEnemiesKilled} / {requiredBlueEnemiesNeeded}";
 
-        #endregion
+        if (maxChargeProgressBar.value == maxChargeProgressBar.maxValue)
+        {
+            maxChargeProgressBar.handleRect.gameObject.SetActive(false);
+        }
+        else if (maxChargeProgressBar.value < maxChargeProgressBar.maxValue)
+        {
+            maxChargeProgressBar.handleRect.gameObject.SetActive(true);
+        }
 
+        #endregion
     }
 }

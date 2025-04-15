@@ -10,7 +10,6 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     /// https://discussions.unity.com/t/enemy-wave-generator-spawn-system-help/108925/2
     /// </summary>
 
-
     #region Variables
 
     [Header("Radius Around Lighthouse and Level")]
@@ -18,27 +17,6 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     [SerializeField, Tooltip("Maximum radius for enemies to spawn within")] private float outerRadius = 0f;
 
     [Space(5)]
-
-    [Header("Enemy Parent Transform Reference")]
-    [SerializeField] private GameObject enemyParent;
-
-    [Space(5)]
-
-    [Header("Lighthouse and Player")]
-    [SerializeField] private GameObject fpsPlayerCharacter;
-    [SerializeField] private GameObject lighthouseGameObject;
-
-    [Space(5)]
-
-    [Header("Wave Variables")]
-    [SerializeField] private float difficultyFactor = 0.9f;
-    [SerializeField] private List<P3_EnemyWave> enemyWaves;
-    [SerializeField] private P3_EnemyWave currentEnemyWave;
-
-    [SerializeField] private float waveDelayFactor;
-    //[SerializeField, Tooltip("For printing messages about enemy waves")] private TMP_Text waveText;
-
-    [Space(10)]
 
     [Header("Spawn Position Variables")]
     [SerializeField] private float radius;
@@ -51,6 +29,27 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     [SerializeField, Tooltip("Minimum angle around the centre of the level for an enemy to spawn at")] private float angleMinimum = 0.0f;
     [SerializeField, Tooltip("Maximum angle around the centre of the level for an enemy to spawn at\"")] private float angleMaximum = 360.0f;
 
+    [Space(10)]
+    
+    [Header("Enemy Parent Transform Reference")]
+    [SerializeField] private GameObject enemyParent;
+
+    [Space(5)]
+
+    [Header("Lighthouse and Player")]
+    [SerializeField] private GameObject fpsPlayerCharacter;
+    [SerializeField] private GameObject lighthouseGameObject;
+
+    [Space(5)]
+
+    [Header("Wave Variables")]
+    [SerializeField] private float waveDelayFactor;
+    //[SerializeField, Tooltip("For printing messages about enemy waves")] private TMP_Text waveText;
+
+    [SerializeField] private float difficultyFactor = 0.9f;
+    [SerializeField] private List<P3_EnemyWave> enemyWaves;
+    [SerializeField] private P3_EnemyWave currentEnemyWave;
+    
     #endregion
 
     IEnumerator WaveSpawnLoop()

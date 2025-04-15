@@ -113,6 +113,8 @@ public class P3_GunplayManager : MonoBehaviour
 
     [SerializeField] public bool isActiveGun = false;
 
+    public bool enableBulletTrails { get; set; } = true;
+
     #endregion
 
     private void Awake()
@@ -267,12 +269,15 @@ public class P3_GunplayManager : MonoBehaviour
             #endregion
 
             //Bullet trails
-            //Using trail renderer
-            TrailRenderer newTrail = Instantiate(bulletTrailRend, bulletTrailSpawnPos.transform.position, Quaternion.identity);
-            StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
+            if (enableBulletTrails)
+            {
+                //Using trail renderer
+                TrailRenderer newTrail = Instantiate(bulletTrailRend, bulletTrailSpawnPos.transform.position, Quaternion.identity);
+                StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
 
-            //Using line renderer
-            //SpawnBulletTrail(bulletTrailSpawnPos.transform.position, _raycastHit.point);
+                //Using line renderer
+                //SpawnBulletTrail(bulletTrailSpawnPos.transform.position, _raycastHit.point);
+            }
 
             Guid enemyGuid = new Guid();
 
