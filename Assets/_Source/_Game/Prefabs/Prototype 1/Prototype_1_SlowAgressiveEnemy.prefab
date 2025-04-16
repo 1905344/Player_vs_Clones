@@ -312,11 +312,11 @@ MonoBehaviour:
   aiAttackRange: 40
   isPlayerInSightRange: 0
   isPlayerInAttackRange: 0
-  attackSFX: {fileID: 0}
+  attackSFX: {fileID: 8300000, guid: 0dbe91efb8ee94e6695ef0f552d202ce, type: 3}
   playerDiscoveredSFX: {fileID: 0}
   lostSightOfPlayerSFX: {fileID: 0}
-  enemyInjuredSFX: {fileID: 0}
-  enemyDeathSFX: {fileID: 0}
+  enemyInjuredSFX: {fileID: 8300000, guid: e11a5a019377fbd4c81caa0adcb4c236, type: 3}
+  enemyDeathSFX: {fileID: 8300000, guid: 402807422d0b1a349adbff810a94e26e, type: 3}
   projectile: {fileID: 1867186218399889277, guid: 5a5fa9befea22e84b9268ca172ecba8b,
     type: 3}
   bulletsFired: 0

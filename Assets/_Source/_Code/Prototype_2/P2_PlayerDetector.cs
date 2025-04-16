@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class P2_PlayerDetector : MonoBehaviour
@@ -14,6 +15,7 @@ public class P2_PlayerDetector : MonoBehaviour
     [SerializeField] private LayerMask detectionMask;
     [SerializeField] private float detectionHeight = 2f;
     [SerializeField] private SphereCollider _sphereCollider;
+    private Vector3 centrePostion;
 
     [Space(5)]
 
@@ -216,7 +218,7 @@ public class P2_PlayerDetector : MonoBehaviour
 
         Vector3 originPoint = transform.position + Vector3.up * detectionHeight;
         float maxDistance = Vector3.Distance(activePlayer.transform.position, originPoint);
-        float distanceIncreasing = detectionRadius - maxDistance;
+        float distanceIncreasing = maxDistance - detectionRadius;
 
         float defaultPlayerMoveSpeed = 12f;
         float defaultPlayerSprintSpeed = 28f;
@@ -232,36 +234,46 @@ public class P2_PlayerDetector : MonoBehaviour
 
             activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
             activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = defaultPlayerSprintSpeed;
+
+            //if (distanceIncreasing < 0)
+            //{
+            //    slowPlayerMoveSpeed -= Time.deltaTime;
+
+            //    if (slowPlayerMoveSpeed <= 2f)
+            //    {
+            //        slowPlayerMoveSpeed = 2.15f;
+            //    }
+            //}
+            //else
+            //{
+            //    slowPlayerMoveSpeed += Time.deltaTime;
+
+            //    if (slowPlayerMoveSpeed >= defaultPlayerMoveSpeed)
+            //    {
+            //        slowPlayerMoveSpeed = 0f;
+            //        activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
+            //    }
+            //}
+
+            //activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
+            //activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
         }
-        else
+        else if (playersOutOfRange.Contains(activePlayer.gameObject))
         {
-            if (distanceIncreasing < 0)
-            {
-                slowPlayerMoveSpeed -= Time.deltaTime;
-
-                if (slowPlayerMoveSpeed <= 2f)
-                {
-                    slowPlayerMoveSpeed = 2.15f;
-                }
-            }
-            else
-            {
-                slowPlayerMoveSpeed += Time.deltaTime;
-
-                if (slowPlayerMoveSpeed >= defaultPlayerMoveSpeed)
-                {
-                    slowPlayerMoveSpeed = 0f;
-                    activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = defaultPlayerMoveSpeed;
-                }
-            }
-
-            activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
-            activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
-
             if (indexPos == 2)
             {
                 activePlayer.GetComponent<P2_PlayerCharacterBase>().canHack = false;
             }
+
+            slowPlayerMoveSpeed -= Time.deltaTime;
+
+            if (slowPlayerMoveSpeed <= 2f)
+            {
+                slowPlayerMoveSpeed = 2.15f;
+            }
+
+            activePlayer.GetComponent<P2_fpsMovement>().moveSpeed = slowPlayerMoveSpeed;
+            activePlayer.GetComponent<P2_fpsMovement>().sprintSpeed = 0;
         }
 
         #endregion

@@ -46,6 +46,8 @@ public class P2_GunplayManager : MonoBehaviour
     [Header("Sound Effects")]
     [SerializeField] private AudioClip gunTapFireSFX;
     [SerializeField] private AudioClip gunHoldFireSFX;
+    [SerializeField] private AudioClip reloadSFX;
+    [SerializeField] private AudioClip emptyGunSFX;
 
     [Space(20)]
 
@@ -208,6 +210,7 @@ public class P2_GunplayManager : MonoBehaviour
         if (P2_InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
         {
             ReloadGun();
+            SoundManager.instance.PlaySFX(reloadSFX);
         }
 
         #endregion
@@ -424,7 +427,6 @@ public class P2_GunplayManager : MonoBehaviour
         //Example 1: i < bulletDecalLimit - 1
         //Example 2: i < bulletDecalLimit - bulletDecalDestroyAmount
 
-
         for (int i = 0; i < bulletDecalDestroyAmount; i++)
         {
             Destroy(bulletDecalParent.GetChild(i).gameObject);
@@ -508,7 +510,6 @@ public class P2_GunplayManager : MonoBehaviour
             if (isReloading)
             {
                 reloadingTimer += Time.deltaTime;
-
                 reloadingText.gameObject.SetActive(true);
                 reloadingText.text = "Reloading";
 

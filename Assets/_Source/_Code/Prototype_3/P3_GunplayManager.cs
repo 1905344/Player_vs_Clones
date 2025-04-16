@@ -28,7 +28,6 @@ public class P3_GunplayManager : MonoBehaviour
     [SerializeField] private P3_AmmoHudBar ammoHudBar;
     [SerializeField] private TMP_Text reloadingText;
     private bool updateHUD = false;
-    //[SerializeField] private Material gunMaterial;
 
     [SerializeField, Tooltip("Parent object for the instantiated bullet decals")] private Transform bulletDecalParent;
     private Vector3 bulletHoleDecalSpawnLocation;
@@ -47,6 +46,8 @@ public class P3_GunplayManager : MonoBehaviour
     [Header("Sound Effects")]
     [SerializeField] private AudioClip gunTapFireSFX;
     [SerializeField] private AudioClip gunHoldFireSFX;
+    [SerializeField] private AudioClip reloadSFX;
+    [SerializeField] private AudioClip emptyGunSFX;
 
     [Space(20)]
 
@@ -215,6 +216,7 @@ public class P3_GunplayManager : MonoBehaviour
         if (P3_InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
         {
             ReloadGun();
+            SoundManager.instance.PlaySFX(reloadSFX);
         }
 
         #endregion
@@ -521,10 +523,9 @@ public class P3_GunplayManager : MonoBehaviour
             if (isReloading)
             {
                 reloadingTimer += Time.deltaTime;
-
                 reloadingText.gameObject.SetActive(true);
                 reloadingText.text = "Reloading";
-
+                
                 if (P3_GameManager.Instance.enableReloadPromptTextAsTimer)
                 {
                     P3_GameManager.Instance.HideReloadPrompt();

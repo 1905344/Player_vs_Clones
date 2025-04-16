@@ -9,6 +9,12 @@ public class P2_enemyHealth : MonoBehaviour
     [SerializeField] public int health = 100;
     public int maxHealth;
     [SerializeField] private P2_Healthbar healthBar;
+    
+    [Space(10)]
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip enemyInjuredSFX;
+    [SerializeField] private AudioClip enemyDeathSFX;
 
     [Space(10)]
 
@@ -40,7 +46,7 @@ public class P2_enemyHealth : MonoBehaviour
             return;
         }
 
-        //SoundManager.instance.PlaySFX(enemyInjuredSFX);
+        SoundManager.instance.PlaySFX(enemyInjuredSFX);
 
         health -= damage;
 
@@ -59,7 +65,7 @@ public class P2_enemyHealth : MonoBehaviour
 
     private void DestroyThisEnemy()
     {
-        //SoundManager.instance.PlaySFX(enemyDeathSFX);
+        SoundManager.instance.PlaySFX(enemyDeathSFX);
 
         if (P2_GameManager.Instance.enableDebug)
         {

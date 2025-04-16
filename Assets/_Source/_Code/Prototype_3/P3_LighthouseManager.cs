@@ -123,6 +123,14 @@ public class P3_LighthouseManager : MonoBehaviour
     [Header("Player Reference")]
     [SerializeField] private GameObject lighthousePlayerCharacter;
 
+    [Space(10)]
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip openLighthouseUiSFX;
+    [SerializeField] private AudioClip closeLighthouseUiSFX;
+    [SerializeField] private AudioClip buttonClickSFX;
+    [SerializeField] private AudioClip progressBarCompletedSFX;
+
     public bool isLighthouseScreenActive;
 
     #endregion
@@ -280,7 +288,7 @@ public class P3_LighthouseManager : MonoBehaviour
 
     #region Recharge Functions
 
-    public void CheckCharge()
+    private void CheckCharge()
     {
         if (currentChargeCapacity < currentMaxChargeCapacity && !isRecharging)
         {
@@ -321,6 +329,8 @@ public class P3_LighthouseManager : MonoBehaviour
             return;
         }
 
+        SoundManager.instance.PlaySFX(buttonClickSFX);
+
         if (currentYellowEnemiesKilled > requiredYellowEnemiesNeeded)
         {
             currentYellowEnemiesKilled -= requiredYellowEnemiesNeeded;
@@ -352,6 +362,8 @@ public class P3_LighthouseManager : MonoBehaviour
         PrimaryProgressBarCurrentValue(currentChargeCapacity);
         RechargeProgressBarMaxValue(requiredYellowEnemiesNeeded);
         RechargeProgressBarCurrentValue(currentYellowEnemiesKilled);
+
+        SoundManager.instance.PlaySFX(progressBarCompletedSFX);
 
         if (!startRotating)
         {
@@ -408,6 +420,8 @@ public class P3_LighthouseManager : MonoBehaviour
             return;
         }
 
+        SoundManager.instance.PlaySFX(buttonClickSFX);
+
         if (currentBlueEnemiesKilled > requiredBlueEnemiesNeeded)
         {
             currentBlueEnemiesKilled -= requiredBlueEnemiesNeeded;
@@ -436,6 +450,8 @@ public class P3_LighthouseManager : MonoBehaviour
         RepairProgressBarMaxValue(requiredBlueEnemiesNeeded);
         RepairProgressBarCurrentValue(currentBlueEnemiesKilled);
 
+        SoundManager.instance.PlaySFX(progressBarCompletedSFX);
+
         repairTimer = 0f;
         isRepairing = false;
         startRotating = true;
@@ -450,6 +466,7 @@ public class P3_LighthouseManager : MonoBehaviour
         lighthousePlayerCharacter.GetComponent<P3_fpsMovement>().DisablePlayerMovement();
         EnableLighthouseUI();
         P3_InputManager.Instance.OnShowLighthouseUI();
+        SoundManager.instance.PlaySFX(openLighthouseUiSFX);
     }
 
     public void OnCancelInteraction()
@@ -457,6 +474,7 @@ public class P3_LighthouseManager : MonoBehaviour
         lighthousePlayerCharacter.GetComponent<P3_fpsMovement>().EnablePlayerMovement();
         DisableLighthouseUI();
         P3_InputManager.Instance.OnHideLighthouseUI();
+        SoundManager.instance.PlaySFX(closeLighthouseUiSFX);
     }
 
     #endregion

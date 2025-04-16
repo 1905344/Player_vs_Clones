@@ -26,6 +26,11 @@ public class P3_fpsCharacterBase : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip playerHitSFX;
+
+    [Space(10)]
+
     [Header("Debug Variables")]
     [SerializeField] public bool isCharacterActive = false;
 

@@ -40,14 +40,19 @@ public class P3_EnemyBase : MonoBehaviour
     [SerializeField] private CapsuleCollider enemyCollider;
     public GameObject playerRef { get; set; }
     public Transform lighthouseRef { get; set; }
-    private GameObject lighthouse;
-
     private Transform destinationPosition;
     private Vector3 destinationVector;
 
     private GameObject explosion;
 
-    [Space(5)]
+    [Space(10)]
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip enemyInjuredSFX;
+    [SerializeField] private AudioClip enemyDeathSFX;
+    [SerializeField] private AudioClip explosionSFX;
+
+    [Space(10)]
 
     [Header("Debug")]
     [SerializeField] private bool startMoving = false;
@@ -68,7 +73,6 @@ public class P3_EnemyBase : MonoBehaviour
     void Start()
     {
         P3_GameManager.Instance.EnemyHit += TakeDamage;
-        lighthouse = GameObject.Find("Lighthouse");
 
         GetDestination();
         startMoving = true;
@@ -82,7 +86,7 @@ public class P3_EnemyBase : MonoBehaviour
             return;
         }
 
-        //SoundManager.instance.PlaySFX(enemyInjuredSFX);
+        SoundManager.instance.PlaySFX(enemyInjuredSFX);
 
         defaultHealth -= damage;
 
@@ -155,8 +159,6 @@ public class P3_EnemyBase : MonoBehaviour
         {
             destinationPosition = playerRef.transform;
         }
-
-        destinationVector = destinationPosition.position;
     }
 
     private void EnemyMovement()
@@ -170,7 +172,10 @@ public class P3_EnemyBase : MonoBehaviour
 
     private void DestroyThisEnemy()
     {
-        //SoundManager.instance.PlaySFX(enemyDeathSFX);
+        if (enemyType != P3_Enemy_Types.Red)
+        {
+            SoundManager.instance.PlaySFX(enemyDeathSFX);
+        }
 
         #region Debug
 
@@ -196,6 +201,8 @@ public class P3_EnemyBase : MonoBehaviour
             return;
         }
 
+        SoundManager.instance.PlaySFX(explosionSFX);
+
         P3_GameManager.Instance.OnLighthouseHit(damageAmount);
         explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
         startDeathTimer = true;
@@ -205,6 +212,12 @@ public class P3_EnemyBase : MonoBehaviour
 
     void Update()
     {
+        if (startMoving && !startDeathTimer)
+        {
+            destinationVector = destinationPosition.position;
+            EnemyMovement();
+        }
+
         if (startDeathTimer)
         {
             timer += Time.deltaTime;

@@ -411,4 +411,7 @@ MonoBehaviour:
     type: 3}
   meshAgent: {fileID: 5219798911751709296}
   enemyCollider: {fileID: 9072955320005445187}
+  enemyInjuredSFX: {fileID: 8300000, guid: e11a5a019377fbd4c81caa0adcb4c236, type: 3}
+  enemyDeathSFX: {fileID: 8300000, guid: 402807422d0b1a349adbff810a94e26e, type: 3}
+  explosionSFX: {fileID: 8300000, guid: 986d6b30567e30e428f3f21373fe45ca, type: 3}
   startMoving: 0

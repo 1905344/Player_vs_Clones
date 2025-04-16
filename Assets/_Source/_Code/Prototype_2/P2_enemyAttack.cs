@@ -22,9 +22,6 @@ public class P2_enemyAttack : MonoBehaviour
 
     [Header("SFX")]
     [SerializeField] private AudioClip attackSFX;
-    [SerializeField] private AudioClip lostSightOfPlayerSFX;
-    [SerializeField] private AudioClip enemyInjuredSFX;
-    [SerializeField] private AudioClip enemyDeathSFX;
 
     public GameObject targetPlayer { get; set; }
     public bool isAttacking { get; set; } = false;
@@ -53,6 +50,7 @@ public class P2_enemyAttack : MonoBehaviour
         if (attackTimer > timeBetweenAttacks)
         {
             bulletsFired++;
+            SoundManager.instance.PlaySFX(attackSFX);
 
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
 

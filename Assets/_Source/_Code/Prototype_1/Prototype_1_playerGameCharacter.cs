@@ -17,6 +17,12 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip playerHitSFX;
+    [SerializeField] private AudioClip playerDeathSFX;
+
+    [Space(10)]
+
     [Header("U.I. Elements")]
     [SerializeField] private Prototype_1_HealthBar hudHealthBar;
     private bool updateHealth = false;
@@ -54,6 +60,8 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
             return;
         }
 
+        SoundManager.instance.PlaySFX(playerHitSFX);
+
         currentHealth -= damage;
 
         if (currentHealth <= 0)
@@ -71,11 +79,16 @@ public class Prototype_1_playerGameCharacter : MonoBehaviour
             isAlive = false;
 
             Prototype_1_GameManager.Instance.OnPlayerKilled();
+            SoundManager.instance.PlaySFX(playerDeathSFX);
+
+            #region Debug
 
             if (Prototype_1_GameManager.Instance.enableDebug)
             {
                 Debug.Log("Player has been killed.");
             }
+
+            #endregion
         }
     }
 

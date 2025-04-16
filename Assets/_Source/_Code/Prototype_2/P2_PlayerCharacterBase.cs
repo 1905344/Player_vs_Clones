@@ -32,6 +32,12 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
     [Space(10)]
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip playerHitSFX; 
+    [SerializeField] private AudioClip playerDeathSFX;
+
+    [Space(10)]
+
     [SerializeField] private int currentHealth;
     [SerializeField] private int maxHealth;
     [SerializeField] private bool isAlive;
@@ -104,6 +110,8 @@ public class P2_PlayerCharacterBase : MonoBehaviour
             return;
         }
 
+        SoundManager.instance.PlaySFX(playerHitSFX);
+
         currentHealth -= damageAmount;
 
         if (currentHealth <= 0)
@@ -133,6 +141,8 @@ public class P2_PlayerCharacterBase : MonoBehaviour
 
         P2_GameManager.Instance.OnPlayerCharacterKilled(getGuid);
         P2_GameManager.Instance.OnCharacterChanged();
+
+        SoundManager.instance.PlaySFX(playerDeathSFX);
 
         isAlive = false;
         gameObject.SetActive(false);

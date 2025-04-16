@@ -40,6 +40,12 @@ public class Prototype_1_GameManager : MonoBehaviour
     //public event Action LevelFailed;
     public event Action LevelCompleted;
 
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip confirmSFX;
+    [SerializeField] private AudioClip returnSFX;
+
+    [Space(5)]
+
     [Header("Restart Scene")]
     [SerializeField] private string sceneName;
 
@@ -73,12 +79,14 @@ public class Prototype_1_GameManager : MonoBehaviour
     [SerializeField] Transform pauseScreen;
     [SerializeField] Transform controlsScreen;
     [SerializeField] Transform settingsScreen;
+        [SerializeField] Transform quitPromptScreen;
     [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
 
     [Header("Tutorial Screen Buttons")]
     [SerializeField] Button tutorialStartGame;
+    [SerializeField] Button tutorialMainMenu;
     [SerializeField] Button tutorialQuitGame;
     [SerializeField] Button tutorialScreenReturnButton;
 
@@ -91,6 +99,13 @@ public class Prototype_1_GameManager : MonoBehaviour
     [SerializeField] Button controlsPauseMenuButton;
     [SerializeField] Button settingsPauseMenuButton;
     [SerializeField] Button quitFromPauseMenuButton;
+
+    [Space(5)]
+
+    [Header("Quit Screen Buttons")]
+    [SerializeField] Button returnToPauseScreenFromQuitPrompt;
+    [SerializeField] Button quitPromptQuitMainMenu;
+    [SerializeField] Button quitPromptQuitGame;
 
     [Space(5)]
 
@@ -124,6 +139,7 @@ public class Prototype_1_GameManager : MonoBehaviour
     [Space(5)]
 
     [Header("Game Over Screen")]
+    [SerializeField] Button quitToMainMenuButton;
     [SerializeField] Button quitGameFromGameOverScreenButton;
     [SerializeField] TMP_Text gameOverText;
     [SerializeField] TMP_Text levelCompletedText;
@@ -271,6 +287,10 @@ public class Prototype_1_GameManager : MonoBehaviour
         tutorialStartGame.enabled = true;
         tutorialStartGame.interactable = true;
 
+        tutorialMainMenu.gameObject.SetActive(true);
+        tutorialMainMenu.enabled = true;
+        tutorialMainMenu.interactable = true;
+
         tutorialQuitGame.gameObject.SetActive(true);
         tutorialQuitGame.enabled = true;
         tutorialQuitGame.interactable = true;
@@ -285,6 +305,10 @@ public class Prototype_1_GameManager : MonoBehaviour
         tutorialStartGame.gameObject.SetActive(false);
         tutorialStartGame.enabled = false;
         tutorialStartGame.interactable = false;
+
+        tutorialMainMenu.gameObject.SetActive(false);
+        tutorialMainMenu.enabled = false;
+        tutorialMainMenu.interactable = false;
 
         tutorialQuitGame.gameObject.SetActive(false);
         tutorialQuitGame.enabled = false;
@@ -306,6 +330,13 @@ public class Prototype_1_GameManager : MonoBehaviour
         tutorialScreen.gameObject.SetActive(false);
 
         DisableReturnButtonTutorialScreen();
+    }
+
+    public void OnQuitToMainMenuFromTutorialScreen()
+    {
+        HideTutorial();
+        DisableReturnButtonTutorialScreen();
+        LoadMainMenu();
     }
 
     #endregion
@@ -446,6 +477,30 @@ public class Prototype_1_GameManager : MonoBehaviour
         promptForReloadToggle.gameObject.SetActive(false);
     }
 
+    private void EnableQuitScreenButtons()
+    {
+        quitToMainMenuButton.enabled = true;
+        quitToMainMenuButton.interactable = true;
+
+        quitGameFromGameOverScreenButton.enabled = true;
+        quitGameFromGameOverScreenButton.interactable = true;
+
+        returnToPauseScreenFromQuitPrompt.enabled = true;
+        returnToPauseScreenFromQuitPrompt.interactable = true;
+    }
+
+    private void DisableQuitScreenButtons()
+    {
+        quitToMainMenuButton.enabled = false;
+        quitToMainMenuButton.interactable = false;
+
+        quitGameFromGameOverScreenButton.enabled = false;
+        quitGameFromGameOverScreenButton.interactable = false;
+
+        returnToPauseScreenFromQuitPrompt.enabled = false;
+        returnToPauseScreenFromQuitPrompt.interactable = false;
+    }
+
     #endregion
 
     #region Functions for Pause Screen Buttons
@@ -459,11 +514,12 @@ public class Prototype_1_GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
 
         EnablePauseButtons();
+        SoundManager.instance.PlaySFX(confirmSFX);
     }
 
     public void OnResume()
     {
-        if (!Prototype_1_InputManager.Instance.pauseGame)
+        if (!P3_InputManager.Instance.pauseGame)
         {
             return;
         }
@@ -479,13 +535,14 @@ public class Prototype_1_GameManager : MonoBehaviour
             #endregion
 
             Time.timeScale = 1.0f;
+            SoundManager.instance.PlaySFX(confirmSFX);
             DisableControlsPage();
             DisableSettingsPage();
             HideTutorialScreenFromPauseMenu();
             DisableReturnButtonTutorialScreen();
             DisablePauseUI();
 
-            Prototype_1_InputManager.Instance.OnResumeUIButtonPressed();
+            P3_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
 
@@ -495,13 +552,18 @@ public class Prototype_1_GameManager : MonoBehaviour
         //of the U.I. button to resume the game
         pauseScreen.gameObject.SetActive(false);
         settingsScreen.gameObject.SetActive(false);
+        quitPromptScreen.gameObject.SetActive(false);
 
         DisablePauseButtons();
+        DisableQuitScreenButtons();
     }
 
     public void OnReturnToPauseScreenPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
+        quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
+        DisableQuitScreenButtons();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -509,53 +571,89 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     public void OnRestartButtonPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         RestartScene(sceneName);
     }
 
     public void OnSettingsButtonPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         DisablePauseButtons();
         EnableSettingsPage();
     }
 
     public void OnReturnFromSettingsButtonPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         EnablePauseButtons();
         DisableSettingsPage();
     }
 
-    public void OnApplicationQuit()
-    {
-        Debug.Log("Game quit");
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        Application.Quit();
-    }
-
     public void OnTutorialButtonPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         DisablePauseButtons();
         ShowTutorialScreenFromPauseMenu();
     }
 
     public void OnReturnFromPausedTutorialScreen()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         EnablePauseButtons();
         HideTutorialScreenFromPauseMenu();
     }
 
-    public void EnableReturnButtonTutorialScreen()
+    private void EnableReturnButtonTutorialScreen()
     {
         tutorialScreenReturnButton.enabled = true;
         tutorialScreenReturnButton.interactable = true;
         tutorialScreenReturnButton.gameObject.SetActive(true);
     }
 
-    public void DisableReturnButtonTutorialScreen()
+    private void DisableReturnButtonTutorialScreen()
     {
         tutorialScreenReturnButton.enabled = false;
         tutorialScreenReturnButton.interactable = false;
         tutorialScreenReturnButton.gameObject.SetActive(false);
+    }
+
+    public void OnQuitButtonPressed()
+    {
+        SoundManager.instance.PlaySFX(confirmSFX);
+        quitPromptScreen.gameObject.SetActive(true);
+        DisablePauseButtons();
+        EnableQuitScreenButtons();
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void OnReturnToPauseScreenFromQuitScreenPressed()
+    {
+        SoundManager.instance.PlaySFX(confirmSFX);
+        quitPromptScreen.gameObject.SetActive(false);
+        EnablePauseButtons();
+        DisableQuitScreenButtons();
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void OnQuitToMainMenu()
+    {
+        SoundManager.instance.PlaySFX(confirmSFX);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        LoadMainMenu();
+    }
+
+    public void OnApplicationQuit()
+    {
+        SoundManager.instance.PlaySFX(confirmSFX);
+        Debug.Log("Game quit");
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Application.Quit();
     }
 
     #endregion
@@ -607,12 +705,14 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     public void OnControlsButtonPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         EnableControlsPage();
         DisablePauseButtons();
     }
 
     public void OnControlsPageReturnButtonPressed()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         DisableControlsPage();
         EnablePauseButtons();
     }
@@ -625,11 +725,13 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     public void OnGameOverReturnToMainMenu()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         LoadMainMenu();
     }
 
     public void RestartLevelFromGameOverScreen()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         RestartScene("Prototype_1_Level");
     }
 
@@ -639,12 +741,14 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     private void OnGameOver()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         gameOverScreen.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(true);
     }
 
     private void OnGameCompleted()
     {
+        SoundManager.instance.PlaySFX(confirmSFX);
         gameOverScreen.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(false);
         levelCompletedText.gameObject.SetActive(true);
@@ -668,6 +772,7 @@ public class Prototype_1_GameManager : MonoBehaviour
             return;
         }
 
+        SoundManager.instance.PlaySFX(confirmSFX);
         startReloadPromptTimer = true;
         toggleReloadPromptText = true;
         reloadPromptText.gameObject.SetActive(true);
@@ -681,6 +786,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
         }
 
+        SoundManager.instance.PlaySFX(confirmSFX);
         promptTimer = 0f;
         startReloadPromptTimer = false;
         toggleReloadPromptText = false;

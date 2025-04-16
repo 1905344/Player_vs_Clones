@@ -46,6 +46,8 @@ public class Prototype_1_GunplayManager : MonoBehaviour
     [Header("Sound Effects")]
     [SerializeField] private AudioClip gunTapFireSFX;
     [SerializeField] private AudioClip gunHoldFireSFX;
+    [SerializeField] private AudioClip reloadSFX;
+    [SerializeField] private AudioClip emptyGunSFX;
 
     [Space(20)]
 
@@ -198,6 +200,7 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         if (Prototype_1_InputManager.Instance.PlayerPressedReload() && bulletsRemaining < magazineClipSize && !isReloading)
         {
             ReloadGun();
+            SoundManager.instance.PlaySFX(reloadSFX);
         }
 
         #endregion
@@ -486,7 +489,6 @@ public class Prototype_1_GunplayManager : MonoBehaviour
         if (isReloading)
         {
             reloadingTimer += Time.deltaTime;
-
             reloadingText.gameObject.SetActive(true);
             reloadingText.text = "Reloading";
 

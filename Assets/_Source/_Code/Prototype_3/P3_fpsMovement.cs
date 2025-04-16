@@ -58,19 +58,7 @@ public class P3_fpsMovement : MonoBehaviour
 
     private void Start()
     {
-        //P3_GameManager.Instance.OnStartGame += EnablePlayerMovement;
         P3_GameManager.Instance.PlayerKilled += DisablePlayerMovement;
-
-        //P3_GameManager.Instance.changePlayerCharacter += ResetRotation;
-
-        //if (disablePlayerMovement)
-        //{
-        //    DisablePlayerMovement();
-        //}
-        //else
-        //{
-        //    EnablePlayerMovement();
-        //}
     }
 
     #region Enable and Disable Player Movement
@@ -93,11 +81,6 @@ public class P3_fpsMovement : MonoBehaviour
     {
         playerIDString = idString;
     }
-
-    //private void ResetRotation()
-    //{
-    //    characterBodyObject.transform.rotation = Quaternion.Euler(Vector3.zero);
-    //}
 
     private void Update()
     {

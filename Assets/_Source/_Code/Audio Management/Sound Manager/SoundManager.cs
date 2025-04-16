@@ -56,8 +56,6 @@ public class SoundManager : MonoBehaviour
     {
         PlaySFX(sfxClip); 
     }
-
-
 }
 
 
