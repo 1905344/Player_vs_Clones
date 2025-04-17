@@ -1,6 +1,6 @@
-using Autodesk.Fbx;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class SoundManager : MonoBehaviour
 {
@@ -11,6 +11,20 @@ public class SoundManager : MonoBehaviour
     [Header("Audio References")]
     [SerializeField] private AudioSource musicSource, effectsSource;
     [SerializeField] private AudioClip sfxClip;
+
+    [Space(10)]
+
+    [Header("Starting Volume")]
+    [SerializeField, Range(0.01f, 1f)] private float masterVolumeStartingVolume = 0.7f;
+    [SerializeField, Range(0.01f, 1f)] private float musicVolumeStartingVolume = 0.7f;
+    [SerializeField, Range(0.01f, 1f)] private float sfxVolumeStartingVolume = 0.7f;
+
+    [Space(10)]
+
+    [Header("Slider U.I. Elements")]
+    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] private Slider musicVolumeSlider;
+    [SerializeField] private Slider sfxVolumeSlider;
 
     [Space(10)]
 
@@ -36,10 +50,20 @@ public class SoundManager : MonoBehaviour
             instance = this;
         }
 
+        masterVolumeSlider.minValue = 0f;
+        masterVolumeSlider.maxValue = 1f;
+
+        musicVolumeSlider.minValue = 0f;
+        musicVolumeSlider.maxValue = 1f;
+
+        sfxVolumeSlider.minValue = 0f;
+        sfxVolumeSlider.maxValue = 1f;
+
         masterVolumeText.maxVisibleCharacters = 4;
         musicVolumeText.maxVisibleCharacters = 4;
         sfxVolumeText.maxVisibleCharacters = 4;
 
+        SetVolume();
         SetVolumeSliders();
     }
 
@@ -86,9 +110,20 @@ public class SoundManager : MonoBehaviour
 
     public void SetVolumeSliders()
     {
+        masterVolumeSlider.value = AudioListener.volume;
+        musicVolumeSlider.value = musicSource.volume;
+        sfxVolumeSlider.value = effectsSource.volume;
+
         masterVolumeText.text = AudioListener.volume.ToString();
         musicVolumeText.text = musicSource.volume.ToString();
         sfxVolumeText.text = effectsSource.volume.ToString();
+    }
+
+    private void SetVolume()
+    {
+        AudioListener.volume = masterVolumeStartingVolume;
+        musicSource.volume = masterVolumeStartingVolume;
+        effectsSource.volume = sfxVolumeStartingVolume;
     }
 
     private void Update()

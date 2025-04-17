@@ -12319,8 +12319,8 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 7
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -50950,6 +50950,9 @@ MonoBehaviour:
   musicSource: {fileID: 192367017}
   effectsSource: {fileID: 937352811}
   sfxClip: {fileID: 0}
+  masterVolumeSlider: {fileID: 1316238511}
+  musicVolumeSlider: {fileID: 601601634}
+  sfxVolumeSlider: {fileID: 1635944059}
   masterVolumeText: {fileID: 276178155}
   musicVolumeText: {fileID: 2117241326}
   sfxVolumeText: {fileID: 1584813865}

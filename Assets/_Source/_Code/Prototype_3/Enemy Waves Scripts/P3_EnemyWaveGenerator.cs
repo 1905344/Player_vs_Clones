@@ -43,7 +43,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     [Space(5)]
 
     [Header("Wave Variables")]
-    [SerializeField] private float waveDelayFactor;
+    private float waveDelayFactor;
     //[SerializeField, Tooltip("For printing messages about enemy waves")] private TMP_Text waveText;
 
     [SerializeField] private float difficultyFactor = 0.9f;
