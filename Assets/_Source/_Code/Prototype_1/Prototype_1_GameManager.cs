@@ -66,6 +66,8 @@ public class Prototype_1_GameManager : MonoBehaviour
     private float promptTimer;
     private bool toggleReloadPromptText = false;
 
+    public bool enableBulletTrails { get; set; } = true;
+
     [Space(10)]
 
     [Header("U.I. Elements")]
@@ -79,7 +81,7 @@ public class Prototype_1_GameManager : MonoBehaviour
     [SerializeField] Transform pauseScreen;
     [SerializeField] Transform controlsScreen;
     [SerializeField] Transform settingsScreen;
-        [SerializeField] Transform quitPromptScreen;
+    [SerializeField] Transform quitPromptScreen;
     [SerializeField] Transform gameOverScreen;
 
     [Space(5)]
@@ -519,7 +521,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     public void OnResume()
     {
-        if (!P3_InputManager.Instance.pauseGame)
+        if (!Prototype_1_InputManager.Instance.pauseGame)
         {
             return;
         }
@@ -541,8 +543,9 @@ public class Prototype_1_GameManager : MonoBehaviour
             HideTutorialScreenFromPauseMenu();
             DisableReturnButtonTutorialScreen();
             DisablePauseUI();
+            SoundManager.instance.SetVolumeSliders();
 
-            P3_InputManager.Instance.OnResumeUIButtonPressed();
+            Prototype_1_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
 

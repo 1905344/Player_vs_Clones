@@ -65,6 +65,8 @@ public class P2_GameManager : MonoBehaviour
     private bool toggleReloadPromptText = false;
     private bool isOneCharacterDead = false;
 
+    public bool enableBulletTrails { get; set; } = true;
+
     [Space(20)]
 
     [Header("U.I. Elements")]
@@ -516,7 +518,7 @@ public class P2_GameManager : MonoBehaviour
 
     public void OnResume()
     {
-        if (!P3_InputManager.Instance.pauseGame)
+        if (!P2_InputManager.Instance.pauseGame)
         {
             return;
         }
@@ -538,8 +540,9 @@ public class P2_GameManager : MonoBehaviour
             HideTutorialScreenFromPauseMenu();
             DisableReturnButtonTutorialScreen();
             DisablePauseUI();
+            SoundManager.instance.SetVolumeSliders();
 
-            P3_InputManager.Instance.OnResumeUIButtonPressed();
+            P2_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
 

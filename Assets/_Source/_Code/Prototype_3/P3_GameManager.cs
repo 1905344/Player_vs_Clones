@@ -75,6 +75,8 @@ public class P3_GameManager : MonoBehaviour
     private float promptTimer;
     private bool toggleReloadPromptText = false;
 
+    public bool enableBulletTrails { get; set; } = true;
+
     [Space(10)]
 
     [Header("U.I. Elements")]
@@ -189,8 +191,6 @@ public class P3_GameManager : MonoBehaviour
             P3_InputManager.Instance.EnableGameInput();
             survivalTimeText.gameObject.SetActive(true);
         }
-
-        UpdateObjectiveText();
     }
 
     #region Event Functions
@@ -562,7 +562,8 @@ public class P3_GameManager : MonoBehaviour
             HideTutorialScreenFromPauseMenu();
             DisableReturnButtonTutorialScreen();
             DisablePauseUI();
-            
+            SoundManager.instance.SetVolumeSliders();
+
             P3_InputManager.Instance.OnResumeUIButtonPressed();
         }
     }
@@ -701,7 +702,7 @@ public class P3_GameManager : MonoBehaviour
     {
         promptForReloadToggle.isOn = enableReloadPromptTextAsTimer;
     }
-
+    
     #endregion
 
     #region Controls Page Functions

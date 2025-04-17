@@ -264,10 +264,13 @@ public class P2_GunplayManager : MonoBehaviour
 
             #endregion
 
-            //Bullet trail
-            //Using trail renderer
-            TrailRenderer newTrail = Instantiate(bulletTrail, bulletTrailSpawnPos.transform.position, Quaternion.identity);
-            StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
+            if (Prototype_1_GameManager.Instance.enableBulletTrails)
+            {
+                //Bullet trail
+                //Using trail renderer
+                TrailRenderer newTrail = Instantiate(bulletTrail, bulletTrailSpawnPos.transform.position, Quaternion.identity);
+                StartCoroutine(SpawnBulletTrail(newTrail, _raycastHit.point));
+            }
 
             Guid enemyGuid = new Guid();
 
