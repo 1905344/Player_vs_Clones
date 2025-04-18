@@ -172,6 +172,8 @@ public class P3_GameManager : MonoBehaviour
         {
             instance = this;
         }
+
+        Time.timeScale = 0f;
     }
 
     private void Start()
@@ -190,6 +192,7 @@ public class P3_GameManager : MonoBehaviour
             HideTutorial();
             P3_InputManager.Instance.EnableGameInput();
             survivalTimeText.gameObject.SetActive(true);
+            Time.timeScale = 1f;
         }
     }
 
@@ -298,6 +301,7 @@ public class P3_GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         OnStartMainGame();
         //P3_InputManager.Instance.OnEnable();
+        Time.timeScale = 1.0f;
     }
 
     private void ShowTutorial()
@@ -308,9 +312,9 @@ public class P3_GameManager : MonoBehaviour
         tutorialStartGame.enabled = true;
         tutorialStartGame.interactable = true;
 
-        tutorialMainMenu.gameObject.SetActive(true);
-        tutorialMainMenu.enabled = true;
-        tutorialMainMenu.interactable = true;
+        //tutorialMainMenu.gameObject.SetActive(true);
+        //tutorialMainMenu.enabled = true;
+        //tutorialMainMenu.interactable = true;
 
         tutorialQuitGame.gameObject.SetActive(true);
         tutorialQuitGame.enabled = true;
@@ -327,9 +331,9 @@ public class P3_GameManager : MonoBehaviour
         tutorialStartGame.enabled = false;
         tutorialStartGame.interactable = false;
 
-        tutorialMainMenu.gameObject.SetActive(false);
-        tutorialMainMenu.enabled = false;
-        tutorialMainMenu.interactable = false;
+        //tutorialMainMenu.gameObject.SetActive(false);
+        //tutorialMainMenu.enabled = false;
+        //tutorialMainMenu.interactable = false;
 
         tutorialQuitGame.gameObject.SetActive(false);
         tutorialQuitGame.enabled = false;

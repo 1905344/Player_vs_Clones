@@ -398,7 +398,7 @@ public class P3_LighthouseManager : MonoBehaviour
             repairButton.enabled = true;
             repairButton.interactable = true;
         }
-        else if (!needsRepair || isRepairing && currentBlueEnemiesKilled < requiredBlueEnemiesNeeded)
+        else if (!needsRepair || isRepairing || currentBlueEnemiesKilled < requiredBlueEnemiesNeeded)
         {
             repairButton.enabled = false;
             repairButton.interactable = false;

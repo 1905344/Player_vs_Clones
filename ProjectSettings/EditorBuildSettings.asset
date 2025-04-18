@@ -9,15 +9,16 @@ EditorBuildSettings:
     path: Assets/_Source/_Scenes/U.I/MainMenu.unity
     guid: 882876ab50900404bb2d04c4b0318c4e
   - enabled: 0
-    path: Assets/_Source/_Scenes/DemoLevel.unity
-    guid: 5855b11ea13df04409367748bb282e4d
-  - enabled: 0
     path: Assets/_Source/_Scenes/Prototype_2_Level/Prototype_2_Level.unity
     guid: 7c220beaf2787a94997d4b140a2daa9b
   - enabled: 1
     path: Assets/_Source/_Scenes/Prototype_3_Level/Prototype_3_Level.unity
     guid: ef8a377a725487441aecef0a961cb7ae
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 17f43ff6c05ccec4bbb9f6ab77d0bf43,
+      type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000,
+      guid: e40302f798297cb43829aa0f103bde43, type: 2}
     com.unity.dt.app-ui: {fileID: 11400000, guid: 99f9c9493070a9d4c979a8fec7c5a8d3,
       type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 6fa256cc111fc6d44ac5fcb2284b9548,
