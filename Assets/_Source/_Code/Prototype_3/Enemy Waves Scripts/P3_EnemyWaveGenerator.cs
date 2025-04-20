@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 //using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class P3_EnemyWaveGenerator : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private float angle;
     [SerializeField] private float x;
+    //[SerializeField] private float yOffset;
     [SerializeField] private float z;
 
     [Space(5)]
@@ -45,11 +47,24 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     [Header("Wave Variables")]
     private float waveDelayFactor;
     //[SerializeField, Tooltip("For printing messages about enemy waves")] private TMP_Text waveText;
-
-    [SerializeField] private float difficultyFactor = 0.9f;
     [SerializeField] private List<P3_EnemyWave> enemyWaves;
     [SerializeField] private P3_EnemyWave currentEnemyWave;
-    
+
+    [Space(3)]
+
+    [SerializeField] private bool enableDifficulty = false;
+    [SerializeField] private float difficultyFactor = 0.9f;
+
+    [Space(10)]
+
+    [SerializeField] private List<GameObject> enemyList;
+
+    [Space(10)]
+
+    [Header("Debug")]
+    [SerializeField] private bool showInnerRadius = false;
+    [SerializeField] private bool showOuterRadius = false;
+
     #endregion
 
     IEnumerator WaveSpawnLoop()
@@ -67,6 +82,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                     if (wAction.waveDelay > 0)
                     {
                         yield return new WaitForSeconds(wAction.waveDelay * waveDelayFactor);
+                        //Debug.Log($"P3_EnemyWaveGenerator: delay = {wAction.waveDelay * waveDelayFactor}");
                     }
 
                     //Optional text priting
@@ -100,6 +116,8 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
 
                             wAction.enemyPrefab.GetComponent<P3_EnemyBase>().playerRef = fpsPlayerCharacter;
                             wAction.enemyPrefab.GetComponent<P3_EnemyBase>().lighthouseRef = lighthouseGameObject.transform;
+
+                            enemyList.Add(wAction.enemyPrefab.gameObject);
                         }
                     }
                 }
@@ -108,7 +126,10 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                 yield return null;
             }
 
-            waveDelayFactor *= difficultyFactor;
+            if (enableDifficulty)
+            {
+                waveDelayFactor *= difficultyFactor;
+            }
 
             //Preventing crash if all delays are set to 0
             yield return null;
@@ -134,14 +155,33 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     private void StopSpawning()
     {
         StopCoroutine(WaveSpawnLoop());
+
+        foreach (GameObject enemy in enemyList)
+        {
+            if (enemy != null)
+            {
+                enemy.GetComponent<NavMeshAgent>().enabled = false;
+                Destroy(enemy);
+            }
+        }
     }
+
+    #region Debug: Show Gizmos
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, innerRadius);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, outerRadius);
+        if (showInnerRadius)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, innerRadius);
+        }
+        
+        if (showOuterRadius)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, outerRadius);
+        }
     }
+
+    #endregion
 }

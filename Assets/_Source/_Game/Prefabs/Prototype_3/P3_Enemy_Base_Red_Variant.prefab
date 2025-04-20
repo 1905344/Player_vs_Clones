@@ -30,6 +30,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3277810399669570697, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
+      propertyPath: meshAgent
+      value: 
+      objectReference: {fileID: 1999841388855285653}
+    - target: {fileID: -3277810399669570697, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
       propertyPath: damageAmount
       value: 15
       objectReference: {fileID: 0}
@@ -42,7 +47,7 @@ PrefabInstance:
         type: 3}
       propertyPath: enemyCollider
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3339756241715196838}
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -66,7 +71,7 @@ PrefabInstance:
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.07
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 737308637690026905, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
@@ -224,7 +229,12 @@ PrefabInstance:
     - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
       propertyPath: m_Speed
-      value: 14
+      value: 14.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
         type: 3}
@@ -272,3 +282,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5e9c2a3647cc2b41850ea735d5bc58f, type: 3}
+--- !u!195 &1999841388855285653 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 5219798911751709296, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6030511566518597093}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &3339756241715196838 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 9072955320005445187, guid: f5e9c2a3647cc2b41850ea735d5bc58f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6030511566518597093}
+  m_PrefabAsset: {fileID: 0}

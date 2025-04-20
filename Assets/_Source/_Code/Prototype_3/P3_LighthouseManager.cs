@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -145,7 +144,8 @@ public class P3_LighthouseManager : MonoBehaviour
         PrimaryProgressBarMaxValue(defaultMaximumChargeCapacity);
 
         MaxChargeProgressBarMaxValue(defaultMaximumChargeCapacity);
-        
+        MaxChargeProgressBarCurrentValue(defaultMaximumChargeCapacity);
+
         RechargeProgressBarMaxValue(requiredYellowEnemiesNeeded);
         RepairProgressBarMaxValue(requiredBlueEnemiesNeeded);
     }
@@ -237,18 +237,24 @@ public class P3_LighthouseManager : MonoBehaviour
 
     #region Max Charge Progress Bar
 
-    private void MaxChargeProgressBarCurrentValue(float maxChargeValue)
+    private void MaxChargeProgressBarCurrentValue(float currentValue)
     {
-        maxChargeProgressBar.value = maxChargeValue;
+        maxChargeProgressBar.value = currentValue;
         maxChargeProgressBarFill.color = maxChargeProgressBarGradient.Evaluate(maxChargeProgressBar.normalizedValue);
+
+        if (!needsRepair)
+        {
+            maxChargeProgressBar.handleRect.gameObject.SetActive(false);
+        }
+        else
+        {
+            maxChargeProgressBar.handleRect.gameObject.SetActive(true);
+        }
     }
 
     private void MaxChargeProgressBarMaxValue(float maxValue)
     {
-        maxChargeProgressBar.value = maxValue;
-        maxChargeProgressBar.value = maxValue;
-        maxChargeProgressBarFill.color = maxChargeProgressBarGradient.Evaluate(maxChargeProgressBar.normalizedValue);
-
+        maxChargeProgressBar.maxValue = maxValue;
         maxChargeProgressBar.handleRect.gameObject.SetActive(false);
     }
 
@@ -454,7 +460,7 @@ public class P3_LighthouseManager : MonoBehaviour
 
         repairTimer = 0f;
         isRepairing = false;
-        startRotating = true;
+        //startRotating = true;
     }
 
     #endregion
@@ -490,10 +496,10 @@ public class P3_LighthouseManager : MonoBehaviour
         closeWindowButton.interactable = true;
 
         //rechargeButton.enabled = true;
-        rechargeButton.interactable = true;
+        //rechargeButton.interactable = true;
 
         //repairButton.enabled = true;
-        repairButton.interactable = true;
+        //repairButton.interactable = true;
     }
 
     public void DisableLighthouseUI()
@@ -630,15 +636,6 @@ public class P3_LighthouseManager : MonoBehaviour
         
         currentYellowEnemiesText.text = $"Yellow killed: {currentYellowEnemiesKilled} / {requiredYellowEnemiesNeeded}";
         currentBlueEnemiesText.text = $"Blue killed: {currentBlueEnemiesKilled} / {requiredBlueEnemiesNeeded}";
-
-        if (maxChargeProgressBar.value == maxChargeProgressBar.maxValue)
-        {
-            maxChargeProgressBar.handleRect.gameObject.SetActive(false);
-        }
-        else if (maxChargeProgressBar.value < maxChargeProgressBar.maxValue)
-        {
-            maxChargeProgressBar.handleRect.gameObject.SetActive(true);
-        }
 
         #endregion
     }

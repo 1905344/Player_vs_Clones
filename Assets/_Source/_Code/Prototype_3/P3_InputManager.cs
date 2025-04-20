@@ -267,8 +267,17 @@ public class P3_InputManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
-        playerInputActions.UI.Disable();
-        ToggleActionMap(playerInputActions.Player);
+
+        if (vCam != player2_Camera)
+        {
+            playerInputActions.UI.Disable();
+            playerInputActions.Player.Enable();
+            ToggleActionMap(playerInputActions.Player);
+        }
+
+        //playerInputActions.UI.Disable();
+        //playerInputActions.Player.Enable();
+        //ToggleActionMap(playerInputActions.Player);
     }
 
     public void DisableGameInput()
@@ -285,7 +294,9 @@ public class P3_InputManager : MonoBehaviour
         SetCamera(0, 0, _FOV);
 
         playerInputActions.Player.Disable();
+        playerInputActions.UI.Enable();
         ToggleActionMap(playerInputActions.UI);
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }

@@ -25,10 +25,9 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _EMISSION
   - _SPECULARHIGHLIGHTS_OFF
   m_InvalidKeywords: []
-  m_LightmapFlags: 1
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -135,9 +134,9 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 0.8901961, b: 0, a: 1}
+    - _BaseColor: {r: 0.8716521, g: 1, b: 0, a: 1}
     - _Color: {r: 1, g: 0.8901961, b: 0, a: 1}
-    - _EmissionColor: {r: 0.5, g: 0.44509804, b: 0, a: 1}
+    - _EmissionColor: {r: 0.022097087, g: 0.01967074, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -849,12 +849,12 @@ public class P3_GameManager : MonoBehaviour
             if (enableMilliseconds)
             {
                 float milliseconds = (survivalTimer % 1) * 1000;
-                survivalTimeString = string.Format("{0:00}:{1:00}:{02:000}", minutes, seconds, milliseconds);
+                survivalTimeString = string.Format("{0:00}:{01:00}:{02:000}", minutes, seconds, milliseconds);
                 survivalTimeText.text = survivalTimeString;
             }
             else
             {
-                survivalTimeString = string.Format("{0:00}:{1:00}", minutes, seconds);
+                survivalTimeString = string.Format("{00:00}:{01:00}", minutes, seconds);
                 survivalTimeText.text = survivalTimeString;
             }
         }

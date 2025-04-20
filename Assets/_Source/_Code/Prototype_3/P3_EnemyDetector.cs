@@ -68,6 +68,28 @@ public class P3_EnemyDetector : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            if (enemiesInRange.Contains(other.gameObject))
+            {
+                enemiesInRange.Remove(other.gameObject);
+            }
+
+            if (enemiesInRange.Count == 0)
+            {
+                updateLightColour = true;
+                enemyDetected = false;
+            }
+            else
+            {
+                updateLightColour = true;
+                enemyDetected = true;
+            }
+        }
+    }
+
     #region Debug: Show Gizmos
 
     private void OnDrawGizmosSelected()
