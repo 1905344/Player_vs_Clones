@@ -76,12 +76,17 @@ public class P3_GameManager : MonoBehaviour
     private bool toggleReloadPromptText = false;
 
     public bool enableBulletTrails { get; set; } = true;
+    public bool showEnemyInfo { get; set; } = true;
 
     [Space(10)]
 
     [Header("U.I. Elements")]
     [SerializeField] TMP_Text reloadPromptText;
     [SerializeField] TMP_Text pauseTitleText;
+
+    [Space(5)]
+
+    [SerializeField] Transform enemyInfoHudElement;
 
     [Space(5)]
 
@@ -141,6 +146,9 @@ public class P3_GameManager : MonoBehaviour
     [SerializeField] Toggle invertMouseY;
     [SerializeField] Toggle mouseAcceleration;
     [SerializeField] Toggle promptForReloadToggle;
+    [SerializeField] Toggle bulletTrailsToggle;
+    [SerializeField] Toggle millisecondsToggle;
+    [SerializeField] Toggle showEnemyInfoToggle;
 
     [Space(5)]
 
@@ -179,6 +187,9 @@ public class P3_GameManager : MonoBehaviour
     private void Start()
     {
         SetReloadPromptToggle();
+        SetBulletTrailsToggle();
+        SetMillisecondsToggle();
+        SetEnemyInfoToggle();
 
         if (!skipTutorial)
         {
@@ -289,6 +300,10 @@ public class P3_GameManager : MonoBehaviour
         tutorialStartGame.gameObject.SetActive(false);
         tutorialStartGame.enabled = false;
         tutorialStartGame.interactable = false;
+
+        tutorialMainMenu.gameObject.SetActive(false);
+        tutorialMainMenu.enabled = false;
+        tutorialMainMenu.interactable = false;
 
         tutorialQuitGame.gameObject.SetActive(false);
         tutorialQuitGame.enabled = false;
@@ -465,6 +480,18 @@ public class P3_GameManager : MonoBehaviour
         promptForReloadToggle.enabled = true;
         promptForReloadToggle.interactable = true;
         promptForReloadToggle.gameObject.SetActive(true);
+
+        bulletTrailsToggle.enabled = true;
+        bulletTrailsToggle.interactable = true;
+        bulletTrailsToggle.gameObject.SetActive(true);
+
+        millisecondsToggle.enabled = true;
+        millisecondsToggle.interactable = true;
+        millisecondsToggle.gameObject.SetActive(true);
+
+        showEnemyInfoToggle.enabled = true;
+        showEnemyInfoToggle.interactable = true;
+        showEnemyInfoToggle.gameObject.SetActive(true);
     }
 
     private void DisableSettingsUi()
@@ -500,6 +527,18 @@ public class P3_GameManager : MonoBehaviour
         promptForReloadToggle.enabled = false;
         promptForReloadToggle.interactable = false;
         promptForReloadToggle.gameObject.SetActive(false);
+
+        bulletTrailsToggle.enabled = false;
+        bulletTrailsToggle.interactable = false;
+        bulletTrailsToggle.gameObject.SetActive(false);
+
+        millisecondsToggle.enabled = false;
+        millisecondsToggle.interactable = false;
+        millisecondsToggle.gameObject.SetActive(false);
+
+        showEnemyInfoToggle.enabled = false;
+        showEnemyInfoToggle.interactable = false;
+        showEnemyInfoToggle.gameObject.SetActive(false);
     }
 
     private void EnableQuitScreenButtons()
@@ -586,7 +625,7 @@ public class P3_GameManager : MonoBehaviour
 
     public void OnReturnToPauseScreenPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
         DisableQuitScreenButtons();
@@ -610,7 +649,7 @@ public class P3_GameManager : MonoBehaviour
 
     public void OnReturnFromSettingsButtonPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         EnablePauseButtons();
         DisableSettingsPage();
     }
@@ -624,7 +663,7 @@ public class P3_GameManager : MonoBehaviour
 
     public void OnReturnFromPausedTutorialScreen()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         EnablePauseButtons();
         HideTutorialScreenFromPauseMenu();
     }
@@ -656,7 +695,7 @@ public class P3_GameManager : MonoBehaviour
 
     public void OnReturnToPauseScreenFromQuitScreenPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
         DisableQuitScreenButtons();
@@ -700,13 +739,28 @@ public class P3_GameManager : MonoBehaviour
 
     #endregion
 
-    #region Settings Page: Reload Prompt Toggle
+    #region Settings Page: Set Toggle Functions
 
     private void SetReloadPromptToggle()
     {
         promptForReloadToggle.isOn = enableReloadPromptTextAsTimer;
     }
-    
+
+    private void SetBulletTrailsToggle()
+    {
+        bulletTrailsToggle.isOn = enableBulletTrails;
+    }
+
+    private void SetMillisecondsToggle()
+    {
+        millisecondsToggle.isOn = enableMilliseconds;
+    }
+
+    private void SetEnemyInfoToggle()
+    {
+        showEnemyInfoToggle.isOn = showEnemyInfo;
+    }
+
     #endregion
 
     #region Controls Page Functions
@@ -738,7 +792,7 @@ public class P3_GameManager : MonoBehaviour
 
     public void OnControlsPageReturnButtonPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         DisableControlsPage();
         EnablePauseButtons();
     }
@@ -838,6 +892,8 @@ public class P3_GameManager : MonoBehaviour
         {
             reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
         }
+
+        enemyInfoHudElement.gameObject.SetActive(showEnemyInfo);
 
         if (startTimer)
         {

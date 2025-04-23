@@ -494,12 +494,6 @@ public class P3_LighthouseManager : MonoBehaviour
 
         closeWindowButton.enabled = true;
         closeWindowButton.interactable = true;
-
-        //rechargeButton.enabled = true;
-        //rechargeButton.interactable = true;
-
-        //repairButton.enabled = true;
-        //repairButton.interactable = true;
     }
 
     public void DisableLighthouseUI()
@@ -509,11 +503,8 @@ public class P3_LighthouseManager : MonoBehaviour
 
         closeWindowButton.enabled = false;
         closeWindowButton.interactable = false;
-
-        //rechargeButton.enabled = false;
+        
         rechargeButton.interactable = false;
-
-        //repairButton.enabled = false;
         repairButton.interactable = false;
     }
 
@@ -634,8 +625,8 @@ public class P3_LighthouseManager : MonoBehaviour
 
         #region Updating U.I.
         
-        currentYellowEnemiesText.text = $"Yellow killed: {currentYellowEnemiesKilled} / {requiredYellowEnemiesNeeded}";
-        currentBlueEnemiesText.text = $"Blue killed: {currentBlueEnemiesKilled} / {requiredBlueEnemiesNeeded}";
+        currentYellowEnemiesText.text = $"Yellow enemies killed: \n {currentYellowEnemiesKilled} / {requiredYellowEnemiesNeeded}";
+        currentBlueEnemiesText.text = $"Blue enemies killed: \n {currentBlueEnemiesKilled} / {requiredBlueEnemiesNeeded}";
 
         #endregion
     }

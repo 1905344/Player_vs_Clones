@@ -12320,7 +12320,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 7
+  m_AdditionalShaderChannelsFlag: 31
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -14572,10 +14572,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1347108025}
   m_HandleRect: {fileID: 1326991651}
   m_Direction: 0
-  m_MinValue: 60
-  m_MaxValue: 130
-  m_WholeNumbers: 1
-  m_Value: 90
+  m_MinValue: 0
+  m_MaxValue: 1
+  m_WholeNumbers: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -27085,8 +27085,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770599145}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.7900004, y: 1.2900002, z: -23.91}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: -0.7071068}
+  m_LocalPosition: {x: -1.0502753, y: -0.9524164, z: -23.790066}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27211,7 +27211,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 1000
-  field of view: 58.74284
+  field of view: 58.7558
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -39750,10 +39750,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1199533420}
   m_HandleRect: {fileID: 721219681}
   m_Direction: 0
-  m_MinValue: 60
-  m_MaxValue: 130
-  m_WholeNumbers: 1
-  m_Value: 90
+  m_MinValue: 0
+  m_MaxValue: 1
+  m_WholeNumbers: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -47511,7 +47511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmSFX: {fileID: 8300000, guid: ebfd36ce22108b2428131863b3349293, type: 3}
-  returnSFX: {fileID: 0}
+  returnSFX: {fileID: 8300000, guid: afb07908116a585498de7e18a96d8e45, type: 3}
   sceneName: Prototype_1_Level
   levelObjective: Kill all enemies.
   reloadPromptLength: 3
@@ -47549,6 +47549,7 @@ MonoBehaviour:
   invertMouseY: {fileID: 469851876}
   mouseAcceleration: {fileID: 1243901264}
   promptForReloadToggle: {fileID: 807167892}
+  bulletTrailsToggle: {fileID: 990705385}
   returnFromControlsPageButton: {fileID: 1148941997}
   quitToMainMenuButton: {fileID: 557075550}
   quitGameFromGameOverScreenButton: {fileID: 1237336844}
@@ -48424,10 +48425,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1678734362}
   m_HandleRect: {fileID: 725222666}
   m_Direction: 0
-  m_MinValue: 60
-  m_MaxValue: 130
-  m_WholeNumbers: 1
-  m_Value: 90
+  m_MinValue: 0
+  m_MaxValue: 1
+  m_WholeNumbers: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -50950,6 +50951,9 @@ MonoBehaviour:
   musicSource: {fileID: 192367017}
   effectsSource: {fileID: 937352811}
   sfxClip: {fileID: 0}
+  masterVolumeStartingVolume: 0.7
+  musicVolumeStartingVolume: 0.7
+  sfxVolumeStartingVolume: 0.7
   masterVolumeSlider: {fileID: 1316238511}
   musicVolumeSlider: {fileID: 601601634}
   sfxVolumeSlider: {fileID: 1635944059}

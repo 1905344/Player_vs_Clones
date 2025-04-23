@@ -6,10 +6,7 @@ using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    //[Header("Menu Navigation")]
-    //[SerializeField] private SaveSlotsMenu saveSlotsMenu;
-
-    //[Space(5)]
+    #region Variables
 
     [Header("Main Menu Buttons")]
     [SerializeField] private Button newGameButton;
@@ -50,19 +47,14 @@ public class MainMenu : MonoBehaviour
     [Space(15)]
 
     [Header("Sound Effects")]
-    [SerializeField] private AudioClip buttonPressed;
-    //[SerializeField] private AudioClip buttonSelected;
-    //[SerializeField] private AudioClip backButtonPressed;
-    //[SerializeField] private AudioClip quitGame;
+    [SerializeField] private AudioClip buttonConfirmSFX;
+    [SerializeField] private AudioClip buttonReturnSFX;
 
-    void Start()
-    {
-        //DisableButtonsDependingOnData();
-    }
+    #endregion
 
     public void OnApplicationQuit()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonConfirmSFX);
         Debug.Log("Quit game from main menu.");
         Application.Quit();
     }
@@ -73,7 +65,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnPrototype1ButtonClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonConfirmSFX);
         this.DeactivateMenu();
         DisableReturnFromPrototypeSelectionButton();
         DisablePrototypeSelectionButtons();
@@ -83,7 +75,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnPrototype2ButtonClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonConfirmSFX);
         this.DeactivateMenu();
         DisableReturnFromPrototypeSelectionButton();
         DisablePrototypeSelectionButtons();
@@ -93,7 +85,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnPrototype3ButtonClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonConfirmSFX);
         this.DeactivateMenu();
         DisableReturnFromPrototypeSelectionButton();
         DisablePrototypeSelectionButtons();
@@ -105,8 +97,10 @@ public class MainMenu : MonoBehaviour
 
     public void OnNewGameClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonConfirmSFX);
         this.DeactivateMenu();
+
+        titleText.text = prototypeSelectionTitleString;
         selectPrototypePage.SetActive(true);
         EnablePrototypeSelectionButtons();
         EnableReturnFromPrototypeSelectionButton();
@@ -114,7 +108,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnCreditsClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonConfirmSFX);
         DisableMenuButtons();
         EnableCreditsPageButton();
         this.DeactivateMenu();
@@ -125,7 +119,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnReturnFromCreditsClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonReturnSFX);
 
         this.ActivateMenu();
         DisableCreditsPageButton();
@@ -137,7 +131,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnReturnFromPrototypeSelectionScreenClicked()
     {
-        SoundManager.instance.PlaySFX(buttonPressed);
+        SoundManager.instance.PlaySFX(buttonReturnSFX);
 
         this.ActivateMenu();
         DisableReturnFromPrototypeSelectionButton();

@@ -1,5 +1,4 @@
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 
 public class P3_PlayerManager : MonoBehaviour
@@ -28,8 +27,6 @@ public class P3_PlayerManager : MonoBehaviour
 
     [Header("HUD References")]
     [SerializeField] private GameObject hudAmmoBar;
-    [SerializeField] private GameObject hudHealthBar;
-    [SerializeField] private TMP_Text HealthText;
     [SerializeField] private TMP_Text AmmoText;
     [SerializeField] private TMP_Text lighthouseInteractText;
 
@@ -62,8 +59,6 @@ public class P3_PlayerManager : MonoBehaviour
             playerCharacter_2.GetComponent<P3_fpsMovement>().EnablePlayerMovement();
 
             hudAmmoBar.SetActive(false);
-            hudHealthBar.SetActive(false);
-            HealthText.gameObject.SetActive(false);
             AmmoText.gameObject.SetActive(false);
             lighthouseInteractText.gameObject.SetActive(true);
         }
@@ -79,8 +74,6 @@ public class P3_PlayerManager : MonoBehaviour
             playerCharacter_1.GetComponentInChildren<P3_GunplayManager>().EnableGun();
 
             hudAmmoBar.SetActive(true);
-            hudHealthBar.SetActive(true);
-            HealthText.gameObject.SetActive(true);
             AmmoText.gameObject.SetActive(true);
             lighthouseInteractText.gameObject.SetActive(false);
         }

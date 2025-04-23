@@ -131,6 +131,7 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField] Toggle invertMouseY;
     [SerializeField] Toggle mouseAcceleration;
     [SerializeField] Toggle promptForReloadToggle;
+    [SerializeField] Toggle bulletTrailsToggle;
 
     [Space(5)]
 
@@ -169,6 +170,7 @@ public class P2_GameManager : MonoBehaviour
     private void Start()
     {
         SetReloadPromptToggle();
+        SetBulletTrailsToggle();
 
         if (!skipTutorial)
         {
@@ -264,6 +266,10 @@ public class P2_GameManager : MonoBehaviour
         tutorialStartGame.gameObject.SetActive(false);
         tutorialStartGame.enabled = false;
         tutorialStartGame.interactable = false;
+
+        tutorialMainMenu.gameObject.SetActive(false);
+        tutorialMainMenu.enabled = false;
+        tutorialMainMenu.interactable = false;
 
         tutorialQuitGame.gameObject.SetActive(false);
         tutorialQuitGame.enabled = false;
@@ -439,6 +445,10 @@ public class P2_GameManager : MonoBehaviour
         promptForReloadToggle.enabled = true;
         promptForReloadToggle.interactable = true;
         promptForReloadToggle.gameObject.SetActive(true);
+
+        bulletTrailsToggle.enabled = true;
+        bulletTrailsToggle.interactable = true;
+        bulletTrailsToggle.gameObject.SetActive(true);
     }
 
     private void DisableSettingsUi()
@@ -474,6 +484,10 @@ public class P2_GameManager : MonoBehaviour
         promptForReloadToggle.enabled = false;
         promptForReloadToggle.interactable = false;
         promptForReloadToggle.gameObject.SetActive(false);
+
+        bulletTrailsToggle.enabled = false;
+        bulletTrailsToggle.interactable = false;
+        bulletTrailsToggle.gameObject.SetActive(false);
     }
 
     private void EnableQuitScreenButtons()
@@ -584,7 +598,7 @@ public class P2_GameManager : MonoBehaviour
 
     public void OnReturnFromSettingsButtonPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         EnablePauseButtons();
         DisableSettingsPage();
     }
@@ -598,7 +612,7 @@ public class P2_GameManager : MonoBehaviour
 
     public void OnReturnFromPausedTutorialScreen()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         EnablePauseButtons();
         HideTutorialScreenFromPauseMenu();
     }
@@ -630,7 +644,7 @@ public class P2_GameManager : MonoBehaviour
 
     public void OnReturnToPauseScreenFromQuitScreenPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         quitPromptScreen.gameObject.SetActive(false);
         EnablePauseButtons();
         DisableQuitScreenButtons();
@@ -674,11 +688,16 @@ public class P2_GameManager : MonoBehaviour
 
     #endregion
 
-    #region Settings Page: Reload Prompt Toggle
+    #region Settings Page: Reload Prompt and Bullet Trails Toggle
 
     private void SetReloadPromptToggle()
     {
         promptForReloadToggle.isOn = enableReloadPromptTextAsTimer;
+    }
+
+    private void SetBulletTrailsToggle()
+    {
+        bulletTrailsToggle.isOn = enableBulletTrails;
     }
 
     #endregion
@@ -712,7 +731,7 @@ public class P2_GameManager : MonoBehaviour
 
     public void OnControlsPageReturnButtonPressed()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
+        SoundManager.instance.PlaySFX(returnSFX);
         DisableControlsPage();
         EnablePauseButtons();
     }

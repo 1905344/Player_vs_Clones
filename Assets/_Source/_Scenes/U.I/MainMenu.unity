@@ -119,6 +119,66 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &27773885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 27773886}
+  - component: {fileID: 27773887}
+  m_Layer: 0
+  m_Name: Main Menu Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &27773886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27773885}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 962357716}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &27773887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27773885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb10f76520b19c4887794de5260f35c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newGameButton: {fileID: 4097796043243307298}
+  creditsButton: {fileID: 4534286328734293509}
+  quitButton: {fileID: 2083741126135404949}
+  titleText: {fileID: 7378720415011987183}
+  titleTextString: Asymmetric Single Player Experiences
+  prototypeSelectionTitleString: Choose a prototype to play
+  creditsTitleString: Credits
+  selectPrototypePage: {fileID: 567520773}
+  creditsPage: {fileID: 5941617965728087622}
+  startPrototype1Button: {fileID: 1052733983}
+  startPrototype2Button: {fileID: 1085075825}
+  startPrototype3Button: {fileID: 1839268681}
+  returnFromPrototypeSelectionPageButton: {fileID: 1015841991}
+  returnFromCreditsPage: {fileID: 2022270014172072200}
+  buttonConfirmSFX: {fileID: 8300000, guid: ebfd36ce22108b2428131863b3349293, type: 3}
+  buttonReturnSFX: {fileID: 8300000, guid: afb07908116a585498de7e18a96d8e45, type: 3}
 --- !u!1 &169428796
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,7 +459,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &567520774
 RectTransform:
   m_ObjectHideFlags: 0
@@ -764,6 +824,15 @@ MonoBehaviour:
   musicSource: {fileID: 169428798}
   effectsSource: {fileID: 1393923810}
   sfxClip: {fileID: 0}
+  masterVolumeStartingVolume: 0.7
+  musicVolumeStartingVolume: 0.7
+  sfxVolumeStartingVolume: 0.7
+  masterVolumeSlider: {fileID: 0}
+  musicVolumeSlider: {fileID: 0}
+  sfxVolumeSlider: {fileID: 0}
+  masterVolumeText: {fileID: 0}
+  musicVolumeText: {fileID: 0}
+  sfxVolumeText: {fileID: 0}
 --- !u!1 &962357715
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,6 +865,7 @@ Transform:
   - {fileID: 644181164}
   - {fileID: 719780606}
   - {fileID: 1923302152}
+  - {fileID: 27773886}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1015841990
@@ -861,7 +931,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnReturnFromPrototypeSelectionScreenClicked
         m_Mode: 1
@@ -1102,9 +1172,9 @@ RectTransform:
   - {fileID: 1541505390}
   m_Father: {fileID: 1366171549}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 375, y: -123.34999}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 250, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1052733980
@@ -1209,7 +1279,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnPrototype1ButtonClicked
         m_Mode: 1
@@ -1256,9 +1326,9 @@ RectTransform:
   - {fileID: 408874006}
   m_Father: {fileID: 1366171549}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 375, y: -375.05}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 250, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1085075822
@@ -1363,7 +1433,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnPrototype2ButtonClicked
         m_Mode: 1
@@ -2114,7 +2184,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnPrototype3ButtonClicked
         m_Mode: 1
@@ -2199,9 +2269,9 @@ RectTransform:
   - {fileID: 1986962253}
   m_Father: {fileID: 1366171549}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 375, y: -626.74994}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 250, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1923302149
@@ -3061,7 +3131,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnReturnFromCreditsClicked
         m_Mode: 1
@@ -3125,7 +3195,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnApplicationQuit
         m_Mode: 1
@@ -3630,7 +3700,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnNewGameClicked
         m_Mode: 1
@@ -3694,7 +3764,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6834903003560571562}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: OnCreditsClicked
         m_Mode: 1
@@ -4343,7 +4413,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2686220725893384335}
-  - component: {fileID: 6834903003560571562}
   m_Layer: 5
   m_Name: Main Menu
   m_TagString: Untagged
@@ -4351,33 +4420,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &6834903003560571562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6834903003560571561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bb10f76520b19c4887794de5260f35c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  newGameButton: {fileID: 4097796043243307298}
-  creditsButton: {fileID: 4534286328734293509}
-  quitButton: {fileID: 2083741126135404949}
-  titleText: {fileID: 7378720415011987183}
-  titleTextString: Asymmetric Single Player Experiences
-  prototypeSelectionTitleString: Choose a prototype to play
-  creditsTitleString: Credits
-  selectPrototypePage: {fileID: 567520773}
-  creditsPage: {fileID: 5941617965728087622}
-  startPrototype1Button: {fileID: 1052733983}
-  startPrototype2Button: {fileID: 1085075825}
-  startPrototype3Button: {fileID: 1839268681}
-  returnFromPrototypeSelectionPageButton: {fileID: 1015841991}
-  returnFromCreditsPage: {fileID: 2022270014172072200}
-  buttonPressed: {fileID: 8300000, guid: ebfd36ce22108b2428131863b3349293, type: 3}
 --- !u!222 &7158966710576176700
 CanvasRenderer:
   m_ObjectHideFlags: 0

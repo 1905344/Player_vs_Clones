@@ -615,7 +615,7 @@ public class P2_InputManager : MonoBehaviour
 
     private void SetToggleStates()
     {
-        invertMouseYToggle.isOn = !invertMouseY;
+        invertMouseYToggle.isOn = invertMouseY;
         mouseAccelerationToggle.isOn = mouseAcceleration;
 
         #region Debug
