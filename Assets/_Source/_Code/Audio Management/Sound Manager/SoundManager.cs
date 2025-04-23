@@ -37,6 +37,8 @@ public class SoundManager : MonoBehaviour
     private bool updateMusicVolumeText = false;
     private bool updateSFXVolumeText = false;
 
+    [SerializeField] private bool mainMenu = false;
+
     #endregion
 
     private void Awake()
@@ -50,21 +52,17 @@ public class SoundManager : MonoBehaviour
             instance = this;
         }
 
-        masterVolumeSlider.minValue = 0f;
-        masterVolumeSlider.maxValue = 1f;
+        if (!mainMenu)
+        {
+            masterVolumeText.maxVisibleCharacters = 4;
+            musicVolumeText.maxVisibleCharacters = 4;
+            sfxVolumeText.maxVisibleCharacters = 4;
 
-        musicVolumeSlider.minValue = 0f;
-        musicVolumeSlider.maxValue = 1f;
-
-        sfxVolumeSlider.minValue = 0f;
-        sfxVolumeSlider.maxValue = 1f;
-
-        masterVolumeText.maxVisibleCharacters = 4;
-        musicVolumeText.maxVisibleCharacters = 4;
-        sfxVolumeText.maxVisibleCharacters = 4;
-
-        SetVolume();
-        SetVolumeSliders();
+            SetVolume();
+            SetSlidersMinOnStart();
+            SetSlidersMaxOnStart();
+            SetVolumeSliders();
+        }
     }
 
     public void PlaySFX(AudioClip clip)
@@ -106,6 +104,20 @@ public class SoundManager : MonoBehaviour
     public void TestSFX()
     {
         PlaySFX(sfxClip); 
+    }
+
+    private void SetSlidersMinOnStart()
+    {
+        masterVolumeSlider.minValue = 0f;
+        musicVolumeSlider.minValue = 0f;
+        sfxVolumeSlider.minValue = 0f;
+    }
+
+    private void SetSlidersMaxOnStart()
+    {
+        masterVolumeSlider.maxValue = 1f;
+        musicVolumeSlider.maxValue = 1f;
+        sfxVolumeSlider.maxValue = 1f;
     }
 
     public void SetVolumeSliders()

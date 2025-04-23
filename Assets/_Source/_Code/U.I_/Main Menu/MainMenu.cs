@@ -52,6 +52,11 @@ public class MainMenu : MonoBehaviour
 
     #endregion
 
+    private void Awake()
+    {
+        titleText.text = titleTextString;
+    }
+
     public void OnApplicationQuit()
     {
         SoundManager.instance.PlaySFX(buttonConfirmSFX);
