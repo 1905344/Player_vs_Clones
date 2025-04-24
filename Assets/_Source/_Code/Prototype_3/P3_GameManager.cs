@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -21,6 +22,9 @@ public class P3_GameManager : MonoBehaviour
         }
     }
 
+    [Header("Fog Rendering Feature")]
+    [SerializeField] UniversalRendererData fogData;
+
     //Events for the asymmetrical gameplay
     public event Action<string, int> PlayerHit;
     public event Action PlayerKilled;
@@ -37,6 +41,8 @@ public class P3_GameManager : MonoBehaviour
     public event Action BlueEnemyKilled;
     public event Action YellowEnemyKilled;
     public event Action GreenEnemyKilled;
+
+    [Space(10)]
 
     [Header("Sound Effects")]
     [SerializeField] private AudioClip confirmSFX;
@@ -182,6 +188,7 @@ public class P3_GameManager : MonoBehaviour
         }
 
         Time.timeScale = 0f;
+        fogData.rendererFeatures[1].SetActive(true);
     }
 
     private void Start()
@@ -203,7 +210,7 @@ public class P3_GameManager : MonoBehaviour
             HideTutorial();
             P3_InputManager.Instance.EnableGameInput();
             survivalTimeText.gameObject.SetActive(true);
-            Time.timeScale = 1f;
+            Time.timeScale = 1.0f;
         }
     }
 
@@ -315,7 +322,6 @@ public class P3_GameManager : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
         OnStartMainGame();
-        //P3_InputManager.Instance.OnEnable();
         Time.timeScale = 1.0f;
     }
 

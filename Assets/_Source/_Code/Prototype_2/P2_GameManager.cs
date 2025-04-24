@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -20,6 +21,9 @@ public class P2_GameManager : MonoBehaviour
             return instance;
         }
     }
+
+    [Header("Fog Rendering Feature")]
+    [SerializeField] UniversalRendererData fogData;
 
     //Events for the asymmetrical gameplay
     public event Action<string, int> PlayerHit;
@@ -165,6 +169,9 @@ public class P2_GameManager : MonoBehaviour
         {
             instance = this;
         }
+
+        Time.timeScale = 0f;
+        fogData.rendererFeatures[1].SetActive(false);
     }
 
     private void Start()
@@ -180,10 +187,9 @@ public class P2_GameManager : MonoBehaviour
         }
         else
         {
-            //Time.timeScale = 0f;
-
             HideTutorial();
             P2_InputManager.Instance.EnableGameInput();
+            Time.timeScale = 1.0f;
         }
 
         UpdateObjectiveText();
@@ -281,7 +287,7 @@ public class P2_GameManager : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
         OnStartMainGame();
-        //P2_InputManager.Instance.OnEnable();
+        Time.timeScale = 1.0f;
     }
 
     private void ShowTutorial()

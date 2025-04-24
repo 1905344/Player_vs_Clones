@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
+using Unity.VisualScripting.FullSerializer;
 
 public class Prototype_1_EnemyManager : MonoBehaviour
 {
@@ -22,6 +24,12 @@ public class Prototype_1_EnemyManager : MonoBehaviour
     private float timer = 0f;
     private bool startTimer = false;
     private bool loadEnemies = false;
+
+    [Space(10)]
+
+    [SerializeField] TMP_Text enemiesRemainingText;
+    private int totalEnemies = 0;
+    private int remainingEnemies = 0;
 
     #endregion
 
@@ -52,6 +60,9 @@ public class Prototype_1_EnemyManager : MonoBehaviour
         {
             EnableAgents();
         }
+
+        totalEnemies = enemies.Count;
+        remainingEnemies = enemies.Count;
     }
 
     private void EnableAgents()
@@ -81,6 +92,8 @@ public class Prototype_1_EnemyManager : MonoBehaviour
                 enemies.Remove(agent);
             }
         }
+
+        remainingEnemies--;
     }
 
     private void Update()
@@ -101,5 +114,7 @@ public class Prototype_1_EnemyManager : MonoBehaviour
         {
             Prototype_1_GameManager.Instance.OnLevelCompleted();
         }
+
+        enemiesRemainingText.text = $"Enemies remaining: {remainingEnemies} / {totalEnemies}";
     }
 }

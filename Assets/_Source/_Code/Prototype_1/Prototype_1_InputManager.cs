@@ -168,6 +168,7 @@ public class Prototype_1_InputManager : MonoBehaviour
         Prototype_1_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
 
         Prototype_1_GameManager.Instance.OnStartGame += OnEnable;
+        Prototype_1_GameManager.Instance.PlayerKilled += OnDisable;
         Prototype_1_GameManager.Instance.LevelCompleted += OnDisable;
 
 
