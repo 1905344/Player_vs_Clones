@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using JetBrains.Annotations;
+using System.Linq;
 
 public class P2_PlayerManager : MonoBehaviour
 {
@@ -37,6 +40,13 @@ public class P2_PlayerManager : MonoBehaviour
     [SerializeField] private TMP_Text currentPlayerCharacterText;
     [SerializeField] private GameObject ammoHudBar;
     [SerializeField] private TMP_Text ammoTitleText;
+
+    [Space(10)]
+
+    [SerializeField] private List<Sprite> playerCharacterSprites = new List<Sprite>();
+    [SerializeField] private Image previousPlayerCharacterSpritePlaceholder;
+    [SerializeField] private Image activePlayerCharacterSpritePlaceholder;
+    [SerializeField] private Image nextPlayerCharacterSpritePlaceholder;
 
     public int GetCurrentCharacter()
     {
@@ -75,6 +85,8 @@ public class P2_PlayerManager : MonoBehaviour
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
         currentlyActiveGun.GetComponent<P2_GunplayManager>().EnableGun();
+
+        SetCharacterSpritesOnStart();
     }
 
     #region Character Functions
@@ -123,6 +135,8 @@ public class P2_PlayerManager : MonoBehaviour
 
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
+
+        UpdatePlayerCharacterSprites();
     }
 
     private void OnCharacterKilled(string characterID)
@@ -179,9 +193,42 @@ public class P2_PlayerManager : MonoBehaviour
 
     #endregion
 
+    #region Update Player Character Sprites
+
+    private void SetCharacterSpritesOnStart()
+    {
+        previousPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[2];
+        activePlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[0];
+        nextPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[1];
+    }
+
+    private void UpdatePlayerCharacterSprites()
+    {
+        int prevSprite = currentIndexPos - 1;
+        
+        if (prevSprite < 0)
+        {
+            prevSprite = playerCharacters.Count - 1;
+        }
+
+        prevSprite %= playerCharacterSprites.Count;
+
+        int nextSprite = currentIndexPos + 1;
+        nextSprite %= playerCharacterSprites.Count;
+
+        Debug.Log($"P2_PlayerManager: prevSprite = {prevSprite}");
+        Debug.Log($"P2_PlayerManager: nextSprite = {nextSprite}");
+
+        previousPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[prevSprite];
+        activePlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[currentIndexPos];
+        nextPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[nextSprite];
+    }
+
+    #endregion
+
     private void Update()
     {
-        currentPlayerCharacterText.text = $"Current character: \n {currentlyActiveCharacter.GetComponentInChildren<P2_PlayerCharacterBase>().characterName}";
+        currentPlayerCharacterText.text = $"Active character: \n {currentlyActiveCharacter.GetComponentInChildren<P2_PlayerCharacterBase>().characterName}";
         
         //foreach (GameObject character in playerCharacters)
         //{

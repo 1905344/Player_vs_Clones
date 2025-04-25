@@ -173,6 +173,7 @@ public class P3_GameManager : MonoBehaviour
     [Header("Debugging and Testing")]
     [SerializeField] public bool enableDebug = false;
     [SerializeField] public bool skipTutorial = false;
+    [SerializeField] public bool disableFog = false;
 
     #endregion
 
@@ -188,7 +189,15 @@ public class P3_GameManager : MonoBehaviour
         }
 
         Time.timeScale = 0f;
-        fogData.rendererFeatures[1].SetActive(true);
+
+        if (!disableFog)
+        {
+            fogData.rendererFeatures[1].SetActive(true);
+        }
+        else if (enableDebug && disableFog)
+        {
+            fogData.rendererFeatures[1].SetActive(false);
+        }
     }
 
     private void Start()

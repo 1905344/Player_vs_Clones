@@ -70,12 +70,17 @@ public class P2_GameManager : MonoBehaviour
     private bool isOneCharacterDead = false;
 
     public bool enableBulletTrails { get; set; } = true;
+    public bool showPlayerCharacterInfo { get; set; } = true;
 
     [Space(20)]
 
     [Header("U.I. Elements")]
     [SerializeField] TMP_Text reloadPromptText;
     [SerializeField] TMP_Text pauseTitleText;
+
+    [Space(5)]
+
+    [SerializeField] Transform playerCharacterInfoHudElement;
 
     [Space(5)]
 
@@ -135,7 +140,8 @@ public class P2_GameManager : MonoBehaviour
     [SerializeField] Toggle invertMouseY;
     [SerializeField] Toggle mouseAcceleration;
     [SerializeField] Toggle promptForReloadToggle;
-    [SerializeField] Toggle bulletTrailsToggle;
+    [SerializeField] Toggle bulletTrailsToggle; 
+    [SerializeField] Toggle showPlayerCharInfoToggle;
 
     [Space(5)]
 
@@ -178,6 +184,7 @@ public class P2_GameManager : MonoBehaviour
     {
         SetReloadPromptToggle();
         SetBulletTrailsToggle();
+        SetPlayerCharacterInfoToggle();
 
         if (!skipTutorial)
         {
@@ -455,6 +462,10 @@ public class P2_GameManager : MonoBehaviour
         bulletTrailsToggle.enabled = true;
         bulletTrailsToggle.interactable = true;
         bulletTrailsToggle.gameObject.SetActive(true);
+
+        showPlayerCharInfoToggle.enabled = true;
+        showPlayerCharInfoToggle.interactable = true;
+        showPlayerCharInfoToggle.gameObject.SetActive(true);
     }
 
     private void DisableSettingsUi()
@@ -494,6 +505,10 @@ public class P2_GameManager : MonoBehaviour
         bulletTrailsToggle.enabled = false;
         bulletTrailsToggle.interactable = false;
         bulletTrailsToggle.gameObject.SetActive(false);
+
+        showPlayerCharInfoToggle.enabled = false;
+        showPlayerCharInfoToggle.interactable = false;
+        showPlayerCharInfoToggle.gameObject.SetActive(false);
     }
 
     private void EnableQuitScreenButtons()
@@ -694,7 +709,7 @@ public class P2_GameManager : MonoBehaviour
 
     #endregion
 
-    #region Settings Page: Reload Prompt and Bullet Trails Toggle
+    #region Settings Page: Set Toggle Functions
 
     private void SetReloadPromptToggle()
     {
@@ -704,6 +719,11 @@ public class P2_GameManager : MonoBehaviour
     private void SetBulletTrailsToggle()
     {
         bulletTrailsToggle.isOn = enableBulletTrails;
+    }
+
+    private void SetPlayerCharacterInfoToggle()
+    {
+        showPlayerCharInfoToggle.isOn = showPlayerCharacterInfo;
     }
 
     #endregion
@@ -835,5 +855,7 @@ public class P2_GameManager : MonoBehaviour
         {
             reloadPromptText.CrossFadeAlpha(reloadPromptTextAlpha, reloadPromptTextAlphaTime * Time.deltaTime, false);
         }
+
+        playerCharacterInfoHudElement.gameObject.SetActive(showPlayerCharacterInfo);
     }
 }

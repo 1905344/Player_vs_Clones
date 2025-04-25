@@ -336,7 +336,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 0.15
-  m_fontSizeMax: 0.5
+  m_fontSizeMax: 0.42
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1364,7 +1364,7 @@ MonoBehaviour:
   hackScreenText: {fileID: 0}
   frontText: {fileID: 1628744988503831478}
   backText: {fileID: 4422665005009568022}
-  defaultText: Locked
+  defaultText: Locked Requires Ms M
   promptText: Press F to hack
   duringHackingText: Hacking... Press F to cancel
   progressBar: {fileID: 0}
