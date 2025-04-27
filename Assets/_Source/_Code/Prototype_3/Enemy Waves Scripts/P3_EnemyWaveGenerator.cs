@@ -1,8 +1,10 @@
+using NUnit.Framework.Constraints;
 using System.Collections;
 using System.Collections.Generic;
-//using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
+using Unity.AppUI.UI;
 
 public class P3_EnemyWaveGenerator : MonoBehaviour
 {
@@ -52,12 +54,19 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
 
     [Space(3)]
 
-    [SerializeField] private bool enableDifficulty = false;
     [SerializeField] private float difficultyFactor = 0.9f;
+    [SerializeField] public List<string> DifficultyStates = new List<string>();
+    [SerializeField] private string currentDifficultyState = string.Empty;
+    [SerializeField] private bool enableDifficulty = false;
 
     [Space(10)]
 
     [SerializeField] private List<GameObject> enemyList;
+
+    [Space(10)]
+
+    [Header("U.I. Elements")]
+    [SerializeField] private TMP_Dropdown difficultyDropDown;
 
     [Space(10)]
 
@@ -138,6 +147,10 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
 
     private void Start()
     {
+        difficultyDropDown.AddOptions(DifficultyStates);
+
+        difficultyDropDown.value = 0;
+
         P3_GameManager.Instance.OnStartGame += StartSpawning;
         P3_GameManager.Instance.PlayerKilled += StopSpawning;
 
@@ -165,6 +178,51 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
             }
         }
     }
+
+    #region Difficulty Settings
+
+    public void SetDifficulty(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                {
+                    currentDifficultyState = DifficultyStates[index];
+                    enableDifficulty = false;
+                    break;
+                }
+            case 1:
+                {
+                    currentDifficultyState = DifficultyStates[index];
+                    enableDifficulty = true;
+                    difficultyFactor = 2.25f;
+                    break;
+                }
+            case 2:
+                {
+                    currentDifficultyState = DifficultyStates[index];
+                    enableDifficulty = true;
+                    difficultyFactor = 1.5f;
+                    break;
+                }
+            case 3:
+                {
+                    currentDifficultyState = DifficultyStates[index];
+                    enableDifficulty = true;
+                    difficultyFactor = 0.9f;
+                    break;
+                }
+            case 4:
+                {
+                    currentDifficultyState = DifficultyStates[index];
+                    enableDifficulty = true;
+                    difficultyFactor = 0.3f;
+                    break;
+                }
+        }
+    }
+
+    #endregion
 
     #region Debug: Show Gizmos
 

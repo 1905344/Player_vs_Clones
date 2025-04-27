@@ -6,6 +6,7 @@ public class P3_NearbyEnemyIndicator : MonoBehaviour
 
     [Header("Direction Indicator")]
     [SerializeField] private GameObject indicator;
+    [SerializeField] private MeshRenderer indicatorMesh;
 
     [Space(10)]
 
@@ -21,18 +22,16 @@ public class P3_NearbyEnemyIndicator : MonoBehaviour
 
     private GameObject DetectedTarget { get; set; }
 
+    [Space(5)]
+
+    [SerializeField] private Transform indicatorTransform;
+
     [Space(10)]
 
     [Header("Debug: Show Gizmos")]
-    [SerializeField] private float gizmosRadius = 1f;
     [SerializeField] private bool showDetectionRadius = false;
 
     #endregion
-
-    private void Start()
-    {
-        gizmosRadius = detectionRadius;
-    }
 
     private GameObject GetNearestEnemy()
     {
@@ -59,7 +58,7 @@ public class P3_NearbyEnemyIndicator : MonoBehaviour
         if (showDetectionRadius)
         {
             Gizmos.color = radiusColour;
-            Gizmos.DrawWireSphere(transform.position, gizmosRadius);
+            Gizmos.DrawWireSphere(transform.position, detectionRadius);
         }
     }
 
@@ -67,9 +66,16 @@ public class P3_NearbyEnemyIndicator : MonoBehaviour
 
     void Update()
     {
+        indicator.transform.position = indicatorTransform.position;
+
         if (GetNearestEnemy() != null)
         {
+            indicatorMesh.enabled = true;
             indicator.transform.LookAt(GetNearestEnemy().transform);
+        }
+        else
+        {
+            indicatorMesh.enabled = false;
         }
     }
 }

@@ -471,23 +471,36 @@ public class Prototype_1_InputManager : MonoBehaviour
     public void ApplyMouseXSens()
     {
         mouseHorizontalSensitivity = mouseXSensSlider.value;
+        updateMouseXSensText = true;
+
+        //If implementing text input
         //mouseXSensTextInput.text = mouseHorizontalSensitivity.ToString();
 
+        #region Debug
+        
         if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Input Manager: Mouse horizontal sensitivity has been changed to: " + mouseHorizontalSensitivity.ToString());
         }
+
+        #endregion
     }
 
     public void ApplyMouseYSens()
     {
         mouseVerticalSensitivity = mouseYSensSlider.value;
+        updateMouseYSensText = true;
+        //If implementing text input
         //mouseYSensTextInput.text = mouseVerticalSensitivity.ToString();
+
+        #region Debug
 
         if (Prototype_1_GameManager.Instance.enableDebug)
         {
             Debug.Log("Input Manager: Mouse verical sensitivity has been changed to: " + mouseVerticalSensitivity.ToString());
         }
+
+        #endregion
     }
 
     private void SetMouseSensSliders()

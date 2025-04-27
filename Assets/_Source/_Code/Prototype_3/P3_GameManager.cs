@@ -60,6 +60,11 @@ public class P3_GameManager : MonoBehaviour
 
     [Space(5)]
 
+    [Header("Nearby Enemy Indicator")]
+    [SerializeField] private GameObject nearbyEnemyIndicator;
+
+    [Space(5)]
+
     [Header("Survival Variables")]
     [SerializeField] public float survivalTimer;
     [SerializeField] private bool startTimer = false;
@@ -82,7 +87,6 @@ public class P3_GameManager : MonoBehaviour
     private bool toggleReloadPromptText = false;
 
     public bool enableBulletTrails { get; set; } = true;
-    public bool showEnemyInfo { get; set; } = true;
 
     [Space(10)]
 
@@ -155,6 +159,11 @@ public class P3_GameManager : MonoBehaviour
     [SerializeField] Toggle bulletTrailsToggle;
     [SerializeField] Toggle millisecondsToggle;
     [SerializeField] Toggle showEnemyInfoToggle;
+    [SerializeField] Toggle showNearbyEnemyIndicatorToggle;
+
+    [Space(5)]
+     
+    [SerializeField] TMP_Dropdown difficultyDropDown;
 
     [Space(5)]
 
@@ -175,6 +184,9 @@ public class P3_GameManager : MonoBehaviour
     [SerializeField] public bool skipTutorial = false;
     [SerializeField] public bool disableFog = false;
 
+    public bool showEnemyInfo { get; set; } = true;
+    public bool showNearbyEnemyIndicator { get; set; } = true;
+    
     #endregion
 
     private void Awake()
@@ -206,6 +218,7 @@ public class P3_GameManager : MonoBehaviour
         SetBulletTrailsToggle();
         SetMillisecondsToggle();
         SetEnemyInfoToggle();
+        SetEnemyIndicatorToggle();
 
         if (!skipTutorial)
         {
@@ -507,6 +520,14 @@ public class P3_GameManager : MonoBehaviour
         showEnemyInfoToggle.enabled = true;
         showEnemyInfoToggle.interactable = true;
         showEnemyInfoToggle.gameObject.SetActive(true);
+
+        showNearbyEnemyIndicatorToggle.enabled = true;
+        showNearbyEnemyIndicatorToggle.interactable = true;
+        showNearbyEnemyIndicatorToggle.gameObject.SetActive(true);
+
+        difficultyDropDown.enabled = true;
+        difficultyDropDown.interactable = true;
+        difficultyDropDown.gameObject.SetActive(true);
     }
 
     private void DisableSettingsUi()
@@ -554,6 +575,14 @@ public class P3_GameManager : MonoBehaviour
         showEnemyInfoToggle.enabled = false;
         showEnemyInfoToggle.interactable = false;
         showEnemyInfoToggle.gameObject.SetActive(false);
+
+        showNearbyEnemyIndicatorToggle.enabled = false;
+        showNearbyEnemyIndicatorToggle.interactable = false;
+        showNearbyEnemyIndicatorToggle.gameObject.SetActive(false);
+
+        difficultyDropDown.enabled = false;
+        difficultyDropDown.interactable = false;
+        difficultyDropDown.gameObject.SetActive(false);
     }
 
     private void EnableQuitScreenButtons()
@@ -776,6 +805,11 @@ public class P3_GameManager : MonoBehaviour
         showEnemyInfoToggle.isOn = showEnemyInfo;
     }
 
+    private void SetEnemyIndicatorToggle()
+    {
+        showNearbyEnemyIndicatorToggle.isOn = showNearbyEnemyIndicator;
+    }
+
     #endregion
 
     #region Controls Page Functions
@@ -909,6 +943,7 @@ public class P3_GameManager : MonoBehaviour
         }
 
         enemyInfoHudElement.gameObject.SetActive(showEnemyInfo);
+        nearbyEnemyIndicator.SetActive(showNearbyEnemyIndicator);
 
         if (startTimer)
         {
