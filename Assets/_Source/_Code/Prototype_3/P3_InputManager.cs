@@ -263,21 +263,22 @@ public class P3_InputManager : MonoBehaviour
             return;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
         if (vCam != player2_Camera)
         {
-            playerInputActions.UI.Disable();
-            playerInputActions.Player.Enable();
-            ToggleActionMap(playerInputActions.Player);
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.visible = transform;
+            Cursor.lockState = CursorLockMode.None;
         }
 
-        //playerInputActions.UI.Disable();
-        //playerInputActions.Player.Enable();
-        //ToggleActionMap(playerInputActions.Player);
+        playerInputActions.UI.Disable();
+        playerInputActions.Player.Enable();
+        ToggleActionMap(playerInputActions.Player);
     }
 
     public void DisableGameInput()
