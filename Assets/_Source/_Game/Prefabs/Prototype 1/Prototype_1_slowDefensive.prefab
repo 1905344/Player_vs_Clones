@@ -305,8 +305,8 @@ MonoBehaviour:
   walkPointRange: 55
   timeBetweenAttacks: 14
   hasAttackedAlready: 0
-  aiSightRange: 45
-  aiAttackRange: 40
+  aiSightRange: 25
+  aiAttackRange: 21
   isPlayerInSightRange: 0
   isPlayerInAttackRange: 0
   attackSFX: {fileID: 8300000, guid: 0dbe91efb8ee94e6695ef0f552d202ce, type: 3}

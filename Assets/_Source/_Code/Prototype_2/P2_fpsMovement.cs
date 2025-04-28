@@ -61,8 +61,6 @@ public class P2_fpsMovement : MonoBehaviour
         //P2_GameManager.Instance.OnStartGame += EnablePlayerMovement;
         P2_GameManager.Instance.PlayerKilled += DisablePlayerMovement;
 
-        P2_GameManager.Instance.changePlayerCharacter += ResetRotation;
-
         if (disablePlayerMovement)
         {
             DisablePlayerMovement();
@@ -92,11 +90,6 @@ public class P2_fpsMovement : MonoBehaviour
     public void SetIDString(string idString)
     {
         playerIDString = idString;
-    }
-
-    private void ResetRotation()
-    {
-        characterBodyObject.transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 
     private void Update()
@@ -172,6 +165,12 @@ public class P2_fpsMovement : MonoBehaviour
             }
 
             playerVelocity.y += playerGravity * Time.deltaTime;
+        }
+        else if (disablePlayerJumping && !onGround)
+        {
+            //Preventing the character from being stuck mid-jump if the player switches characters
+            Vector3 fallMove = new Vector3(0f, playerGravity, 0f);
+            charController.SimpleMove(fallMove * Time.deltaTime);
         }
 
         #endregion

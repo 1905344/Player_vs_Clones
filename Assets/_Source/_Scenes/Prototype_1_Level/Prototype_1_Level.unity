@@ -1706,7 +1706,7 @@ PrefabInstance:
     - target: {fileID: 4748123175954637842, guid: a79b51b70469ad04197d0ddbe6377a35,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2859
+      value: 2865
       objectReference: {fileID: 0}
     - target: {fileID: 5994575152267880745, guid: a79b51b70469ad04197d0ddbe6377a35,
         type: 3}
@@ -4221,7 +4221,7 @@ PrefabInstance:
     - target: {fileID: 2528496354677318827, guid: 8f6f19dd2b4f86f419bc3a73c8648f8d,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2862
+      value: 2868
       objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 8f6f19dd2b4f86f419bc3a73c8648f8d,
         type: 3}
@@ -8038,7 +8038,7 @@ PrefabInstance:
     - target: {fileID: 4748123175954637842, guid: a79b51b70469ad04197d0ddbe6377a35,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2859
+      value: 2865
       objectReference: {fileID: 0}
     - target: {fileID: 5994575152267880745, guid: a79b51b70469ad04197d0ddbe6377a35,
         type: 3}
@@ -11911,7 +11911,7 @@ PrefabInstance:
     - target: {fileID: 2528496354677318827, guid: 8f6f19dd2b4f86f419bc3a73c8648f8d,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2862
+      value: 2868
       objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 8f6f19dd2b4f86f419bc3a73c8648f8d,
         type: 3}
@@ -27602,7 +27602,7 @@ PrefabInstance:
     - target: {fileID: 1316528713366455346, guid: 52afa97fcc700254ba57a358326bf229,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2859
+      value: 2865
       objectReference: {fileID: 0}
     - target: {fileID: 3040102589653549699, guid: 52afa97fcc700254ba57a358326bf229,
         type: 3}
@@ -29509,11 +29509,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <style="Title">Tutorial</style><br><br><size=45%>This is a first-person
-    shooter prototype, in which you need to use the gun's recoil to navigate the
-    level. <br><br>As this is a prototype, bugs are likely to occur. Please kindly
-    ignore these if possible as they are not features. <br><br>Headphones are recommended.<br><br>You
-    can change some settings from the pause menu. <br><br><br><size=60%><b>Objective:</b></size><br><br><size=45%>Kill
+  m_text: <style="Title">Tutorial</style><br><br><size=45%>This is a prototype game,
+    which means everything is unpolished and bugs are highly likely to occur. Please
+    kindly ignore them as they are not "features".<br>If any critical bugs do occur,
+    please restart the game from the pause menu.<br><br>In this first-person shooter
+    prototype, you must use the gun's recoil to navigate the level, but you cannot
+    use the recoil to jump.<br><br>Headphones are recommended.<br><br>You can change
+    some settings from the pause menu. <br><br><br><size=60%><b>Objective:</b></size><br><br><size=45%>Kill
     all the enemies.<br><br><size=45%><b>The controls are:</b></size><br><br>Look
     around/move camera:<pos=45%><b>Mouse</b><br><br>Fire gun:<pos=45%><b>Left mouse
     button</b><br><br>Reload gun:<pos=45%><b>R</b><br><br>Pause:<pos=45%><b>Escape</b>
@@ -29543,12 +29545,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
+  m_fontSize: 54
   m_fontSizeBase: 52
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 20
-  m_fontSizeMax: 50
+  m_fontSizeMax: 60
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
@@ -30901,7 +30903,7 @@ PrefabInstance:
     - target: {fileID: 1316528713366455346, guid: 52afa97fcc700254ba57a358326bf229,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2859
+      value: 2865
       objectReference: {fileID: 0}
     - target: {fileID: 3040102589653549699, guid: 52afa97fcc700254ba57a358326bf229,
         type: 3}
@@ -32396,7 +32398,7 @@ PrefabInstance:
     - target: {fileID: 2528496354677318827, guid: 8f6f19dd2b4f86f419bc3a73c8648f8d,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2862
+      value: 2868
       objectReference: {fileID: 0}
     - target: {fileID: 3053518200933648360, guid: 8f6f19dd2b4f86f419bc3a73c8648f8d,
         type: 3}
@@ -41821,7 +41823,7 @@ PrefabInstance:
     - target: {fileID: 7706536874141308185, guid: 3e3f253c8ebb54444a77f12c26df4bb3,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2859
+      value: 2865
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -48269,7 +48271,7 @@ PrefabInstance:
     - target: {fileID: 7706536874141308185, guid: 3e3f253c8ebb54444a77f12c26df4bb3,
         type: 3}
       propertyPath: m_VersionIndex
-      value: 2859
+      value: 2865
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

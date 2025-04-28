@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -14,7 +16,7 @@ public class P2_HackableDoor : MonoBehaviour
     [Space(5)]
 
     public bool isHacking = false;
-    public bool canHack = false;
+    public bool hackable = false;
     public bool alreadyHacked = false;
 
     [Space(10)]
@@ -41,6 +43,15 @@ public class P2_HackableDoor : MonoBehaviour
 
     private P2_fpsMovement characterMoveScript;
 
+    [Space(10)]
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip startHackingSFX;
+    [SerializeField] private AudioClip stopHackingSFX;
+    [SerializeField] private AudioClip hackingCompletedSFX;
+
+    private bool characterChanged = false;
+
     #endregion
 
     private void Awake()
@@ -64,25 +75,26 @@ public class P2_HackableDoor : MonoBehaviour
         #endregion
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         P2_PlayerCharacterBase playerCharacterBase = null;
 
         if (other.gameObject.TryGetComponent<P2_PlayerCharacterBase>(out playerCharacterBase))
         {
-            if (playerCharacterBase.canHack)
+            if (playerCharacterBase.canHack && playerCharacterBase.isCharacterActive)
             {
                 characterMoveScript = other.gameObject.GetComponent<P2_fpsMovement>();
 
                 frontText.text = promptText;
                 backText.text = promptText;
-                canHack = true;
+                hackable = true;
+                characterChanged = false;
             }
-            else
+            else if (playerCharacterBase.isCharacterActive)
             {
                 frontText.text = defaultText;
                 backText.text = defaultText;
-                canHack = false;
+                hackable = false;
                 return;
             }
         }
@@ -111,6 +123,8 @@ public class P2_HackableDoor : MonoBehaviour
 
     private void StopHacking()
     {
+        SoundManager.instance.PlaySFX(stopHackingSFX);
+
         isHacking = false;
         hackingTimer = 0f;
         hackingScreen.gameObject.SetActive(false);
@@ -118,11 +132,16 @@ public class P2_HackableDoor : MonoBehaviour
         frontText.text = defaultText;
         backText.text = defaultText;
 
-        characterMoveScript.EnablePlayerMovement();
+        if (!characterChanged)
+        {
+            characterMoveScript.EnablePlayerMovement();
+        }
     }
 
     private void FinishedHacking()
     {
+        SoundManager.instance.PlaySFX(hackingCompletedSFX);
+
         characterMoveScript.EnablePlayerMovement();
         hackingScreen.gameObject.SetActive(false);
         frontText.gameObject.SetActive(false);
@@ -133,23 +152,35 @@ public class P2_HackableDoor : MonoBehaviour
         hackingTimer = 0f;
         isHacking = false;
         alreadyHacked = true;
-        canHack = false;
+        hackable = false;
     }
+
+    private void OnInteraction()
+    {
+        SoundManager.instance.PlaySFX(startHackingSFX);
+
+        //Change text to hacking
+        hackScreenText.text = duringHackingText;
+        isHacking = true;
+    }
+
 
     private void Update()
     {
-        if (canHack)
+        if (hackable)
         {
+            if (P2_InputManager.Instance.PlayerChangedCharacters())
+            {
+                characterChanged = true;
+            }
+
             //InputManager code for when the player starts hacking
             if (P2_InputManager.Instance.PlayerPressedHackButton() && !isHacking)
             {
-                //Change text to hacking
-                hackScreenText.text = duringHackingText;
-                isHacking = true;
-
+                OnInteraction();
                 //characterMoveScript.DisablePlayerMovement();
             }
-            else if ((P2_InputManager.Instance.PlayerPressedHackButton() || P2_InputManager.Instance.PlayerChangedCharacters()) && isHacking)
+            else if (P2_InputManager.Instance.PlayerPressedHackButton() || (P2_InputManager.Instance.PlayerChangedCharacters() && isHacking))
             {
                 StopHacking();
             }

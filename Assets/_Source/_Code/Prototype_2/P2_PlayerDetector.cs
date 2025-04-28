@@ -145,8 +145,8 @@ public class P2_PlayerDetector : MonoBehaviour
                 warningScreen.gameObject.SetActive(false);
             }
 
-            //Allow the player from switching characters
-            P2_InputManager.Instance.canChangeCharacter = true;
+            //Allow the player to switch characters
+            //P2_InputManager.Instance.canChangeCharacter = true;
         }
     }
 
@@ -218,6 +218,7 @@ public class P2_PlayerDetector : MonoBehaviour
 
         Vector3 originPoint = transform.position + Vector3.up * detectionHeight;
         float maxDistance = Vector3.Distance(activePlayer.transform.position, originPoint);
+        
         float distanceIncreasing = maxDistance - detectionRadius;
 
         float defaultPlayerMoveSpeed = 12f;
@@ -280,11 +281,11 @@ public class P2_PlayerDetector : MonoBehaviour
 
         #region Applying or Revoking Changes To All Characters
 
-        foreach (GameObject character in playersInRange)
-        {
+        //foreach (GameObject character in playersInRange)
+        //{
             //Apply changes to all characters within range
             
-        }
+        //}
 
         warningText.text = string.Empty;
 
@@ -293,7 +294,7 @@ public class P2_PlayerDetector : MonoBehaviour
             //Apply changes to all characters out of range
             P2_PlayerCharacterBase playerScript = character.GetComponent<P2_PlayerCharacterBase>();
 
-            warningText.text += $"Player {playerScript.characterName} is too far from the gold cube!\n"/* + "\nPlease return to the gold cube."*/;
+            warningText.text += $"{playerScript.characterName} is too far from the gold cube!\n"/* + "\nPlease return to the gold cube."*/;
 
             //Prevent the player from switching characters
             //P2_InputManager.Instance.canChangeCharacter = false;

@@ -71,6 +71,7 @@ public class P2_enemyAttack : MonoBehaviour
 
     public void StopAttacking()
     {
+        attackTimer = 0f;
         stopShooting = true;
         hasAttackedAlready = true;
         isAttacking = false;

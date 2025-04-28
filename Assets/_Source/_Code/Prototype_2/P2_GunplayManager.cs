@@ -264,7 +264,7 @@ public class P2_GunplayManager : MonoBehaviour
 
             #endregion
 
-            if (Prototype_1_GameManager.Instance.enableBulletTrails)
+            if (P2_GameManager.Instance.enableBulletTrails)
             {
                 //Bullet trail
                 //Using trail renderer

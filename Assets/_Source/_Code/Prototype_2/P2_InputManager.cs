@@ -692,6 +692,19 @@ public class P2_InputManager : MonoBehaviour
 
         #endregion
 
+        #region Enable and Disable Hacking Input Action
+
+        if (vCam != vCameras[2])
+        {
+            playerInputActions.Player.Hacking.Disable();
+        }
+        else
+        {
+            playerInputActions.Player.Hacking.Enable();
+        }
+
+        #endregion
+
         #region Debugging
 
         //if (P2_GameManager.Instance.enableDebug)
