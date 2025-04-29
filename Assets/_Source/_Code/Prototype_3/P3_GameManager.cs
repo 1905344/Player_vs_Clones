@@ -889,7 +889,6 @@ public class P3_GameManager : MonoBehaviour
 
     private void RestartScene(string name)
     {
-        P3_InputManager.Instance.DisableUiInput();
         Time.timeScale = 1.0f;
         SceneManager.LoadSceneAsync(name);
     }

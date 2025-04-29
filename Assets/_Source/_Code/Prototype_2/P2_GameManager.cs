@@ -810,7 +810,6 @@ public class P2_GameManager : MonoBehaviour
 
     private void RestartScene(string name)
     {
-        P2_InputManager.Instance.DisableUiInput();
         Time.timeScale = 1.0f;
         SceneManager.LoadSceneAsync(name);
     }

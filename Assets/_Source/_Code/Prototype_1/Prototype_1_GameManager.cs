@@ -800,7 +800,6 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     private void RestartScene(string name)
     {
-        Prototype_1_InputManager.Instance.DisableUiInput();
         Time.timeScale = 1.0f;
         SceneManager.LoadSceneAsync(name);
     }
