@@ -60,7 +60,7 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer = false;
-    [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = false;
+    [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = true;
 
     [Space(5)]
 
@@ -770,14 +770,13 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     private void OnGameOver()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
         gameOverScreen.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(true);
+        levelCompletedText.gameObject.SetActive(false);
     }
 
     private void OnGameCompleted()
     {
-        SoundManager.instance.PlaySFX(confirmSFX);
         gameOverScreen.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(false);
         levelCompletedText.gameObject.SetActive(true);

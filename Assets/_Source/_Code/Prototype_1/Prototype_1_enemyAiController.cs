@@ -178,7 +178,7 @@ public class Prototype_1_enemyAiController : MonoBehaviour
             return;
         }
 
-        //SoundManager.instance.PlaySFX(enemyInjuredSFX);
+        SoundManager.instance.PlaySFX(enemyInjuredSFX);
 
         enemyHealth -= damage;
 
@@ -195,7 +195,7 @@ public class Prototype_1_enemyAiController : MonoBehaviour
 
     private void DestroyThisEnemy()
     {
-        //SoundManager.instance.PlaySFX(enemyDeathSFX);
+        SoundManager.instance.PlaySFX(enemyDeathSFX);
 
         if (Prototype_1_GameManager.Instance.enableDebug)
         {

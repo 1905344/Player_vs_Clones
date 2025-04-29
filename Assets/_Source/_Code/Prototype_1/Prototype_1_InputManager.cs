@@ -165,11 +165,11 @@ public class Prototype_1_InputManager : MonoBehaviour
     {
         //Event for when the player has been killed
         Prototype_1_GameManager.Instance.PlayerKilled += OnPlayerDeath;
-        Prototype_1_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
+        //Prototype_1_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
 
         Prototype_1_GameManager.Instance.OnStartGame += OnEnable;
-        Prototype_1_GameManager.Instance.PlayerKilled += OnDisable;
-        Prototype_1_GameManager.Instance.LevelCompleted += OnDisable;
+        Prototype_1_GameManager.Instance.LevelCompleted += DisableGameInput;
+        //Prototype_1_GameManager.Instance.LevelCompleted -= DisableGameInput;
 
 
         SetToggleStates();

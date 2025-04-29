@@ -18,7 +18,7 @@ public class Prototype_1_EnemyManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private List<GameObject> enemies = new(7);
+    [SerializeField] private List<GameObject> enemies = new List<GameObject>();
 
     [SerializeField, Tooltip("How long to delay loading the enemies by")] private float delayEnemySpawnTimer;
     private float timer = 0f;
@@ -85,12 +85,13 @@ public class Prototype_1_EnemyManager : MonoBehaviour
 
     public void RemoveEnemy(GameObject enemy)
     {
-        foreach (GameObject agent in enemies) 
+        if (!enemies.Contains(enemy) || enemy == null)
         {
-            if (agent == enemy)
-            {
-                enemies.Remove(agent);
-            }
+            return;
+        }
+        else if (enemies.Contains(enemy) && enemy !=  null)
+        {
+            enemies.Remove(enemy);
         }
 
         remainingEnemies--;
@@ -113,6 +114,7 @@ public class Prototype_1_EnemyManager : MonoBehaviour
         if (enemies.Count == 0)
         {
             Prototype_1_GameManager.Instance.OnLevelCompleted();
+
         }
 
         enemiesRemainingText.text = $"Enemies remaining: {remainingEnemies} / {totalEnemies}";
