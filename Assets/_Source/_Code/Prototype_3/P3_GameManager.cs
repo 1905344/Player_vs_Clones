@@ -173,7 +173,7 @@ public class P3_GameManager : MonoBehaviour
     [Space(5)]
 
     [Header("Game Over Screen")]
-    [SerializeField] Button quitToMainMenuButton;
+    [SerializeField] Button quitToMainMenuFromGameOverScreenButton;
     [SerializeField] Button quitGameFromGameOverScreenButton;
     [SerializeField] TMP_Text gameOverText;
 
@@ -587,11 +587,11 @@ public class P3_GameManager : MonoBehaviour
 
     private void EnableQuitScreenButtons()
     {
-        quitToMainMenuButton.enabled = true;
-        quitToMainMenuButton.interactable = true;
+        quitPromptQuitMainMenu.enabled = true;
+        quitPromptQuitMainMenu.interactable = true;
 
-        quitGameFromGameOverScreenButton.enabled = true;
-        quitGameFromGameOverScreenButton.interactable = true;
+        quitPromptQuitGame.enabled = true;
+        quitPromptQuitGame.interactable = true;
 
         returnToPauseScreenFromQuitPrompt.enabled = true;
         returnToPauseScreenFromQuitPrompt.interactable = true;
@@ -599,11 +599,11 @@ public class P3_GameManager : MonoBehaviour
 
     private void DisableQuitScreenButtons()
     {
-        quitToMainMenuButton.enabled = false;
-        quitToMainMenuButton.interactable = false;
+        quitPromptQuitMainMenu.enabled = false;
+        quitPromptQuitMainMenu.interactable = false;
 
-        quitGameFromGameOverScreenButton.enabled = false;
-        quitGameFromGameOverScreenButton.interactable = false;
+        quitPromptQuitGame.enabled = false;
+        quitPromptQuitGame.interactable = false;
 
         returnToPauseScreenFromQuitPrompt.enabled = false;
         returnToPauseScreenFromQuitPrompt.interactable = false;
@@ -852,13 +852,25 @@ public class P3_GameManager : MonoBehaviour
 
     #region Game Over Functions
 
+    private void EnableGameOverButtons()
+    {
+        quitToMainMenuFromGameOverScreenButton.enabled = true;
+        quitToMainMenuFromGameOverScreenButton.interactable = true;
+
+        quitGameFromGameOverScreenButton.enabled = true;
+        quitGameFromGameOverScreenButton.interactable = true;
+    }
+
     private void OnGameOver()
     {
+        Time.timeScale = 0f;
         startTimer = false;
         gameOverScreen.gameObject.SetActive(true);
         survivalTimeText.gameObject.SetActive(false);
 
         gameOverText.text = $"You survived for: {survivalTimeString} \n \n Try again?";
+
+        EnableGameOverButtons();
     }
 
     public void OnGameOverReturnToMainMenu()
@@ -877,13 +889,15 @@ public class P3_GameManager : MonoBehaviour
 
     private void RestartScene(string name)
     {
-        SceneManager.LoadSceneAsync(name);
+        P3_InputManager.Instance.DisableUiInput();
         Time.timeScale = 1.0f;
+        SceneManager.LoadSceneAsync(name);
     }
 
     private void LoadMainMenu()
     {
         SceneManager.LoadSceneAsync("MainMenu");
+        Time.timeScale = 1.0f;
     }
 
     public void ShowReloadPrompt()
@@ -914,11 +928,6 @@ public class P3_GameManager : MonoBehaviour
 
         reloadPromptText.gameObject.SetActive(false);
         reloadPromptText.alpha = 0.5f;
-    }
-
-    private void UpdateObjectiveText()
-    {
-        objectiveText.text = "Objective:" + "\n" + levelObjective;
     }
 
     #endregion

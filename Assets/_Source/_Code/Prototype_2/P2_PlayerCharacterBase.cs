@@ -140,7 +140,7 @@ public class P2_PlayerCharacterBase : MonoBehaviour
         }
 
         P2_GameManager.Instance.OnPlayerCharacterKilled(getGuid);
-        P2_GameManager.Instance.OnCharacterChanged();
+        //P2_GameManager.Instance.OnCharacterChanged();
 
         SoundManager.instance.PlaySFX(playerDeathSFX);
 

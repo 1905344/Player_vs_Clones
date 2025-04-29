@@ -179,6 +179,7 @@ MonoBehaviour:
   returnFromCreditsPage: {fileID: 2022270014172072200}
   buttonConfirmSFX: {fileID: 8300000, guid: ebfd36ce22108b2428131863b3349293, type: 3}
   buttonReturnSFX: {fileID: 8300000, guid: afb07908116a585498de7e18a96d8e45, type: 3}
+  fogData: {fileID: 11400000, guid: c40be3174f62c4acf8c1216858c64956, type: 2}
 --- !u!1 &28826648
 GameObject:
   m_ObjectHideFlags: 0
@@ -13113,7 +13114,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

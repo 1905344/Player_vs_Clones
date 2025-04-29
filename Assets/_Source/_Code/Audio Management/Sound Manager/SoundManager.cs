@@ -15,9 +15,9 @@ public class SoundManager : MonoBehaviour
     [Space(10)]
 
     [Header("Starting Volume")]
-    [SerializeField, Range(0.01f, 1f)] private float masterVolumeStartingVolume = 0.7f;
-    [SerializeField, Range(0.01f, 1f)] private float musicVolumeStartingVolume = 0.7f;
-    [SerializeField, Range(0.01f, 1f)] private float sfxVolumeStartingVolume = 0.7f;
+    [SerializeField, Range(0.01f, 1f)] private float masterVolumeStartingVolume = 0.6f;
+    [SerializeField, Range(0.01f, 1f)] private float musicVolumeStartingVolume = 0.6f;
+    [SerializeField, Range(0.01f, 1f)] private float sfxVolumeStartingVolume = 0.6f;
 
     [Space(10)]
 

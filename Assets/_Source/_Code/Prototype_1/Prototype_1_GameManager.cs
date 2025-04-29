@@ -146,7 +146,7 @@ public class Prototype_1_GameManager : MonoBehaviour
     [Space(5)]
 
     [Header("Game Over Screen")]
-    [SerializeField] Button quitToMainMenuButton;
+    [SerializeField] Button quitToMainMenuFromGameOverScreenButton;
     [SerializeField] Button quitGameFromGameOverScreenButton;
     [SerializeField] TMP_Text gameOverText;
     [SerializeField] TMP_Text levelCompletedText;
@@ -254,6 +254,7 @@ public class Prototype_1_GameManager : MonoBehaviour
         if (OnStartGame != null)
         {
             OnStartGame();
+            Time.timeScale = 1.0f;
         }
     }
 
@@ -502,11 +503,11 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     private void EnableQuitScreenButtons()
     {
-        quitToMainMenuButton.enabled = true;
-        quitToMainMenuButton.interactable = true;
+        quitPromptQuitMainMenu.enabled = true;
+        quitPromptQuitMainMenu.interactable = true;
 
-        quitGameFromGameOverScreenButton.enabled = true;
-        quitGameFromGameOverScreenButton.interactable = true;
+        quitPromptQuitGame.enabled = true;
+        quitPromptQuitGame.interactable = true;
 
         returnToPauseScreenFromQuitPrompt.enabled = true;
         returnToPauseScreenFromQuitPrompt.interactable = true;
@@ -514,11 +515,11 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     private void DisableQuitScreenButtons()
     {
-        quitToMainMenuButton.enabled = false;
-        quitToMainMenuButton.interactable = false;
+        quitPromptQuitMainMenu.enabled = false;
+        quitPromptQuitMainMenu.interactable = false;
 
-        quitGameFromGameOverScreenButton.enabled = false;
-        quitGameFromGameOverScreenButton.interactable = false;
+        quitPromptQuitGame.enabled = false;
+        quitPromptQuitGame.interactable = false;
 
         returnToPauseScreenFromQuitPrompt.enabled = false;
         returnToPauseScreenFromQuitPrompt.interactable = false;
@@ -768,29 +769,46 @@ public class Prototype_1_GameManager : MonoBehaviour
 
     #region Game Functions
 
+    private void EnableGameOverButtons()
+    {
+        quitToMainMenuFromGameOverScreenButton.enabled = true;
+        quitToMainMenuFromGameOverScreenButton.interactable = true;
+
+        quitGameFromGameOverScreenButton.enabled = true;
+        quitGameFromGameOverScreenButton.interactable = true;
+    }
+
     private void OnGameOver()
     {
+        Time.timeScale = 0f;
         gameOverScreen.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(true);
         levelCompletedText.gameObject.SetActive(false);
+
+        EnableGameOverButtons();
     }
 
     private void OnGameCompleted()
     {
+        Time.timeScale = 0f;
         gameOverScreen.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(false);
         levelCompletedText.gameObject.SetActive(true);
+
+        EnableGameOverButtons();
     }
 
     private void RestartScene(string name)
     {
-        SceneManager.LoadSceneAsync(name);
+        Prototype_1_InputManager.Instance.DisableUiInput();
         Time.timeScale = 1.0f;
+        SceneManager.LoadSceneAsync(name);
     }
 
     private void LoadMainMenu()
     {
         SceneManager.LoadSceneAsync("MainMenu");
+        Time.timeScale = 1.0f;
     }
 
     public void ShowReloadPrompt()

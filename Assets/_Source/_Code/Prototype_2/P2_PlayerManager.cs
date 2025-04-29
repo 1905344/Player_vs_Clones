@@ -44,9 +44,11 @@ public class P2_PlayerManager : MonoBehaviour
     [Space(10)]
 
     [SerializeField] private List<Sprite> playerCharacterSprites = new List<Sprite>();
+    [SerializeField] private Sprite placeholderSprite;
     [SerializeField] private Image previousPlayerCharacterSpritePlaceholder;
     [SerializeField] private Image activePlayerCharacterSpritePlaceholder;
     [SerializeField] private Image nextPlayerCharacterSpritePlaceholder;
+    [SerializeField] private Image changeCharacterInputSprite;
 
     public int GetCurrentCharacter()
     {
@@ -93,6 +95,11 @@ public class P2_PlayerManager : MonoBehaviour
 
     private void OnCharacterChanged()
     {
+        if (playerCharacters.Count == 0)
+        {
+            return;
+        }
+
         //Disable the active character
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
@@ -136,11 +143,25 @@ public class P2_PlayerManager : MonoBehaviour
         currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().UpdateHealth();
         currentlyActiveCharacter.GetComponent<P2_fpsMovement>().EnablePlayerMovement();
 
-        UpdatePlayerCharacterSprites();
+        UpdatePlayerCharacterSprites(currentIndexPos);
     }
 
     private void OnCharacterKilled(string characterID)
     {
+        if (characterID == null)
+        {
+            #region Debug
+
+            if (P2_GameManager.Instance.enableDebug)
+            {
+                Debug.Log($"Character killed received no characterID: {characterID}");
+            }
+
+            #endregion
+
+            return;
+        }
+
         //Check if the last character has been killed
         if (playerCharacters.Count == 0)
         {
@@ -148,47 +169,34 @@ public class P2_PlayerManager : MonoBehaviour
             return;
         }
 
-        if (characterID == null)
-        {
-            Debug.Log($"Character killed received no characterID: {characterID}");
-            return;
-        }
-
-        if (currentCharacterID.ToString() == characterID)
-        {
-            //Disable the active character
-            currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
-
-            currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
-            
-            //Disable the gun attached to the active character
-            if (playerCharacters[currentIndexPos].GetComponent<P2_PlayerCharacterBase>().CharacterGunStatus())
-            {
-                //Disable the gun attached to the active character
-                currentlyActiveGun.GetComponent<P2_GunplayManager>().DisableGun();
-            }
-
-            currentCharacterID = Guid.Empty;
-            currentIDString = string.Empty;
-
-            RemoveCharacter();
-        }
-
         for (int i = 0; i < playerCharacters.Count; i++)
         {
             string characterGuid = playerCharacters[i].GetComponent<P2_PlayerCharacterBase>().GetCharacterIDString();
+            GameObject playerCharaterToRemove = playerCharacters[i].gameObject;
 
-            if (characterGuid == characterID)
+            if (characterGuid == characterID && characterGuid != currentIDString)
             {
-                GameObject character = playerCharacters[i].gameObject;
-                playerCharacters.Remove(character);
+                playerCharacters.Remove(playerCharaterToRemove);
+                RemovePlayerCharacterSprite(i);
+            }
+            else if (characterGuid == currentIDString && characterID == currentIDString)
+            {
+                currentlyActiveCharacter.GetComponent<P2_fpsMovement>().DisablePlayerMovement();
+                currentlyActiveCharacter.GetComponent<P2_PlayerCharacterBase>().isCharacterActive = false;
+
+                if (playerCharacters[currentIndexPos].GetComponent<P2_PlayerCharacterBase>().CharacterGunStatus())
+                {
+                    currentlyActiveGun.GetComponent<P2_GunplayManager>().DisableGun();
+                }
+
+                currentCharacterID = Guid.Empty;
+                currentIDString = string.Empty;
+
+                playerCharacters.Remove(playerCharaterToRemove);
+                RemovePlayerCharacterSprite(i);
+                P2_GameManager.Instance.OnCharacterChanged();
             }
         }
-    }
-
-    private void RemoveCharacter()
-    {
-        playerCharacters.RemoveAt(currentIndexPos);
     }
 
     #endregion
@@ -202,9 +210,24 @@ public class P2_PlayerManager : MonoBehaviour
         nextPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[1];
     }
 
-    private void UpdatePlayerCharacterSprites()
+    private void UpdatePlayerCharacterSprites(int position)
     {
-        int prevSprite = currentIndexPos - 1;
+        if (playerCharacterSprites.Count == 0)
+        {
+            return;
+        }
+
+        if (playerCharacterSprites.Count == 2)
+        {
+            previousPlayerCharacterSpritePlaceholder.gameObject.SetActive(false);
+        }
+        else if (playerCharacterSprites.Count == 1)
+        {
+            previousPlayerCharacterSpritePlaceholder.gameObject.SetActive(false);
+            nextPlayerCharacterSpritePlaceholder.gameObject.SetActive(false);
+        }
+
+        int prevSprite = position - 1;
         
         if (prevSprite < 0)
         {
@@ -213,15 +236,44 @@ public class P2_PlayerManager : MonoBehaviour
 
         prevSprite %= playerCharacterSprites.Count;
 
-        int nextSprite = currentIndexPos + 1;
+        int nextSprite = position + 1;
         nextSprite %= playerCharacterSprites.Count;
 
-        Debug.Log($"P2_PlayerManager: prevSprite = {prevSprite}");
-        Debug.Log($"P2_PlayerManager: nextSprite = {nextSprite}");
+        #region Debug
+
+        if (P2_GameManager.Instance.enableDebug)
+        {
+            Debug.Log($"P2_PlayerManager: prevSprite = {prevSprite}");
+            Debug.Log($"P2_PlayerManager: nextSprite = {nextSprite}");
+        }
+
+        #endregion
 
         previousPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[prevSprite];
         activePlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[currentIndexPos];
         nextPlayerCharacterSpritePlaceholder.sprite = playerCharacterSprites[nextSprite];
+    }
+
+    private void RemovePlayerCharacterSprite(int index)
+    {
+        if (playerCharacters.Count == 1)
+        {
+            changeCharacterInputSprite.gameObject.SetActive(false);
+        }
+
+        Sprite removeSprite = playerCharacterSprites[index];
+
+        if (previousPlayerCharacterSpritePlaceholder.sprite == removeSprite)
+        {
+            previousPlayerCharacterSpritePlaceholder.sprite = placeholderSprite;
+        }
+
+        if (nextPlayerCharacterSpritePlaceholder.sprite == removeSprite)
+        {
+            nextPlayerCharacterSpritePlaceholder.sprite = placeholderSprite;
+        }
+
+        playerCharacterSprites.Remove(removeSprite);
     }
 
     #endregion
@@ -229,18 +281,5 @@ public class P2_PlayerManager : MonoBehaviour
     private void Update()
     {
         currentPlayerCharacterText.text = $"Active character: \n {currentlyActiveCharacter.GetComponentInChildren<P2_PlayerCharacterBase>().characterName}";
-        
-        //foreach (GameObject character in playerCharacters)
-        //{
-        //    if (character != currentlyActiveCharacter)
-        //    {
-        //        Canvas characterCanvas = character.GetComponentInChildren<Canvas>();
-
-        //        foreach (GameObject child in characterCanvas.GetComponentsInChildren<GameObject>())
-        //        {
-        //            child.transform.LookAt(mainCamera.transform);
-        //        }
-        //    }
-        //}
     }
 }

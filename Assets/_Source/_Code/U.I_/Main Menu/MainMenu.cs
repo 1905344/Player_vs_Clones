@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Rendering.Universal;
 
 public class MainMenu : MonoBehaviour
 {
@@ -50,11 +51,17 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private AudioClip buttonConfirmSFX;
     [SerializeField] private AudioClip buttonReturnSFX;
 
+    [Space(10)]
+
+    [Header("Fog Rendering Feature")]
+    [SerializeField] UniversalRendererData fogData;
+
     #endregion
 
     private void Awake()
     {
         titleText.text = titleTextString;
+        fogData.rendererFeatures[1].SetActive(false);
     }
 
     public void OnApplicationQuit()

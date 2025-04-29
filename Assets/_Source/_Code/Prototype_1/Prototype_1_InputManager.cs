@@ -218,6 +218,11 @@ public class Prototype_1_InputManager : MonoBehaviour
         Cursor.visible = true;
     }
 
+    public void DisableUiInput()
+    {
+        playerActions.UI.Disable();
+    }
+
     public void EnableGameInput()
     {
         #region Debug
@@ -239,6 +244,7 @@ public class Prototype_1_InputManager : MonoBehaviour
 
         vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
         playerActions.UI.Disable();
+        playerActions.Player.Enable();
         ToggleActionMap(playerActions.Player);
     }
 
@@ -256,7 +262,9 @@ public class Prototype_1_InputManager : MonoBehaviour
         SetCamera(0, 0, _FOV);
 
         playerActions.Player.Disable();
+        playerActions.UI.Enable();
         ToggleActionMap(playerActions.UI);
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
 public class P2_CameraManager : MonoBehaviour
 {
@@ -36,6 +37,11 @@ public class P2_CameraManager : MonoBehaviour
 
     private void OnCameraChanged()
     {
+        if (cameras.Count <= 1)
+        {
+            return;
+        }
+
         if (cameras[currentActiveCamera].gameObject != null)
         {
             cameras[currentActiveCamera].gameObject.SetActive(false);
@@ -59,12 +65,31 @@ public class P2_CameraManager : MonoBehaviour
 
     private void RemoveCamera(string cameraGuid)
     {
-        if (cameraGuid == null || cameraGuid != currentCameraID)
+        if (cameraGuid == null)
         {
-            Debug.Log($"RemoveCamera received no guid: {cameraGuid}");
+            #region Debug
+
+            if (P2_GameManager.Instance.enableDebug)
+            {
+                Debug.Log("P2_CameraManager: RemoveCamera received no guid.");
+            }
+
+            #endregion
+                
             return;
         }
 
-        cameras.Remove(cameras[currentActiveCamera].gameObject);
+        for (int i = 0; i < cameras.Count; i++)
+        {
+            string checkID = cameras[i].GetComponent<P2_CameraID>().GetCameraID();
+
+            GameObject removeCamera = cameras[i];
+
+            if (cameraGuid == checkID)
+            {
+                removeCamera.gameObject.SetActive(false);
+                cameras.Remove(removeCamera);
+            }
+        }
     }
 }

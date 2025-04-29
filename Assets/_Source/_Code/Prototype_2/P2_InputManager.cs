@@ -68,6 +68,7 @@ public class P2_InputManager : MonoBehaviour
     [SerializeField] private List<CinemachineVirtualCamera> vCameras = new List<CinemachineVirtualCamera>();
     [SerializeField] private int currentVCam = 0;
     [SerializeField] private string getCurrentVCamString = string.Empty;
+    [SerializeField] private string vCamThreeIDString = string.Empty;
 
     [Space(10)]
 
@@ -197,9 +198,10 @@ public class P2_InputManager : MonoBehaviour
     {
         //Event for when the player has been killed
         P2_GameManager.Instance.PlayerKilled += OnPlayerDeath;
-        P2_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
-        
+        //P2_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
+
         P2_GameManager.Instance.playerCharacterKilled += RemoveCamera;
+        //P2_GameManager.Instance.playerCharacterKilled -= RemoveCamera;
 
         //When the game starts
         P2_GameManager.Instance.OnStartGame += OnEnable;
@@ -234,9 +236,11 @@ public class P2_InputManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        vCamThreeIDString = vCameras[2].GetComponent<P2_CameraID>().GetCameraID();
+
         vCam = vCameras[0];
         getCurrentVCamString = vCameras[0].GetComponent<P2_CameraID>().GetCameraID();
-
+        
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
 
@@ -248,6 +252,11 @@ public class P2_InputManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    public void DisableUiInput()
+    {
+        playerInputActions.UI.Disable();
     }
 
     public void EnableGameInput()
@@ -271,6 +280,7 @@ public class P2_InputManager : MonoBehaviour
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
         playerInputActions.UI.Disable();
+        playerInputActions.Player.Enable();
         ToggleActionMap(playerInputActions.Player);
     }
 
@@ -288,7 +298,9 @@ public class P2_InputManager : MonoBehaviour
         SetCamera(0, 0, _FOV);
         
         playerInputActions.Player.Disable();
+        playerInputActions.UI.Enable();
         ToggleActionMap(playerInputActions.UI);
+        
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
     }
@@ -489,7 +501,6 @@ public class P2_InputManager : MonoBehaviour
     private void OnPlayerDeath()
     {
         isPlayerDead = true;
-        ToggleActionMap(playerInputActions.UI);
         DisableGameInput();
     }
 
@@ -497,35 +508,25 @@ public class P2_InputManager : MonoBehaviour
 
     private void UpdateCamera()
     {
-        if (currentVCam >= (vCameras.Count - 1))
+        if (vCameras.Count <= 1)
         {
-            currentVCam = 0;
+            playerInputActions.Player.ChangeCharacter.Disable();
+        }
+
+        getCurrentVCamString = string.Empty;
+        currentVCam++;
+        currentVCam %= vCameras.Count;
+
+        vCam = vCameras[currentVCam];
+        getCurrentVCamString = vCameras[currentVCam].GetComponent<P2_CameraID>().GetCameraID();
+
+        if (getCurrentVCamString != vCamThreeIDString)
+        {
+            playerInputActions.Player.Hacking.Disable();
         }
         else
         {
-            currentVCam++;
-        }
-
-        for (int i = 0;  i < vCameras.Count; i++) 
-        {
-            if (vCameras[i].gameObject.activeInHierarchy && currentVCam >= vCameras.Count)
-            {
-                currentVCam = 0;
-                getCurrentVCamString = string.Empty;
-                vCam = vCameras[0];
-            }
-
-            if (i == currentVCam)
-            {
-                string checkGuid = vCameras[i].GetComponent<P2_CameraID>().GetCameraID();
-
-                if (checkGuid == getCurrentVCamString)
-                {
-                    getCurrentVCamString = checkGuid;
-                }
-
-                vCam = vCameras[i];
-            }
+            playerInputActions.Player.Hacking.Enable();
         }
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
@@ -539,14 +540,32 @@ public class P2_InputManager : MonoBehaviour
 
     public void RemoveCamera(string guid)
     {
+        if (guid == null)
+        {
+            #region Debug
+
+            if (P2_GameManager.Instance.enableDebug)
+            {
+                Debug.Log("P2_InputManager: RemoveCamera received no guid");
+            }
+
+            #endregion
+        }
+
         for (int i = 0; i < vCameras.Count; i++)
         {
             string cameraID = vCameras[i].GetComponent<P2_CameraID>().GetCameraID();
             CinemachineVirtualCamera removeCamera = vCameras[i];
 
-            if (guid.ToString() == cameraID)
+            if (guid == cameraID)
             {
+                removeCamera.gameObject.SetActive(false);
                 vCameras.Remove(removeCamera);
+            }
+
+            if (guid == vCamThreeIDString)
+            {
+                playerInputActions.Player.Hacking.Disable();
             }
         }
     }
@@ -692,18 +711,10 @@ public class P2_InputManager : MonoBehaviour
 
         #endregion
 
-        #region Enable and Disable Hacking Input Action
-
-        if (vCam != vCameras[2])
+        if (vCameras.Count == 1)
         {
-            playerInputActions.Player.Hacking.Disable();
+            canChangeCharacter = false;
         }
-        else
-        {
-            playerInputActions.Player.Hacking.Enable();
-        }
-
-        #endregion
 
         #region Debugging
 

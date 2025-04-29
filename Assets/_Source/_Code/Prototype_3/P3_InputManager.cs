@@ -89,6 +89,10 @@ public class P3_InputManager : MonoBehaviour
     [SerializeField] private bool isPlayerDead = false;
     [SerializeField] public bool canChangeCharacter = true;
 
+    [Space(5)]
+
+    [SerializeField] GameObject lighthouseScreen;
+
     public static bool HasDevice<T>(PlayerInput input) where T : InputDevice
     {
         for (int i = 0; i < input.devices.Count; i++)
@@ -243,8 +247,13 @@ public class P3_InputManager : MonoBehaviour
         playerInputActions.Player.Disable();
         playerInputActions.UI.Enable();
 
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+    }
+
+    public void DisableUiInput()
+    {
+        playerInputActions.UI.Disable();
     }
 
     public void EnableGameInput()
@@ -265,20 +274,21 @@ public class P3_InputManager : MonoBehaviour
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-        if (vCam != player2_Camera)
+        if (!lighthouseScreen.activeInHierarchy)
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
-        else
+        else if (vCam == player2_Camera && lighthouseScreen.activeInHierarchy)
         {
-            Cursor.visible = transform;
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
         playerInputActions.UI.Disable();
         playerInputActions.Player.Enable();
         ToggleActionMap(playerInputActions.Player);
+        
     }
 
     public void DisableGameInput()
