@@ -149,7 +149,7 @@ public class MainMenu : MonoBehaviour
         DisableReturnFromPrototypeSelectionButton();
         DisablePrototypeSelectionButtons();
         EnableMenuButtons();
-        creditsPage.SetActive(false);
+        selectPrototypePage.SetActive(false);
 
         EventSystem.current.SetSelectedGameObject(newGameButton.gameObject);
     }
