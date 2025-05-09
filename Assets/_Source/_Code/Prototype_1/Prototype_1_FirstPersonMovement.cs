@@ -97,10 +97,10 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
     private void ApplyGunRecoil()
     {
-        if (isGunRecoilActive)
-        {
-            return;
-        }
+        //if (isGunRecoilActive)
+        //{
+        //    return;
+        //}
 
         #region Debug
 
@@ -187,28 +187,11 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
 
         #region Player Movement and Sprinting
 
-        //playerMovement = Prototype_1_InputManager.Instance.GetPlayerMovement();
-        //characterMove = new Vector3(playerMovement.x, 0f, playerMovement.y);
-
-        //Recoil moves the player
-        //characterMove = new Vector3(gunRecoilMoveAmount.x, 0f, gunRecoilMoveAmount.y);
-
         if (isGunRecoilActive)
         {
-            //Vector3 forceBackwardMove = cameraTransform.forward * -1;
-
-            //float moveTimer = recoilMoveTimer / recoilMoveTimeInterval;
-
             if (recoilMoveTimer > 0)
             {
                 recoilMoveTimer += Time.deltaTime;
-
-                //characterMove = -cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
-                //characterMove.y = 0f;
-
-                //Might need to change Time.deltaTime to a fixed time variable
-                //charController.Move(characterMove * gunRecoilMoveSpeed * Time.deltaTime);
-                //charController.Move(playerVelocity * Time.deltaTime);
 
                 float setMoveSpeed = gunRecoilMoveSpeed * gunRecoilMoveAmount;
                 charController.SimpleMove(forceBackwardMove * setMoveSpeed);
@@ -240,27 +223,6 @@ public class Prototype_1_FirstPersonMovement : MonoBehaviour
             Vector3 fallMove = new Vector3(0f, playerGravity, 0f);
             charController.SimpleMove(fallMove * Time.deltaTime);
         }
-
-        //characterMove = cameraTransform.forward * characterMove.z + cameraTransform.right * characterMove.x;
-        //characterMove.y = 0f;
-
-        //Sprinting
-
-        //isSprinting = Prototype_1_InputManager.Instance.isPlayerSprintingThisFrame;
-
-        //if (isSprinting)
-        //{
-        //    movementSpeed = sprintSpeed;
-        //    //Debug.Log("Character is sprinting!");
-        //}
-        //else
-        //{
-        //    movementSpeed = moveSpeed;
-        //    //Debug.Log("Character is not sprinting!");
-        //}
-
-        //charController.Move(characterMove * movementSpeed * Time.deltaTime);
-        //charController.Move(playerVelocity * Time.deltaTime);
 
         //Rotating the body game object when the player rotates the camera with the mouse
         characterBodyTransform.rotation = cameraTransform.rotation;
