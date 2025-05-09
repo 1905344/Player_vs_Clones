@@ -17,6 +17,8 @@ public class P3_LighthouseManager : MonoBehaviour
     }
 
     [Header("Rotating Lights")]
+    [SerializeField] private Light lightOne;
+    [SerializeField] private Light lightTwo;
     [SerializeField] private GameObject rotatingObject;
     [SerializeField] private float rotationSpeed;
     private Vector3 lightRotation;
@@ -82,6 +84,8 @@ public class P3_LighthouseManager : MonoBehaviour
     [SerializeField] private bool startDischarging = false;
     [SerializeField] private bool startRotating = false;
     [SerializeField, Tooltip("Increase the difficulty of the game by increasing the discharge speed"), Range(0.1f, 10f)] private float increaseDischargeRate = 0.5f;
+    [SerializeField, Tooltip("Increase the rate at which the light dims"), Range(0.1f, 25f)] private float lightDimRate = 12.5f;
+    [SerializeField, Tooltip("Increase the rate at which the light range reduces"), Range(0.1f, 10f)] private float lightRangeReduceRate = 3.5f;
 
     [Space(3)]
 
@@ -176,6 +180,11 @@ public class P3_LighthouseManager : MonoBehaviour
     private void OnDischarging()
     {
         currentChargeCapacity -= Time.deltaTime * increaseDischargeRate;
+        lightOne.range -= Time.deltaTime * (increaseDischargeRate * lightRangeReduceRate);
+        lightOne.intensity -= Time.deltaTime * (increaseDischargeRate * lightDimRate);
+        
+        lightTwo.intensity -= Time.deltaTime * (increaseDischargeRate * lightDimRate);
+        lightTwo.range -= Time.deltaTime * (increaseDischargeRate * lightRangeReduceRate);
 
         if (currentChargeCapacity <= 0)
         {
