@@ -14,4 +14,13 @@ public class P3_EnemyWaveAction
     public Transform enemyPrefab;
     public float enemySpawnCount;
     public string Message;
+
+    public P3_EnemyWaveAction(string w_ActionName, float w_Delay, Transform w_EnemyPrefab, float w_EnemySpawnCount, string w_Message)
+    {
+        this.waveActionName = w_ActionName;
+        this.waveDelay = w_Delay;
+        this.enemyPrefab = w_EnemyPrefab;
+        this.enemySpawnCount = w_EnemySpawnCount;
+        Message = w_Message;
+    }
 }

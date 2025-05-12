@@ -1,10 +1,11 @@
-using NUnit.Framework.Constraints;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AI;
+using System.Linq;
 using TMPro;
 using Unity.AppUI.UI;
+using UnityEngine;
+using UnityEngine.AI;
 
 public class P3_EnemyWaveGenerator : MonoBehaviour
 {
@@ -25,7 +26,6 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private float angle;
     [SerializeField] private float x;
-    //[SerializeField] private float yOffset;
     [SerializeField] private float z;
 
     [Space(5)]
@@ -50,14 +50,27 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     private float waveDelayFactor;
     //[SerializeField, Tooltip("For printing messages about enemy waves")] private TMP_Text waveText;
     [SerializeField] private List<P3_EnemyWave> enemyWaves;
+    [SerializeField] private List<P3_EnemyWave> defaultEnemyWaves;
     [SerializeField] private P3_EnemyWave currentEnemyWave;
 
     [Space(3)]
 
+    [Header("Difficulty Settings")]
     [SerializeField] private float difficultyFactor = 0.9f;
-    [SerializeField] public List<string> DifficultyStates = new List<string>();
+    [SerializeField] private List<string> DifficultyStates = new List<string>();
     [SerializeField] private string currentDifficultyState = string.Empty;
     [SerializeField] private bool enableDifficulty = false;
+    
+    [Space(10)]
+
+    [Header("Enemy Prefabs")]
+    [SerializeField] private GameObject blackEnemy;
+    [SerializeField] private GameObject blueEnemy;
+    [SerializeField] private GameObject greenEnemy;
+    [SerializeField] private GameObject greyEnemy;
+    [SerializeField] private GameObject redEnemy;
+    [SerializeField] private GameObject whiteEnemy;
+    [SerializeField] private GameObject yellowEnemy;
 
     [Space(10)]
 
@@ -106,10 +119,10 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                         {
                             //Get random radius between inner radius and outer radius 
                             //Distance using the inner and outer radii
-                            radius = Random.Range(innerRadius, outerRadius);
+                            radius = UnityEngine.Random.Range(innerRadius, outerRadius);
 
                             //Get random angle in the circle, between 0 and 360 degrees.
-                            angle = Random.Range(angleMinimum, angleMaximum);
+                            angle = UnityEngine.Random.Range(angleMinimum, angleMaximum);
 
                             //Get the X and Z values of the circle
                             //X = X coordinate of the centre of the circle + radius * cos(angle)
@@ -148,7 +161,6 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
     private void Start()
     {
         difficultyDropDown.AddOptions(DifficultyStates);
-
         difficultyDropDown.value = 0;
 
         P3_GameManager.Instance.OnStartGame += StartSpawning;
@@ -189,36 +201,137 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                 {
                     currentDifficultyState = DifficultyStates[index];
                     enableDifficulty = false;
+                    RemoveAllDifficultyWaves();
+                    UpdateEnemyWaveList();
+
                     break;
                 }
             case 1:
                 {
                     currentDifficultyState = DifficultyStates[index];
                     enableDifficulty = true;
-                    difficultyFactor = 2.25f;
+                    difficultyFactor = 3.5f;
+
+                    RemoveAllDifficultyWaves();
+                    UpdateEnemyWaveList();
+
+                    AddNewWaveAction("Medium Default Increase", "Spawn 10 grey every 25 seconds", 25f, greyEnemy.transform, 10);
+                    AddNewWaveAction("Medium - Blue", "Spawn 4 blue every 20 seconds", 20f, blueEnemy.transform, 4);
+                    AddNewWaveAction("Medium - Yellow", "Spawn 4 yellow every 12 seconds", 12.5f, yellowEnemy.transform, 4);
+                    AddNewWaveAction("Medium - Red", "Spawn 5 red every 30 seconds", 30f, redEnemy.transform, 5);
+                    AddNewWaveAction("Medium - White", "Spawn 5 white every 45 seconds", 45f, whiteEnemy.transform, 5);
+
                     break;
                 }
             case 2:
                 {
                     currentDifficultyState = DifficultyStates[index];
                     enableDifficulty = true;
-                    difficultyFactor = 1.5f;
+                    difficultyFactor = 2f;
+
+                    RemoveAllDifficultyWaves();
+                    UpdateEnemyWaveList();
+
+                    AddNewWaveAction("Challenging Default Increase", "Spawn 10 grey every 20 seconds", 20f, greyEnemy.transform, 10);
+                    AddNewWaveAction("Challenging - Blue", "Spawn 6 blue every 18 seconds", 18f, blueEnemy.transform, 6);
+                    AddNewWaveAction("Challenging - Yellow", "Spawn 6 yellow every 11 seconds", 11f, yellowEnemy.transform, 6);
+                    AddNewWaveAction("Challenging - Red", "Spawn 5 red every 30 seconds", 30f, redEnemy.transform, 5);
+                    AddNewWaveAction("Challenging - White", "Spawn 5 white every 45 seconds", 45f, whiteEnemy.transform, 5);
+
                     break;
                 }
             case 3:
                 {
                     currentDifficultyState = DifficultyStates[index];
                     enableDifficulty = true;
-                    difficultyFactor = 0.9f;
+                    difficultyFactor = 1.5f;
+
+                    RemoveAllDifficultyWaves();
+                    UpdateEnemyWaveList();
+
+                    AddNewWaveAction("Hard Default Increase", "Spawn 10 grey every 15 seconds", 15f, greyEnemy.transform, 10);
+                    AddNewWaveAction("Hard - Blue", "Spawn 7 blue every 15 seconds", 15f, blueEnemy.transform, 7);
+                    AddNewWaveAction("Hard - Yellow", "Spawn 7 yellow every 10 seconds", 10f, yellowEnemy.transform, 7);
+                    AddNewWaveAction("Hard - Red", "Spawn 5 red every 30 seconds", 30f, redEnemy.transform, 5);
+                    AddNewWaveAction("Hard - White", "Spawn 5 white every 45 seconds", 45f, whiteEnemy.transform, 5);
+
                     break;
                 }
             case 4:
                 {
                     currentDifficultyState = DifficultyStates[index];
                     enableDifficulty = true;
-                    difficultyFactor = 0.3f;
+                    difficultyFactor = 0.75f;
+
+                    RemoveAllDifficultyWaves();
+                    UpdateEnemyWaveList();
+
+                    AddNewWaveAction("Extreme Default Increase", "Spawn 15 grey every 10 seconds", 10f, greyEnemy.transform, 10);
+                    AddNewWaveAction("Extreme - Blue", "Spawn 9 blue every 12 seconds", 12f, blueEnemy.transform, 9);
+                    AddNewWaveAction("Extreme - Yellow", "Spawn 9 yellow every 10 seconds", 12.5f, yellowEnemy.transform, 9);
+                    AddNewWaveAction("Extreme - White", "Spawn 7 white every 25 seconds", 25f, whiteEnemy.transform, 7);
+                    AddNewWaveAction("Extreme - Red", "Spawn 5 red every 20 seconds", 20f, redEnemy.transform, 5);
+
                     break;
                 }
+        }
+    }
+
+    private void AddNewWaveAction(string waveName, string waveActionName, float delayAmount, Transform enemyPrefab, int spawnCount)
+    {
+        //if the difficulty level is changed, then add a new wave action to the spawner
+        P3_EnemyWaveAction difficultyEnemyWaveAction = new P3_EnemyWaveAction(waveActionName, delayAmount, enemyPrefab.transform, spawnCount, string.Empty);
+        P3_EnemyWave newWave = new P3_EnemyWave(waveName, difficultyEnemyWaveAction);
+        enemyWaves.Add(newWave);
+    }
+
+    private void RemoveAllDifficultyWaves()
+    {
+        enemyWaves.Clear();
+
+        //List<string> wavesToRemove = new List<string>
+        //{
+        //    "Medium Default Increase",
+        //    "Medium - Blue",
+        //    "Medium - Yellow",
+        //    "Medium - Red",
+        //    "Medium - White",
+        //    "Challenging Default Increase",
+        //    "Challenging - Blue",
+        //    "Challenging - Yellow",
+        //    "Challenging - Red",
+        //    "Challenging - White",
+        //    "Hard Default Increase",
+        //    "Hard - Blue",
+        //    "Hard - Yellow",
+        //    "Hard - Red",
+        //    "Hard - White",
+        //    "Extreme Default Increase",
+        //    "Extreme - Blue",
+        //    "Extreme - Yellow",
+        //    "Extreme - White",
+        //    "Extreme - Red"
+        //};
+
+        //foreach (P3_EnemyWave checkWave in difficultEnemyWaves)
+        //{
+        //    foreach (string s in wavesToRemove)
+        //    {
+        //        if (checkWave.enemyWaveName.Contains(s))
+        //        {
+        //            difficultEnemyWaves.Remove(checkWave);
+        //        }
+        //    }
+        //}
+
+        //enemyWaves = difficultEnemyWaves;
+    }
+
+    private void UpdateEnemyWaveList()
+    {
+        foreach (P3_EnemyWave defaultWave in defaultEnemyWaves)
+        {
+            enemyWaves.Add(defaultWave);
         }
     }
 

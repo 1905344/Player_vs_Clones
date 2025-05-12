@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -83,9 +84,6 @@ public class P3_LighthouseManager : MonoBehaviour
     [Header("Lighthouse Variables")]
     [SerializeField] private bool startDischarging = false;
     [SerializeField] private bool startRotating = false;
-    [SerializeField, Tooltip("Increase the difficulty of the game by increasing the discharge speed"), Range(0.1f, 10f)] private float increaseDischargeRate = 0.5f;
-    [SerializeField, Tooltip("Increase the rate at which the light dims"), Range(0.1f, 25f)] private float lightDimRate = 12.5f;
-    [SerializeField, Tooltip("Increase the rate at which the light range reduces"), Range(0.1f, 10f)] private float lightRangeReduceRate = 3.5f;
 
     [Space(3)]
 
@@ -108,10 +106,29 @@ public class P3_LighthouseManager : MonoBehaviour
     [SerializeField] private float currentMaxChargeCapacity;
     [SerializeField] private float defaultMaximumChargeCapacity;
 
-    [Space(2)]
+    [Space(3)]
 
     [SerializeField, Tooltip("Maximum value for the cap on the max charge capacity")] private float maxChargeCapCapacity;
     [SerializeField] private float cappedMaxChargeCapacity;
+
+    [Space(10)]
+
+    [Header("Default Light Values")]
+    [SerializeField] private float defaultLightIntensity = 2000f;
+    [SerializeField] private float defaultLightInnerAngle = 115f;
+
+    [Space(5)]
+
+    [Header("Difficulty Settings")]
+    [SerializeField] public List<string> difficultyStates = new List<string>();
+    [SerializeField] private string currentDifficultyState = string.Empty;
+    [SerializeField] private bool enableDifficulty = false;
+
+    [Space(3)]
+
+    [SerializeField, Tooltip("Increase the difficulty of the game by increasing the discharge speed"), Range(0.5f, 2.5f)] private float dischargeRate;
+    [SerializeField, Tooltip("Increase the rate at which the light dims"), Range(10f, 25f)] private float lightIntensityMultiplier;
+    [SerializeField, Tooltip("Increase the rate at which the light inner spot angle reduces"), Range(0.1f, 2f)] private float lightInnerAngleMultiplier;
 
     [Space(10)]
 
@@ -179,12 +196,13 @@ public class P3_LighthouseManager : MonoBehaviour
 
     private void OnDischarging()
     {
-        currentChargeCapacity -= Time.deltaTime * increaseDischargeRate;
-        lightOne.range -= Time.deltaTime * (increaseDischargeRate * lightRangeReduceRate);
-        lightOne.intensity -= Time.deltaTime * (increaseDischargeRate * lightDimRate);
+        currentChargeCapacity -= Time.deltaTime * dischargeRate;
         
-        lightTwo.intensity -= Time.deltaTime * (increaseDischargeRate * lightDimRate);
-        lightTwo.range -= Time.deltaTime * (increaseDischargeRate * lightRangeReduceRate);
+        lightOne.intensity -= Time.deltaTime * lightIntensityMultiplier;
+        lightOne.innerSpotAngle -= Time.deltaTime * lightInnerAngleMultiplier;
+
+        lightTwo.intensity -= Time.deltaTime * lightIntensityMultiplier;
+        lightTwo.innerSpotAngle -= Time.deltaTime * lightInnerAngleMultiplier;
 
         if (currentChargeCapacity <= 0)
         {
@@ -363,6 +381,12 @@ public class P3_LighthouseManager : MonoBehaviour
 
         currentChargeCapacity += increaseCurrentChargeCapacity;
 
+        lightOne.intensity = currentChargeCapacity * lightIntensityMultiplier;
+        lightOne.innerSpotAngle = currentChargeCapacity * lightInnerAngleMultiplier;
+        
+        lightTwo.intensity = currentChargeCapacity * lightIntensityMultiplier;
+        lightTwo.innerSpotAngle = currentChargeCapacity * lightInnerAngleMultiplier;
+
         if (currentChargeCapacity >= currentMaxChargeCapacity)
         {
             currentChargeCapacity = currentMaxChargeCapacity;
@@ -520,6 +544,67 @@ public class P3_LighthouseManager : MonoBehaviour
     public void OnCloseUiScreenButtonPressed()
     {
         OnCancelInteraction();
+    }
+
+    #endregion
+
+    #region Difficulty Settings
+
+    public void SetDifficulty(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                {
+                    currentDifficultyState = difficultyStates[index];
+                    enableDifficulty = false;
+                    dischargeRate = 0.5f;
+                    lightIntensityMultiplier = 10f;
+                    lightInnerAngleMultiplier = 0.76f;
+
+                    break;
+                }
+            case 1:
+                {
+                    currentDifficultyState = difficultyStates[index];
+                    enableDifficulty = true;
+                    dischargeRate = 1f;
+                    lightIntensityMultiplier = 12.5f;
+                    lightInnerAngleMultiplier = 1.05f;
+
+                    break;
+                }
+            case 2:
+                {
+                    currentDifficultyState = difficultyStates[index];
+                    enableDifficulty = true;
+                    dischargeRate = 1.5f;
+                    lightIntensityMultiplier = 17.5f;
+                    lightInnerAngleMultiplier = 1.25f;
+
+                    break;
+                }
+            case 3:
+                {
+                    currentDifficultyState = difficultyStates[index];
+                    enableDifficulty = true;
+                    dischargeRate = 2f;
+                    lightIntensityMultiplier = 20f;
+                    lightInnerAngleMultiplier = 1.5f;
+
+                    break;
+                }
+            case 4:
+                {
+                    currentDifficultyState = difficultyStates[index];
+                    enableDifficulty = true;
+                    dischargeRate = 2.5f;
+                    lightIntensityMultiplier = 25f;
+                    lightInnerAngleMultiplier = 2f;
+
+                    break;
+                }
+        }
     }
 
     #endregion

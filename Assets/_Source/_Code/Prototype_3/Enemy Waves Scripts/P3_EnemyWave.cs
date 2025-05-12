@@ -12,4 +12,11 @@ public class P3_EnemyWave
 
     public string enemyWaveName;
     public List<P3_EnemyWaveAction> waveActions;
+
+    public P3_EnemyWave (string w_Name, P3_EnemyWaveAction action)
+    {
+        this.enemyWaveName = w_Name;
+        this.waveActions = new List<P3_EnemyWaveAction>();
+        waveActions.Add(action);
+    }
 }
