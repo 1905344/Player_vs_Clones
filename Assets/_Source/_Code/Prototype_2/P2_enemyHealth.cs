@@ -52,7 +52,7 @@ public class P2_enemyHealth : MonoBehaviour
 
         if (P2_GameManager.Instance.enableDebug)
         {
-            Debug.Log("Enemy " + enemyID + " has been hit." + health + " health remaining.");
+            Debug.Log("Enemy " + enemyID + " has been hit. " + health + " health remaining.");
         }
 
         if (health <= 0)

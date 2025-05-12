@@ -130,6 +130,7 @@ public class Prototype_1_InputManager : MonoBehaviour
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
     public bool pauseGame = false;
+    private bool showCursor = false;
 
     #endregion
 
@@ -202,8 +203,7 @@ public class Prototype_1_InputManager : MonoBehaviour
         playerActions.Player.Enable();
         updateFOV = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        showCursor = false;
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
@@ -214,8 +214,7 @@ public class Prototype_1_InputManager : MonoBehaviour
         playerActions.Player.Disable();
         playerActions.UI.Enable();
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        showCursor = true;
     }
 
     public void DisableUiInput()
@@ -239,8 +238,7 @@ public class Prototype_1_InputManager : MonoBehaviour
             return;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        showCursor = false;
 
         vCam.SetCameraPOV(mouseHorizontalSensitivity, mouseVerticalSensitivity, mouseAcceleration, invertMouseY);
         playerActions.UI.Disable();
@@ -265,8 +263,7 @@ public class Prototype_1_InputManager : MonoBehaviour
         playerActions.UI.Enable();
         ToggleActionMap(playerActions.UI);
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        showCursor = true;
     }
 
     #endregion
@@ -411,8 +408,7 @@ public class Prototype_1_InputManager : MonoBehaviour
         SetCameraFOVSlider();
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        showCursor = false;
 
         Prototype_1_GameManager.Instance.OnResume();
         pauseGame = false;
@@ -649,6 +645,21 @@ public class Prototype_1_InputManager : MonoBehaviour
         {
             mouseYSensText.text = mouseVerticalSensitivity.ToString();
             updateMouseYSensText = false;
+        }
+
+        #endregion
+
+        #region Update Cursor Visibility
+
+        if (!showCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
         }
 
         #endregion

@@ -289,8 +289,8 @@ public class Prototype_1_GunplayManager : MonoBehaviour
                     Prototype_1_GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
             }
-            else if (_raycastHit.collider != null && _raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground")
-                || _raycastHit.collider.CompareTag("Environment") || _raycastHit.collider.CompareTag("Pushable"))
+            else if (_raycastHit.collider != null && (_raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground")
+                || _raycastHit.collider.CompareTag("Environment") || _raycastHit.collider.CompareTag("Pushable")))
             {
                 bulletHoleDecalSpawnLocation = _raycastHit.point;
 

@@ -160,6 +160,7 @@ public class P3_InputManager : MonoBehaviour
     public bool IsPlayerHoldingTheFireButton { get; private set; }
     public bool IsPlayerTappingTheFireButton { get; private set; }
     public bool pauseGame = false;
+    private bool showCursor = false;
 
     #endregion
 
@@ -203,7 +204,7 @@ public class P3_InputManager : MonoBehaviour
     {
         //Event for when the player has been killed
         P3_GameManager.Instance.PlayerKilled += OnPlayerDeath;
-        P3_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
+        //P3_GameManager.Instance.PlayerKilled -= OnPlayerDeath;
 
         //When the game starts
         P3_GameManager.Instance.OnStartGame += OnEnable;
@@ -235,8 +236,7 @@ public class P3_InputManager : MonoBehaviour
         playerInputActions.Player.Enable();
         updateFOV = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        showCursor = false;
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
     }
@@ -247,8 +247,7 @@ public class P3_InputManager : MonoBehaviour
         playerInputActions.Player.Disable();
         playerInputActions.UI.Enable();
 
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = true;
+        showCursor = true;
     }
 
     public void DisableUiInput()
@@ -276,13 +275,11 @@ public class P3_InputManager : MonoBehaviour
 
         if (!lighthouseScreen.activeInHierarchy)
         {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            showCursor = false;
         }
         else if (vCam == player2_Camera && lighthouseScreen.activeInHierarchy)
         {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
+            showCursor = true;
         }
 
         playerInputActions.UI.Disable();
@@ -308,8 +305,7 @@ public class P3_InputManager : MonoBehaviour
         playerInputActions.UI.Enable();
         ToggleActionMap(playerInputActions.UI);
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        showCursor = true;
     }
 
     #endregion
@@ -472,8 +468,7 @@ public class P3_InputManager : MonoBehaviour
         SetCameraFOVSlider();
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        showCursor = false;
 
         P3_GameManager.Instance.OnResume();
         pauseGame = false;
@@ -622,16 +617,14 @@ public class P3_InputManager : MonoBehaviour
     
     public void OnShowLighthouseUI()
     {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        showCursor = true;
         SetCamera(0, 0, _FOV);
         canChangeCharacter = false;
     }
 
     public void OnHideLighthouseUI()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        showCursor = false;
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
         canChangeCharacter = true;
     }
@@ -697,6 +690,21 @@ public class P3_InputManager : MonoBehaviour
         {
             mouseYSensText.text = mouseVerticalSensitivity.ToString();
             updateMouseYSensText = false;
+        }
+
+        #endregion
+
+        #region Update Cursor Visibility
+
+        if (!showCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
         }
 
         #endregion

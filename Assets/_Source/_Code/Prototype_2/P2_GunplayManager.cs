@@ -308,7 +308,7 @@ public class P2_GunplayManager : MonoBehaviour
                     P2_GameManager.Instance.OnEnemyHit(enemyGuid, bulletDamage);
                 }
             }
-            else if (_raycastHit.collider != null && _raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground") 
+            else if (_raycastHit.collider.CompareTag("Wall") || _raycastHit.collider.CompareTag("Ground") 
                 || _raycastHit.collider.CompareTag("Environment") || _raycastHit.collider.CompareTag("Pushable"))
             {
                 bulletHoleDecalSpawnLocation = _raycastHit.point;

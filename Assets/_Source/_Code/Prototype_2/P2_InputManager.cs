@@ -155,6 +155,7 @@ public class P2_InputManager : MonoBehaviour
     public bool pauseGame = false;
 
     public bool canChangeCharacter = true;
+    private bool showCursor = false;
 
     #endregion
 
@@ -233,8 +234,7 @@ public class P2_InputManager : MonoBehaviour
         playerInputActions.Player.Enable();
         updateFOV = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        showCursor = false;
 
         vCamThreeIDString = vCameras[2].GetComponent<P2_CameraID>().GetCameraID();
 
@@ -250,8 +250,7 @@ public class P2_InputManager : MonoBehaviour
         playerInputActions.Player.Disable();
         playerInputActions.UI.Enable();
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        showCursor = true;
     }
 
     public void DisableUiInput()
@@ -275,8 +274,7 @@ public class P2_InputManager : MonoBehaviour
             return;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        showCursor = false;
 
         SetCamera(mouseHorizontalSensitivity, mouseVerticalSensitivity, _FOV);
         playerInputActions.UI.Disable();
@@ -300,9 +298,8 @@ public class P2_InputManager : MonoBehaviour
         playerInputActions.Player.Disable();
         playerInputActions.UI.Enable();
         ToggleActionMap(playerInputActions.UI);
-        
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+
+        showCursor = true;
     }
 
     #endregion
@@ -715,6 +712,21 @@ public class P2_InputManager : MonoBehaviour
         {
             canChangeCharacter = false;
         }
+
+        #region Update Cursor Visibility
+
+        if (!showCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
+
+        #endregion
 
         #region Debugging
 

@@ -58,7 +58,7 @@ public class P2_GameManager : MonoBehaviour
 
     [Header("Reload Prompt Variables")]
     private bool startReloadPromptTimer = false;
-    [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = false;
+    [SerializeField, Tooltip("This turns on the reload prompt text")] public bool enableReloadPromptTextAsTimer { get; set; } = true;
 
     [Space(5)]
 
