@@ -28,7 +28,7 @@ public class P3_PlayerManager : MonoBehaviour
     [Header("HUD References")]
     [SerializeField] private GameObject hudAmmoBar;
     [SerializeField] private TMP_Text AmmoText;
-    [SerializeField] private TMP_Text lighthouseInteractText;
+    [SerializeField] private GameObject lighthouseInteractText;
 
     #endregion
 
@@ -60,7 +60,7 @@ public class P3_PlayerManager : MonoBehaviour
 
             hudAmmoBar.SetActive(false);
             AmmoText.gameObject.SetActive(false);
-            lighthouseInteractText.gameObject.SetActive(true);
+            lighthouseInteractText.SetActive(true);
         }
         else if (playerCharacter_2.GetComponent<P3_LighthouseCharacter>().isCharacterActive)
         {
@@ -75,7 +75,7 @@ public class P3_PlayerManager : MonoBehaviour
 
             hudAmmoBar.SetActive(true);
             AmmoText.gameObject.SetActive(true);
-            lighthouseInteractText.gameObject.SetActive(false);
+            lighthouseInteractText.SetActive(false);
         }
     }
 
