@@ -231,7 +231,7 @@ MonoBehaviour:
   projectile: {fileID: 1867186218399889277, guid: 5a5fa9befea22e84b9268ca172ecba8b,
     type: 3}
   bulletsFired: 0
-  bulletDamage: 10
+  bulletDamage: 15
   showSightRange: 0
   showAttackRange: 0
   stopShooting: 0
