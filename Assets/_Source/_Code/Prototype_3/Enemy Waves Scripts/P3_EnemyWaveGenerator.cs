@@ -89,12 +89,19 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
 
     #endregion
 
+
     IEnumerator WaveSpawnLoop()
     {
         waveDelayFactor = 1.0f;
 
         while (true)
         {
+            if (diffHasChanged)
+            {
+                diffHasChanged = false;
+                UpdateDifficulty();
+            }
+
             foreach (P3_EnemyWave wave in enemyWaves)
             {
                 currentEnemyWave = wave;
@@ -106,6 +113,9 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                         yield return new WaitForSeconds(wAction.waveDelay * waveDelayFactor);
                         //Debug.Log($"P3_EnemyWaveGenerator: delay = {wAction.waveDelay * waveDelayFactor}");
                     }
+
+                    if (diffHasChanged)
+                        break;
 
                     //Optional text priting
                     //if (wAction.Message != "")
@@ -144,9 +154,15 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                     }
                 }
 
+                if (diffHasChanged)
+                    break;
+
                 //Preventing crash if all delays are set to 0
                 yield return null;
             }
+
+            if (diffHasChanged)
+                continue;
 
             if (enableDifficulty)
             {
@@ -156,6 +172,12 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
             //Preventing crash if all delays are set to 0
             yield return null;
         }
+    }
+
+
+    private void Awake()
+    {
+        diffHasChanged = false;
     }
 
     private void Start()
@@ -193,13 +215,22 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
 
     #region Difficulty Settings
 
+    bool diffHasChanged = false;
+    int changeToDiff;
+
     public void SetDifficulty(int index)
     {
-        switch (index)
+        diffHasChanged = true;
+        changeToDiff = index;
+    }
+
+    private void UpdateDifficulty()
+    {
+        switch (changeToDiff)
         {
             case 0:
                 {
-                    currentDifficultyState = DifficultyStates[index];
+                    currentDifficultyState = DifficultyStates[changeToDiff];
                     enableDifficulty = false;
                     RemoveAllDifficultyWaves();
                     UpdateEnemyWaveList();
@@ -208,7 +239,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                 }
             case 1:
                 {
-                    currentDifficultyState = DifficultyStates[index];
+                    currentDifficultyState = DifficultyStates[changeToDiff];
                     enableDifficulty = true;
                     difficultyFactor = 3.5f;
 
@@ -225,7 +256,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                 }
             case 2:
                 {
-                    currentDifficultyState = DifficultyStates[index];
+                    currentDifficultyState = DifficultyStates[changeToDiff];
                     enableDifficulty = true;
                     difficultyFactor = 2f;
 
@@ -242,7 +273,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                 }
             case 3:
                 {
-                    currentDifficultyState = DifficultyStates[index];
+                    currentDifficultyState = DifficultyStates[changeToDiff];
                     enableDifficulty = true;
                     difficultyFactor = 1.5f;
 
@@ -259,7 +290,7 @@ public class P3_EnemyWaveGenerator : MonoBehaviour
                 }
             case 4:
                 {
-                    currentDifficultyState = DifficultyStates[index];
+                    currentDifficultyState = DifficultyStates[changeToDiff];
                     enableDifficulty = true;
                     difficultyFactor = 0.75f;
 
