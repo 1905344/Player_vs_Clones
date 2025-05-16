@@ -58414,9 +58414,9 @@ MonoBehaviour:
   musicSource: {fileID: 192367017}
   effectsSource: {fileID: 937352811}
   sfxClip: {fileID: 0}
-  masterVolumeStartingVolume: 0.7
-  musicVolumeStartingVolume: 0.7
-  sfxVolumeStartingVolume: 0.7
+  masterVolumeStartingVolume: 0.6
+  musicVolumeStartingVolume: 0.8
+  sfxVolumeStartingVolume: 0.8
   masterVolumeSlider: {fileID: 1316238511}
   musicVolumeSlider: {fileID: 601601634}
   sfxVolumeSlider: {fileID: 1635944059}
