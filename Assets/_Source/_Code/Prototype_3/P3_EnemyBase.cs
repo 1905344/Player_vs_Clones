@@ -152,7 +152,16 @@ public class P3_EnemyBase : MonoBehaviour
     {
         if (enemyType == P3_Enemy_Types.Red)
         {
-            destinationPosition = lighthouseRef.transform;
+            if (lighthouseRef.transform != null)
+            {
+                destinationPosition = lighthouseRef.transform;
+            }
+            else
+            {
+                Transform getLighthouseTransform = GameObject.FindGameObjectWithTag("Lighthouse").transform;
+                destinationPosition = getLighthouseTransform;
+            }
+            
             //Debug.Log($"P3_EnemyBase: Enemy type is: {enemyType} and lighthouse destination is: {destinationPosition.position}");
         }
         else
